@@ -1,0 +1,33 @@
+require("dotenv").config();
+
+module.exports = {
+	// PORT: process.env.PORT,
+	// NODE_ENV: process.env.NODE_ENV,
+	// BASE_URL: process.env.BASE_URL,
+	// LIVE_URL: process.env.LIVE_URL,
+	// COOKIE_EXPIRE_DAYS: process.env.COOKIE_EXPIRE_DAYS,
+	// DB_URL: process.env.DB_URL,
+	// JWT_SECRET: process.env.JWT_SECRET,
+	// JWT_EXPIRY: process.env.JWT_EXPIRY,
+	// MAX_FILE_SIZE: process.env.MAX_FILE_SIZE,
+	// FORGOT_PASSWORD_TOKEN_EXPIRY_MINUTE: process.env.FORGOT_PASSWORD_TOKEN_EXPIRY_MINUTE,
+	// AWS_BUCKET_NAME: process.env.BUCKET_NAME,
+	// AWS_BUCKET_REGION: process.env.BUCKET_REGION,
+	// AWS_ACCESS_KEY: process.env.ACCESS_KEY,
+	// AWS_SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY,
+	// BOOKING_ID_LENGTH: process.env.BOOKING_ID_LENGTH,
+	// MAIL_HOST: process.env.MAIL_HOST,
+	// MAIL_PORT: process.env.MAIL_PORT,
+	// MAIL_AUTH_CREDENTIAL_USER: process.env.MAIL_AUTH_CREDENTIAL_USER,
+	// MAIL_AUTH_CREDENTIAL_PASSWORD: process.env.MAIL_AUTH_CREDENTIAL_PASSWORD,
+	PORT: 500,
+	NODE_ENV: "development",
+	DB_URL: "mongodb://127.0.0.1:27017/cinema",
+	BASE_URL: "http://localhost:500",
+	JWT_SECRET: "8hEnPGeoBqGUT6zksxt4G95gW",
+
+	AWS_BUCKET_NAME: "myBucketAmongus",
+	AWS_BUCKET_REGION: "us-east-1",
+	AWS_ACCESS_KEY: "AKIA1234567890EXAMPLE",
+	AWS_SECRET_ACCESS_KEY: "abc123DEF456ghi789JKL012MNO345pqr678stu",
+};
