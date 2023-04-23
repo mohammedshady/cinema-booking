@@ -3,7 +3,7 @@ const CustomError = require("../utils/customError");
 const mongoose = require("mongoose");
 
 // models
-const screen = require("../models/screen");
+const Screen = require("../models/screen");
 const Feedback = require("../models/feedback");
 const Show = require("../models/show");
 const Booking = require("../models/booking");
@@ -61,11 +61,10 @@ exports.updateScreen = asyncHandler(async (req, res, next) => {
 
 	if (!id) return next(new CustomError("Please provide Screen id"));
 
-	const updatedscreen = await Screen.findByIdAndUpdate(
-		id,
-		req.body,
-		{ new: true, runValidators: true }
-	);
+	const updatedscreen = await Screen.findByIdAndUpdate(id, req.body, {
+		new: true,
+		runValidators: true,
+	});
 
 	if (!updatedscreen) {
 		return next(new CustomError("Screen not found", 404));
@@ -87,7 +86,10 @@ exports.getScreens = asyncHandler(async (req, res, next) => {
 	sortBy = sortBy || "screenName";
 	order = order || 1;
 
-	const halls = await Screen.find({ deleted: false }, { createdAt: 0, updatedAt: 0 }).sort({
+	const halls = await Screen.find(
+		{ deleted: false },
+		{ createdAt: 0, updatedAt: 0 }
+	).sort({
 		[`${sortBy}`]: order,
 	});
 
@@ -145,7 +147,6 @@ exports.deleteFeedback = asyncHandler(async (req, res, next) => {
 			feedBackId,
 		},
 	});
-
 });
 
 // view scheduled shows analytics
@@ -221,7 +222,9 @@ exports.getScheduledShowsAndAnalytics = asyncHandler(async (req, res, next) => {
 
 	if (sortBy == "totalBookings") {
 		shows = shows.sort((a, b) => {
-			return order == 1 ? b.totalBookings - a.totalBookings : a.totalBookings - b.totalBookings;
+			return order == 1
+				? b.totalBookings - a.totalBookings
+				: a.totalBookings - b.totalBookings;
 		});
 	}
 
@@ -247,7 +250,9 @@ exports.getShowsHistoryAndAnalytics = asyncHandler(async (req, res, next) => {
 	const skipCount = page * parseInt(perPage);
 	const limitCount = parseInt(perPage);
 
-	const totalShows = await Show.countDocuments({ status: { $ne: "starting soon" } });
+	const totalShows = await Show.countDocuments({
+		status: { $ne: "starting soon" },
+	});
 
 	let shows = await Show.aggregate([
 		{
@@ -296,11 +301,15 @@ exports.getShowsHistoryAndAnalytics = asyncHandler(async (req, res, next) => {
 
 	if (sortBy == "totalBookings") {
 		shows = shows.sort((a, b) => {
-			return order == 1 ? b.totalBookings - a.totalBookings : a.totalBookings - b.totalBookings;
+			return order == 1
+				? b.totalBookings - a.totalBookings
+				: a.totalBookings - b.totalBookings;
 		});
 	} else if (sortBy == "totalEarnings") {
 		shows = shows.sort((a, b) => {
-			return order == 1 ? b.totalEarnings - a.totalEarnings : a.totalEarnings - b.totalEarnings;
+			return order == 1
+				? b.totalEarnings - a.totalEarnings
+				: a.totalEarnings - b.totalEarnings;
 		});
 	}
 
@@ -385,7 +394,10 @@ exports.populateShowForm = asyncHandler(async (req, res, next) => {
 
 	if (!showId) return next(new CustomError("Provide showId", 400));
 
-	const show = await Show.findOne({ _id: showId }, { movie: 1, price: 1, date: 1, screen: 1 }).populate([
+	const show = await Show.findOne(
+		{ _id: showId },
+		{ movie: 1, price: 1, date: 1, screen: 1 }
+	).populate([
 		{
 			path: "screen",
 			model: "screen",

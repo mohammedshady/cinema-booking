@@ -37,7 +37,7 @@ export const SORT_OPTION = {
 	TOTAL_ROWS: "totalRows",
 	TOTAL_COLS: "totalColumns",
 	MOVIE_NAME: "movie.title",
-	SCREEN_NAME: "cinemaHall.screenName",
+	SCREEN_NAME: "screen.screenName",
 	TOTAL_BOOKINGS: "totalBookings",
 	TOTAL_EARNINGS: "totalEarnings",
 	SCREEN: "screenName",

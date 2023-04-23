@@ -2,6 +2,7 @@ require("dotenv").config();
 require("./utils/db").connect();
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const fileUpload = require("express-fileupload");
 const cors = require("cors");
 const morgan = require("morgan");
 const path = require("path");
@@ -21,8 +22,9 @@ app.use(express.urlencoded({ extended: true }));
 // accept cross origin request
 app.use(cors());
 
-// cookies middleware
+// cookies & file upload middlewares
 app.use(cookieParser());
+app.use(fileUpload());
 
 // middleware for access frontend
 const buildPath = path.normalize(path.join(__dirname, "../client/dist"));

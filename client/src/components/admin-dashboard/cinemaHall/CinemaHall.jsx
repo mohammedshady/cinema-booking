@@ -16,8 +16,8 @@ import { toast } from "react-toastify";
 const initialState = {
 	loading: true,
 	error: "",
-	totalHalls: 0,
-	cinemaHalls: [],
+	totalScreens: 0,
+	screens: [],
 };
 
 const reducer = (state, action) => {
@@ -38,7 +38,7 @@ const reducer = (state, action) => {
 	}
 };
 
-const CinemaHall = () => {
+const screens = () => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -52,9 +52,9 @@ const CinemaHall = () => {
 		setSortOption(sortOption);
 	};
 
-	const { totalHalls, cinemaHalls, loading, error } = state;
+	const { totalScreens, screens, loading, error } = state;
 
-	const fetchCinemaHalls = () => {
+	const fetchScreens = () => {
 		axios
 			.get(`/api/admin/screens?sortBy=${sortOption}&order=${sortOrder}`)
 			.then((res) => {
@@ -67,7 +67,7 @@ const CinemaHall = () => {
 	};
 
 	useEffect(() => {
-		fetchCinemaHalls();
+		fetchScreens();
 	}, [sortOption, sortOrder]);
 
 	const handleDelete = (e) => {
@@ -86,7 +86,7 @@ const CinemaHall = () => {
 					.delete(`/api/admin/screens/${e.target.id}`)
 					.then(() => {
 						toast.success("Deleted succesfully");
-						fetchCinemaHalls();
+						fetchScreens();
 						dispatch({ type: "SET_LOADING", payload: false });
 					})
 					.catch((error) => {
@@ -100,7 +100,7 @@ const CinemaHall = () => {
 	if (error) return <Loader msg="error" />;
 	else if (loading) return <Loader msg="loading" />;
 
-	const cinemaHallTable = (
+	const screensTable = (
 		<table className="min-w-full">
 			<thead>
 				<tr>
@@ -149,7 +149,7 @@ const CinemaHall = () => {
 				</tr>
 			</thead>
 			<tbody>
-				{cinemaHalls.map((screen, index) => (
+				{screens.map((screen, index) => (
 					<tr className={styles.tr} key={screen._id}>
 						<td className={styles.td}>
 							<p className={styles.td_p}>{index + 1}</p>
@@ -187,9 +187,9 @@ const CinemaHall = () => {
 			<Navbar
 				child={
 					<>
-						<h1 className={styles.nav_h1}>All CinemaHalls</h1>
+						<h1 className={styles.nav_h1}>All Screens</h1>
 						<Link to={"add"} className={styles.nav_link}>
-							Add new cinemahall
+							Add new screen
 						</Link>
 					</>
 				}
@@ -198,8 +198,8 @@ const CinemaHall = () => {
 			{/* statistics */}
 			<div className={styles.stat_main}>
 				<div className="m-5">
-					<h1 className={styles.stat_h1}>Total Halls</h1>
-					<p className={styles.stat_p}>{totalHalls}</p>
+					<h1 className={styles.stat_h1}>Total Screens</h1>
+					<p className={styles.stat_p}>{totalScreens}</p>
 				</div>
 			</div>
 
@@ -208,10 +208,10 @@ const CinemaHall = () => {
 			<div className="mx-auto px-4 sm:px-8">
 				<div className="py-4 overflow-x-auto">
 					<div className={styles.table_container}>
-						{cinemaHalls.length > 0 ? (
-							cinemaHallTable
+						{screens.length > 0 ? (
+							screensTable
 						) : (
-							<NoItem item={"We don't have any cinemahalls, add one !"} />
+							<NoItem item={"We don't have any screens, add one !"} />
 						)}
 					</div>
 				</div>
@@ -233,4 +233,4 @@ const styles = {
 	table_container: "inline-block min-w-full rounded-lg max-h-[70vh] overflow-auto scroll-smooth",
 };
 
-export default CinemaHall;
+export default screens;

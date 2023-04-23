@@ -14,7 +14,7 @@ const defaultFormData = {
 	rows: 0,
 };
 
-const CinemaHallForm = () => {
+const ScreenForm = () => {
 	const [formData, setFormData] = useState(defaultFormData);
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
@@ -28,7 +28,7 @@ const CinemaHallForm = () => {
 			.post(`/api/admin/screens`, formData)
 			.then((res) => {
 				setLoading(false);
-				toast.success("Cinemahall added succesfully");
+				toast.success("Screen added succesfully");
 				window.history.back();
 			})
 			.catch((error) => {
@@ -46,7 +46,7 @@ const CinemaHallForm = () => {
 
 	return (
 		<div className="h-[100vh] overflow-auto">
-			<Navbar child={<h1 className={styles.nav_h1}>Add new cinemahall</h1>} />
+			<Navbar child={<h1 className={styles.nav_h1}>Add new screen</h1>} />
 
 			<div className="m-5 p-5 bg-slate-800 rounded-lg">
 				<form onSubmit={handleSubmit} className="w-[40%] m-auto" autoComplete="off">
@@ -113,7 +113,7 @@ const CinemaHallForm = () => {
 						className="
                         w-full px-6 py-2.5 bg-blue-600 text-white font-medium text-md rounded hover:bg-blue-700"
 					>
-						<FileUploadOutlinedIcon /> Add new cinemahall
+						<FileUploadOutlinedIcon /> Add new screen
 					</button>
 				</form>
 			</div>
@@ -127,4 +127,4 @@ const styles = {
 	label: "block mb-2 font-extralight text-blue-400",
 };
 
-export default CinemaHallForm;
+export default ScreenForm;

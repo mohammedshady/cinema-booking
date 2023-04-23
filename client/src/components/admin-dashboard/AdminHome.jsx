@@ -46,7 +46,7 @@ const AdminHome = () => {
 						>
 							<DoorSlidingOutlinedIcon />
 
-							<span className="mx-4 w-full font-medium">Cinemahalls</span>
+							<span className="mx-4 w-full font-medium">Screens</span>
 						</NavLink>
 						<NavLink
 							className={(navData) =>
