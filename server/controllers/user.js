@@ -140,45 +140,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 	// Redirect user to password reset page with reset token and user id
 	const resetPasswordUrl = `http://localhost:500/#/user/reset-password/${user.email}/${resetToken}`;
 	console.log("redirecting");
-	res.redirect(resetPasswordUrl)
-	//
-	// const { email } = req.body;
-
-	// if (!email) return next(new CustomError("Please enter email", 400));
-
-	// const user = await User.findOne({ email });
-
-	// if (!user)
-	// 	return next(new CustomError("User not found with this email", 400));
-
-	// await User.updateOne(
-	// 	{ email },
-	// 	{ $set: { forgotPasswordToken: token, forgotPasswordTokenExpiry: expiry } }
-	// );
-
-	// /**
-	//  * send mail to user
-	//  * form url =  http://{{url}}/#/user/reset-password/:userId/:token
-	//  * api url = http://{{url}}/api/user/resetPassword/:userId/:token
-	//  */
-
-	// const url = `${BASE_URL}/#/user/reset-password/${user._id}/${token}`;
-
-	// const mailDetails = {
-	// 	link: url,
-	// };
-
-	// sendMail(email, "Password reset", mailDetails, false);
-
-	// return res.status(200).json({
-	// 	status: "success",
-	// 	message:
-	// 		"Reset link set to your email, please check your inbox to continue",
-	// 	data: {
-	// 		email,
-	// 		url,
-	// 	},
-	// });
+	res.redirect(resetPasswordUrl);
 });
 
 // reset password
@@ -214,34 +176,6 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 		message: "password reset successfully",
 		data: {},
 	});
-	// const { token, userId } = req.params;
-
-	// if (!token || !userId)
-	// 	return next(new CustomError("Please provide token", 400));
-
-	// const user = await User.findOne({ _id: userId, token });
-
-	// if (!user)
-	// 	return next(
-	// 		new CustomError("Something went wrong, try again after sometime", 400)
-	// 	);
-
-	// if (user.forgotPasswordTokenExpiry < Date.now())
-	// 	return next(new CustomError("This link is expired 💥", 400));
-
-	// const { password } = req.body;
-
-	// if (!password) return next(new CustomError("Please enter password", 400));
-
-	// user.password = password;
-
-	// await user.save();
-
-	// return res.status(200).json({
-	// 	status: "success",
-	// 	message: "password reset successfully",
-	// 	data: {},
-	// });
 });
 
 // load user

@@ -1,46 +1,48 @@
 const router = require("express").Router();
 
 // controllers
-const {
-	signUp,
-	logIn,
-	giveFeedback,
-	getMyBookings,
-	forgotPassword,
-	resetPassword,
-	loadUser,
-	logout,
-} = require("../controllers/user");
+const userController = require("../controllers/user");
 const { bookShow } = require("../controllers/show");
 
 // auth middleware
 const { authToken } = require("../middlewares/authenticateToken");
+const { authorizeRole } = require("../middlewares/authorizer");
 
 // sign up
-router.post("/signup", signUp);
+router.post("/signup", userController.signUp);
 
 // login
-router.post("/login", logIn);
+router.post("/login", userController.logIn);
 
 // logout
-router.get("/logout", logout);
+router.get("/logout", authToken, userController.logout);
 
 // load user
-router.get("/load", loadUser);
+router.get("/load", authToken, userController.loadUser);
 
 // book show
-router.post("/bookShow", authToken, bookShow);
+router.post("/bookShow", authToken, authorizeRole(0), bookShow);
 
 // give feedback
-router.post("/feedback", authToken, giveFeedback);
+router.post(
+	"/feedback",
+	authToken,
+	authorizeRole(0),
+	userController.giveFeedback
+);
 
 // view my bookings
-router.get("/bookings", authToken, getMyBookings);
+router.get(
+	"/bookings",
+	authToken,
+	authorizeRole(0),
+	userController.getMyBookings
+);
 
 // forgot password
-router.post("/forgotPassword", forgotPassword);
+router.post("/forgotPassword", userController.forgotPassword);
 
 // reset password
-router.post("/resetPassword/:userId/:token", resetPassword);
+router.post("/resetPassword/:userId/:token", userController.resetPassword);
 
 module.exports = router;
