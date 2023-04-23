@@ -28,6 +28,7 @@ app.use(cookieParser());
 const buildPath = path.normalize(path.join(__dirname, "../client/dist"));
 app.use(express.static(buildPath));
 app.use(express.static(path.join(__dirname, "uploads")));
+console.log(path.join(__dirname, "uploads"));
 
 // logger
 app.use(morgan("dev"));

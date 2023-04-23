@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const cinemaHallSchema = new Schema(
+const screenSchema = new Schema(
 	{
 		screenName: {
 			type: String,
@@ -28,6 +28,6 @@ const cinemaHallSchema = new Schema(
 	{ timestamps: true, versionKey: false }
 );
 
-const CinemaHall = mongoose.model("CinemaHall", cinemaHallSchema);
+const Screen = mongoose.model("screen", screenSchema);
 
-module.exports = CinemaHall;
+module.exports = Screen;

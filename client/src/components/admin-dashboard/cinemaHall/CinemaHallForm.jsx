@@ -25,7 +25,7 @@ const CinemaHallForm = () => {
 		e.preventDefault();
 
 		axios
-			.post(`/api/admin/cinemaHall`, formData)
+			.post(`/api/admin/screens`, formData)
 			.then((res) => {
 				setLoading(false);
 				toast.success("Cinemahall added succesfully");

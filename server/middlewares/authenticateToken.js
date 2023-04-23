@@ -6,6 +6,7 @@ const User = require("../models/user");
 exports.authToken = asyncHandler(async (req, res, next) => {
 	const token = req.cookies.token;
 
+	console.log(token)
 	// if token unavailable send login again message
 	if (!token) return next(new CustomError("Login again", 403));
 

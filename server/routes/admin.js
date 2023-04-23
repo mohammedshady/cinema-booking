@@ -3,7 +3,7 @@ const router = require("express").Router();
 // controllers
 const adminController = require("../controllers/admin");
 const movieController = require("../controllers/movie");
-const { addNewShow, updateShowDetails } = require("../controllers/show");
+const { addNewShow, updateShowDetails, deleteShow } = require("../controllers/show");
 
 // auth middleware
 const { authToken } = require("../middlewares/authenticateToken");
@@ -28,6 +28,22 @@ router.get(
 	movieController.getAllReleasedMovies
 );
 
+// get all deleted movies for show form select option
+router.get(
+	"/deleted-movies",
+	authToken,
+	authorizeRole(1),
+	movieController.getAllDeletedMovies
+);
+
+// update movies data
+router.put(
+	"/movies/:movieId",
+	authToken,
+	authorizeRole(1),
+	movieController.updateMovie
+);
+
 // delete movie
 router.delete(
 	"/movies/:movieId",
@@ -36,28 +52,36 @@ router.delete(
 	movieController.deleteMovie
 );
 
-// add new cinema hall
+// add new Screen
 router.post(
-	"/cinemaHall",
+	"/screens",
 	authToken,
 	authorizeRole(1),
-	adminController.addCinemaHall
+	adminController.addScreen
 );
 
-// delete cinema hall
+// delete Screen
 router.delete(
-	"/cinemaHall/:id",
+	"/screens/:id",
 	authToken,
 	authorizeRole(1),
-	adminController.deleteCinemaHall
+	adminController.deleteScreen
 );
 
-// get all cinema hall
-router.get(
-	"/cinemaHall",
+// update Screen
+router.put(
+	"/screens/:id",
 	authToken,
 	authorizeRole(1),
-	adminController.getCinemaHalls
+	adminController.updateScreen
+);
+
+// get all Screens
+router.get(
+	"/screens",
+	authToken,
+	authorizeRole(1),
+	adminController.getScreens
 );
 
 // add new show
@@ -65,6 +89,14 @@ router.post("/show", authToken, authorizeRole(1), addNewShow);
 
 // update show
 router.patch("/show/:showId", authToken, authorizeRole(1), updateShowDetails);
+
+//delete show
+router.delete(
+	"/show/:showId",
+	authToken,
+	authorizeRole(1),
+	deleteShow
+);
 
 // get all scheduled shows
 router.get(
@@ -104,6 +136,14 @@ router.get(
 	authToken,
 	authorizeRole(1),
 	adminController.viewFeedback
+);
+
+//delete a feedback
+router.delete(
+	"/feedback/:feedBackId",
+	authToken,
+	authorizeRole(1),
+	adminController.deleteFeedback
 );
 
 module.exports = router;

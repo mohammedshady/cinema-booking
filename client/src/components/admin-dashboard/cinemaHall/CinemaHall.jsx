@@ -56,7 +56,7 @@ const CinemaHall = () => {
 
 	const fetchCinemaHalls = () => {
 		axios
-			.get(`/api/admin/cinemaHall?sortBy=${sortOption}&order=${sortOrder}`)
+			.get(`/api/admin/screens?sortBy=${sortOption}&order=${sortOrder}`)
 			.then((res) => {
 				dispatch({ type: "FETCH_SUCCESS", payload: { ...res.data.data, loading: false, error: "" } });
 			})
@@ -83,7 +83,7 @@ const CinemaHall = () => {
 			if (result.isConfirmed) {
 				dispatch({ type: "SET_LOADING", payload: true });
 				axios
-					.delete(`/api/admin/cinemaHall/${e.target.id}`)
+					.delete(`/api/admin/screens/${e.target.id}`)
 					.then(() => {
 						toast.success("Deleted succesfully");
 						fetchCinemaHalls();

@@ -61,8 +61,8 @@ const App = () => {
 						<Route path="shows/update/:id" element={<ShowForm update={true} />} />
 						<Route path="shows/:id" element={<ShowDetails />} />
 						<Route path="feedbacks" element={<AdminFeedback />} />
-						<Route path="cinemahalls" element={<CinemaHall />} />
-						<Route path="cinemahalls/add" element={<CinemaHallForm />} />
+						<Route path="screens" element={<CinemaHall />} />
+						<Route path="screens/add" element={<CinemaHallForm />} />
 					</Route>
 				</Route>
 

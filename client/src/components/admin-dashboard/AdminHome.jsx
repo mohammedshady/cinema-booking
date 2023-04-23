@@ -42,7 +42,7 @@ const AdminHome = () => {
 							className={(navData) =>
 								navData.isActive ? `${styles.active_link}` : `${styles.normal_link}`
 							}
-							to={"/admin/cinemahalls"}
+							to={"/admin/screens"}
 						>
 							<DoorSlidingOutlinedIcon />
 

@@ -111,6 +111,36 @@ exports.getMyBookings = asyncHandler(async (req, res, next) => {
 	});
 });
 
+// delete a booking
+exports.deleteBooking = asyncHandler(async (req, res, next) => {
+	const { bookingId } = req.params;
+	console.log(bookingId)
+
+	// check if booking exists
+	const booking = await Booking.findById(bookingId);
+
+	if (!booking) {
+		return next(new CustomError("Booking not found", 400));
+	}
+
+	// check if user is authorized to delete booking
+	if (booking.user.toString() !== req.user._id.toString()) {
+		return next(new CustomError("unAuthorized user for deletion", 400));
+	}
+
+	// remove booking
+	await booking.remove();
+
+	// return success message
+	res.status(200).json({
+		status: "success",
+		message: "Booking Deleted",
+		data: {
+			bookingId: bookingId,
+		}
+	});
+});
+
 // forgot password
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
 	const { email } = req.body;

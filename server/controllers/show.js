@@ -4,21 +4,21 @@ const CustomError = require("../utils/customError");
 // models
 const Show = require("../models/show");
 const Movie = require("../models/movie");
-const CinemaHall = require("../models/cinemaHall");
+const Screen = require("../models/screen");
 const Booking = require("../models/booking");
 
 // add new show
 exports.addNewShow = asyncHandler(async (req, res, next) => {
 	/**
-	 * 1. select movie, price, dateTime, cinemaHall
+	 * 1. select movie, price, dateTime, screen
 	 * 2. cerate show document
-	 * 3. create Seat document for each seat available in cinemaHall,
+	 * 3. create Seat document for each seat available in screen,
 	 * 4. add all seats to availableSeats in show document
 	 */
 
-	let { movie, price, dateTime, cinemaHall } = req.body;
+	let { movie, price, dateTime, screen } = req.body;
 
-	if (!movie || !cinemaHall)
+	if (!movie || !screen)
 		return next(new CustomError("Provide movie & cinema hall", 400));
 
 	dateTime = new Date(dateTime);
@@ -36,7 +36,7 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 		return next(new CustomError("Can't add show for this movie", 400));
 
 	// check cinema hall
-	const hall = await CinemaHall.findOne({ _id: cinemaHall });
+	const hall = await Screen.findOne({ _id: screen });
 
 	if (!hall) return next(new CustomError("Cinema hall doesn't exist", 400));
 
@@ -54,12 +54,12 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 		date: dateTime,
 		startTime,
 		endTime,
-		cinemaHall,
+		screen,
 	};
 
 	// find in Show collection if there is already a show for a given time
 	let show = await Show.findOne({
-		cinemaHall,
+		screen,
 		startTime: { $lte: startTime },
 		endTime: { $gte: startTime },
 	});
@@ -102,6 +102,23 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 	});
 });
 
+//delete a show 
+exports.deleteShow = asyncHandler(async (req, res, next) => {
+	const { showId } = req.params;
+
+	if (!showId) return next(new CustomError("Provide showId", 400));
+
+	await Show.findByIdAndDelete(showId);
+
+	return res.status(200).json({
+		status: "success",
+		message: "Show deleted successfully",
+		data: {
+			showId
+		},
+	});
+});
+
 // book a show
 exports.bookShow = asyncHandler(async (req, res, next) => {
 	const { seats, show } = req.body;
@@ -124,8 +141,8 @@ exports.bookShow = asyncHandler(async (req, res, next) => {
 		}
 	).populate([
 		{
-			path: "cinemaHall",
-			model: "CinemaHall",
+			path: "screen",
+			model: "screen",
 			select: "screenName",
 		},
 		{
@@ -181,7 +198,7 @@ exports.bookShow = asyncHandler(async (req, res, next) => {
 		seats: userSeats,
 		show: {
 			id: show,
-			screenName: showDoc.cinemaHall.screenName,
+			screenName: showDoc.screen.screenName,
 			date: showDoc.date,
 			startTime: showDoc.startTime,
 			price: showDoc.price,
@@ -203,6 +220,9 @@ exports.bookShow = asyncHandler(async (req, res, next) => {
 	});
 });
 
+
+
+
 // update show details
 exports.updateShowDetails = asyncHandler(async (req, res, next) => {
 	const { showId } = req.params;
@@ -216,8 +236,8 @@ exports.updateShowDetails = asyncHandler(async (req, res, next) => {
 	 */
 
 	const show = await Show.findOne({ _id: showId }).populate({
-		path: "cinemaHall",
-		model: "CinemaHall",
+		path: "screen",
+		model: "screen",
 		select: "screenName totalSeats",
 	});
 
@@ -231,17 +251,17 @@ exports.updateShowDetails = asyncHandler(async (req, res, next) => {
 		);
 
 	// destructure update data
-	let { movie, price, dateTime, cinemaHall } = req.body;
+	let { movie, price, dateTime, screen } = req.body;
 
 	/**
-	 * if there is update in cinemaHall we also need to update available seats
+	 * if there is update in screen we also need to update available seats
 	 */
-	if (cinemaHall) {
-		// finding cinemaHall
-		const hall = await CinemaHall.findOne({ _id: cinemaHall });
+	if (screen) {
+		// finding screen
+		const hall = await screen.findOne({ _id: screen });
 
-		// assign new cinemaHall to show
-		show.cinemaHall = cinemaHall;
+		// assign new screen to show
+		show.screen = screen;
 		show.availableSeats = [];
 
 		const seatMap = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -332,8 +352,8 @@ exports.getShowByMovie = asyncHandler(async (req, res, next) => {
 		.sort({ [`${sortBy}`]: order })
 		.populate([
 			{
-				path: "cinemaHall",
-				model: "CinemaHall",
+				path: "screen",
+				model: "screen",
 				select: "screenName",
 			},
 		]);
@@ -359,8 +379,8 @@ exports.getShowSeatsDetails = asyncHandler(async (req, res, next) => {
 		{ _id: showId },
 		{ price: 1, availableSeats: 1, bookedSeats: 1 }
 	).populate({
-		path: "cinemaHall",
-		model: "CinemaHall",
+		path: "screen",
+		model: "screen",
 		select: "totalRows totalColumns -_id",
 	});
 

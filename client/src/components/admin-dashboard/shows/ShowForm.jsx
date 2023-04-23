@@ -46,7 +46,7 @@ const ShowForm = ({ update }) => {
 	const fetchDetails = async () => {
 		try {
 			const { data: movieData } = await axios.get(`/api/admin/released-movies`);
-			const { data: hallData } = await axios.get(`/api/admin/cinemaHall`);
+			const { data: hallData } = await axios.get(`/api/admin/screens`);
 
 			dispatch({
 				type: "FETCH_SUCCESS",

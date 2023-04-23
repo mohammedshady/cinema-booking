@@ -155,6 +155,29 @@ exports.deleteMovie = asyncHandler(async (req, res, next) => {
 	});
 });
 
+
+//update movie
+exports.updateMovie = asyncHandler(async (req, res, next) => {
+	const { movieId } = req.params;
+
+	if (!movieId) return next(new CustomError("Provide MovieId", 400));
+
+	const updatedMovie = await Movie.findByIdAndUpdate(
+		movieId,
+		req.body,
+		{ new: true, runValidators: true }
+	);
+
+	if (!updatedMovie) {
+		return next(new CustomError("Movie not found", 404));
+	}
+	return res.status(200).json({
+		status: "success",
+		message: "Movie updated successfully",
+		data: {},
+	});
+});
+
 // get all added movies
 exports.getAllMovies = asyncHandler(async (req, res, next) => {
 	let { sortBy, order, page, perPage } = req.query;
@@ -207,12 +230,31 @@ exports.getAllReleasedMovies = asyncHandler(async (req, res, next) => {
 		release_date: -1,
 	});
 
+	if (movies.length === 0) return next(new CustomError("found no Movies", 404));
+
 	return res.status(200).json({
 		status: "success",
 		message: "movies list fetched",
 		data: {
 			totalMovies: movies.length,
 			movies,
+		},
+	});
+});
+// get all deleted movies
+exports.getAllDeletedMovies = asyncHandler(async (req, res, next) => {
+	const deletedMovies = await Movie.find({ status: "deleted" }, { title: 1 }).sort({
+		release_date: -1,
+	});
+
+	if (deletedMovies.length === 0) return next(new CustomError("found no deleted Movies", 404));
+
+	return res.status(200).json({
+		status: "success",
+		message: "deleted movies list fetched",
+		data: {
+			totalMovies: deletedMovies.length,
+			deletedMovies,
 		},
 	});
 });

@@ -3,75 +3,100 @@ const CustomError = require("../utils/customError");
 const mongoose = require("mongoose");
 
 // models
-const CinemaHall = require("../models/cinemaHall");
+const screen = require("../models/screen");
 const Feedback = require("../models/feedback");
 const Show = require("../models/show");
 const Booking = require("../models/booking");
 
-// add new cinema hall
-exports.addCinemaHall = asyncHandler(async (req, res, next) => {
+// add new screen
+exports.addScreen = asyncHandler(async (req, res, next) => {
 	const { name, rows, columns } = req.body;
 
 	if (!name || !rows || !columns) return next(new CustomError("Name, rows and columns are required"));
 
 	const nameRegex = new RegExp(name, "i");
 
-	let hall = await CinemaHall.findOne({ screenName: nameRegex, deleted: false });
+	let hall = await Screen.findOne({ screenName: nameRegex, deleted: false });
 
-	if (hall) return next(new CustomError("Cinema Hall already exist with this name"));
+	if (hall) return next(new CustomError("Screen already exist with this name"));
 
-	const cinemaHallData = {
+	const screenData = {
 		screenName: name.toUpperCase(),
 		totalRows: rows,
 		totalColumns: columns,
 		totalSeats: rows * columns,
 	};
 
-	hall = await CinemaHall.create(cinemaHallData);
+	hall = await Screen.create(screenData);
 
 	res.status(201).json({
 		status: "success",
-		message: "New cinema hall added",
+		message: "New Screen added",
 		data: {
-			cinemaHall: hall,
+			screen: hall,
 		},
 	});
 });
 
-// delete cinema hall
-exports.deleteCinemaHall = asyncHandler(async (req, res, next) => {
+// delete screen
+exports.deleteScreen = asyncHandler(async (req, res, next) => {
 	const { id } = req.params;
 
-	if (!id) return next(new CustomError("Please provide cinemahall id"));
+	if (!id) return next(new CustomError("Please provide screen id"));
 
-	await CinemaHall.updateOne({ _id: id }, { $set: { deleted: true } });
+	await Screen.updateOne({ _id: id }, { $set: { deleted: true } });
 
 	res.status(201).json({
 		status: "success",
-		message: "cinemaHall deleted successfully",
+		message: "screen deleted successfully",
 		data: {
-			cinemaHall: id,
+			screen: id,
 		},
 	});
 });
 
-// get all cinema hall
-exports.getCinemaHalls = asyncHandler(async (req, res, next) => {
+// update screen
+exports.updateScreen = asyncHandler(async (req, res, next) => {
+	const { id } = req.params;
+
+	if (!id) return next(new CustomError("Please provide Screen id"));
+
+	const updatedscreen = await Screen.findByIdAndUpdate(
+		id,
+		req.body,
+		{ new: true, runValidators: true }
+	);
+
+	if (!updatedscreen) {
+		return next(new CustomError("Screen not found", 404));
+	}
+
+	res.status(200).json({
+		status: "success",
+		message: "Screen updated successfully",
+		data: {
+			screen: updatedscreen,
+		},
+	});
+});
+
+// get all Screens
+exports.getScreens = asyncHandler(async (req, res, next) => {
 	let { sortBy, order } = req.query;
 
 	sortBy = sortBy || "screenName";
 	order = order || 1;
 
-	const halls = await CinemaHall.find({ deleted: false }, { createdAt: 0, updatedAt: 0 }).sort({
+	const halls = await Screen.find({ deleted: false }, { createdAt: 0, updatedAt: 0 }).sort({
 		[`${sortBy}`]: order,
 	});
 
 	res.status(201).json({
 		status: "success",
-		message: "Cinema halls list fetched",
+		message: "Screens list fetched",
 		data: {
 			totalHalls: halls.length,
-			cinemaHalls: halls,
+			screens: halls,
 		},
 	});
 });
@@ -103,6 +128,24 @@ exports.viewFeedback = asyncHandler(async (req, res, next) => {
 			feedbacks,
 		},
 	});
+});
+
+// Delete a feedback
+exports.deleteFeedback = asyncHandler(async (req, res, next) => {
+	const { feedBackId } = req.params;
+
+	if (!feedBackId) return next(new CustomError("Please provide FeedBack id"));
+
+	await Feedback.findByIdAndDelete(feedBackId);
+
+	res.status(200).json({
+		status: "success",
+		message: "feedback deleted successfully",
+		data: {
+			feedBackId,
+		},
+	});
+
 });
 
 // view scheduled shows analytics
@@ -139,10 +182,10 @@ exports.getScheduledShowsAndAnalytics = asyncHandler(async (req, res, next) => {
 		},
 		{
 			$lookup: {
-				from: "cinemahalls",
-				localField: "cinemaHall",
+				from: "screens",
+				localField: "screen",
 				foreignField: "_id",
-				as: "cinemaHall",
+				as: "screen",
 			},
 		},
 		{
@@ -154,7 +197,7 @@ exports.getScheduledShowsAndAnalytics = asyncHandler(async (req, res, next) => {
 			},
 		},
 		{
-			$unwind: { path: "$cinemaHall" },
+			$unwind: { path: "$screen" },
 		},
 		{
 			$unwind: { path: "$movie" },
@@ -214,10 +257,10 @@ exports.getShowsHistoryAndAnalytics = asyncHandler(async (req, res, next) => {
 		},
 		{
 			$lookup: {
-				from: "cinemahalls",
-				localField: "cinemaHall",
+				from: "screens",
+				localField: "screen",
 				foreignField: "_id",
-				as: "cinemaHall",
+				as: "screen",
 			},
 		},
 		{
@@ -229,7 +272,7 @@ exports.getShowsHistoryAndAnalytics = asyncHandler(async (req, res, next) => {
 			},
 		},
 		{
-			$unwind: { path: "$cinemaHall" },
+			$unwind: { path: "$screen" },
 		},
 		{
 			$unwind: { path: "$movie" },
@@ -342,10 +385,10 @@ exports.populateShowForm = asyncHandler(async (req, res, next) => {
 
 	if (!showId) return next(new CustomError("Provide showId", 400));
 
-	const show = await Show.findOne({ _id: showId }, { movie: 1, price: 1, date: 1, cinemaHall: 1 }).populate([
+	const show = await Show.findOne({ _id: showId }, { movie: 1, price: 1, date: 1, screen: 1 }).populate([
 		{
-			path: "cinemaHall",
-			model: "CinemaHall",
+			path: "screen",
+			model: "screen",
 			select: "screenName",
 		},
 		{
