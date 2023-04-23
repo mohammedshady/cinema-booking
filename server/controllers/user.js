@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const Feedback = require("../models/feedback");
 const Booking = require("../models/booking");
+const Show = require("../models/show");
 
 // sign up
 exports.signUp = asyncHandler(async (req, res, next) => {
@@ -114,7 +115,6 @@ exports.getMyBookings = asyncHandler(async (req, res, next) => {
 // delete a booking
 exports.deleteBooking = asyncHandler(async (req, res, next) => {
 	const { bookingId } = req.params;
-	console.log(bookingId)
 
 	// check if booking exists
 	const booking = await Booking.findById(bookingId);
@@ -124,10 +124,25 @@ exports.deleteBooking = asyncHandler(async (req, res, next) => {
 	}
 
 	// check if user is authorized to delete booking
-	if (booking.user.toString() !== req.user._id.toString()) {
-		return next(new CustomError("unAuthorized user for deletion", 400));
-	}
+	// if (booking.user.toString() !== req.user._id.toString()) {
+	// 	return next(new CustomError("unAuthorized user for deletion", 400));
+	// }
 
+	const seats = booking.seats;
+
+	const showId = booking.show.id.toString();
+
+	const show = await Show.findById(showId);
+
+	if (!show) return next(new CustomError("Amongus", 400));
+
+	for (let i = 0; i < show.seats.length; i++) {
+		for (let j = 0; j < seats.length; j++) {
+			if (show.seats[i].name === seats[j]) show.seats[i].available = true;
+		}
+	}
+	show.save();
+	
 	// remove booking
 	await booking.remove();
 
@@ -137,7 +152,7 @@ exports.deleteBooking = asyncHandler(async (req, res, next) => {
 		message: "Booking Deleted",
 		data: {
 			bookingId: bookingId,
-		}
+		},
 	});
 });
 

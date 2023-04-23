@@ -4,7 +4,6 @@ const router = require("express").Router();
 const userController = require("../controllers/user");
 const { bookShow } = require("../controllers/show");
 
-
 // auth middleware
 const { authToken } = require("../middlewares/authenticateToken");
 const { authorizeRole } = require("../middlewares/authorizer");
@@ -24,7 +23,6 @@ router.get("/load", authToken, userController.loadUser);
 // book show
 router.post("/bookShow", authToken, authorizeRole(0), bookShow);
 
-
 // give feedback
 router.post(
 	"/feedback",
@@ -42,7 +40,7 @@ router.get(
 );
 
 //delete booking
-router.delete("/bookings/:bookingId", authToken, authorizeRole(0), userController.deleteBooking);
+router.delete("/bookings/:bookingId", userController.deleteBooking);
 
 // forgot password
 router.post("/forgotPassword", userController.forgotPassword);
