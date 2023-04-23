@@ -183,7 +183,6 @@ const MovieForm = () => {
 
 					{/* image upload */}
 					<div className="mb-6 flex justify-between">
-						{/* poster image  */}
 						<div>
 							<label className={styles.label} htmlFor="poster">
 								Poster Image *
@@ -197,7 +196,6 @@ const MovieForm = () => {
 							/>
 							<p className={`${styles.error}`}>{formErrors.poster}</p>
 						</div>
-						{/* banner image */}
 						<div>
 							<label className={styles.label} htmlFor="banner">
 								Banner Image *
