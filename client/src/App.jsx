@@ -19,8 +19,8 @@ import MovieForm from "./components/admin-dashboard/movies/MovieForm";
 import ShowForm from "./components/admin-dashboard/shows/ShowForm";
 import ShowDetails from "./components/admin-dashboard/shows/ShowDetails";
 import ShowHistory from "./components/admin-dashboard/shows/ShowHistory";
-import CinemaHall from "./components/admin-dashboard/cinemaHall/CinemaHall";
-import CinemaHallForm from "./components/admin-dashboard/cinemaHall/CinemaHallForm";
+import Screen from "./components/admin-dashboard/cinemaHall/CinemaHall";
+import ScreenForm from "./components/admin-dashboard/cinemaHall/CinemaHallForm";
 import AdminWelcome from "./components/admin-dashboard/AdminWelcome";
 import SeatSelector from "./components/shows/SeatSelector";
 import PrivateRoute from "./components/PrivateRoute";
@@ -61,8 +61,8 @@ const App = () => {
 						<Route path="shows/update/:id" element={<ShowForm update={true} />} />
 						<Route path="shows/:id" element={<ShowDetails />} />
 						<Route path="feedbacks" element={<AdminFeedback />} />
-						<Route path="screens" element={<CinemaHall />} />
-						<Route path="screens/add" element={<CinemaHallForm />} />
+						<Route path="screens" element={<Screen />} />
+						<Route path="screens/add" element={<ScreenForm />} />
 					</Route>
 				</Route>
 

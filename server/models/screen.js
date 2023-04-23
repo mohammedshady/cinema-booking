@@ -6,19 +6,19 @@ const screenSchema = new Schema(
 	{
 		screenName: {
 			type: String,
-			required: [true, "cinema hall name is required"],
+			required: [true, "cinema screen name is required"],
 		},
 		totalSeats: {
 			type: Number,
-			required: [true, "Total cinema hall seats is required"],
+			required: [true, "Total cinema screen seats is required"],
 		}, // rows * columns
 		totalRows: {
 			type: Number,
-			required: [true, "total number of cinema hall rows is required"],
+			required: [true, "total number of cinema screen rows is required"],
 		},
 		totalColumns: {
 			type: Number,
-			required: [true, "total number of cinema hall columns is required"],
+			required: [true, "total number of cinema screen columns is required"],
 		},
 		deleted: {
 			type: Boolean,

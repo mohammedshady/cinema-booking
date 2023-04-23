@@ -12,13 +12,15 @@ const Booking = require("../models/booking");
 exports.addScreen = asyncHandler(async (req, res, next) => {
 	const { name, rows, columns } = req.body;
 
-	if (!name || !rows || !columns) return next(new CustomError("Name, rows and columns are required"));
+	if (!name || !rows || !columns)
+		return next(new CustomError("Name, rows and columns are required"));
 
 	const nameRegex = new RegExp(name, "i");
 
-	let hall = await Screen.findOne({ screenName: nameRegex, deleted: false });
+	let screen = await Screen.findOne({ screenName: nameRegex, deleted: false });
 
-	if (hall) return next(new CustomError("Screen already exist with this name"));
+	if (screen)
+		return next(new CustomError("Screen already exist with this name"));
 
 	const screenData = {
 		screenName: name.toUpperCase(),
@@ -27,13 +29,13 @@ exports.addScreen = asyncHandler(async (req, res, next) => {
 		totalSeats: rows * columns,
 	};
 
-	hall = await Screen.create(screenData);
+	screen = await Screen.create(screenData);
 
 	res.status(201).json({
 		status: "success",
 		message: "New Screen added",
 		data: {
-			screen: hall,
+			screen: screen,
 		},
 	});
 });
@@ -86,7 +88,7 @@ exports.getScreens = asyncHandler(async (req, res, next) => {
 	sortBy = sortBy || "screenName";
 	order = order || 1;
 
-	const halls = await Screen.find(
+	const screens = await Screen.find(
 		{ deleted: false },
 		{ createdAt: 0, updatedAt: 0 }
 	).sort({
@@ -97,8 +99,8 @@ exports.getScreens = asyncHandler(async (req, res, next) => {
 		status: "success",
 		message: "Screens list fetched",
 		data: {
-			totalHalls: halls.length,
-			screens: halls,
+			totalScreens: screens.length,
+			screens: screens,
 		},
 	});
 });

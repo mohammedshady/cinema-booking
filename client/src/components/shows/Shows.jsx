@@ -101,7 +101,7 @@ const Shows = () => {
 											Price
 											<SwapVertRoundedIcon fontSize="small" className="ml-2" />
 										</th>
-										<th className={styles.th}>Cinema Hall</th>
+										<th className={styles.th}>Screen</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -129,7 +129,7 @@ const Shows = () => {
 												<p className={styles.td_p}>{show.price} INR</p>
 											</td>
 											<td className={styles.td}>
-												<p className={styles.td_p}>{show.cinemaHall.screenName}</p>
+												<p className={styles.td_p}>{show.screen.screenName}</p>
 											</td>
 										</tr>
 									))}

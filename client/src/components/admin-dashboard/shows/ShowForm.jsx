@@ -15,7 +15,7 @@ const initialState = {
 	loading: true,
 	error: "",
 	movies: [],
-	cinemaHalls: [],
+	screens: [],
 };
 
 const reducer = (state, action) => {
@@ -41,18 +41,18 @@ const ShowForm = ({ update }) => {
 	const location = useLocation();
 	const [isSubmitting, setIsSubmitting] = useState("");
 
-	const { movies, cinemaHalls, loading, error } = state;
+	const { movies, screens, loading, error } = state;
 
 	const fetchDetails = async () => {
 		try {
 			const { data: movieData } = await axios.get(`/api/admin/released-movies`);
-			const { data: hallData } = await axios.get(`/api/admin/screens`);
+			const { data: screenData } = await axios.get(`/api/admin/screens`);
 
 			dispatch({
 				type: "FETCH_SUCCESS",
 				payload: {
 					movies: movieData.data.movies,
-					cinemaHalls: hallData.data.cinemaHalls,
+					screens: screenData.data.screens,
 					loading: false,
 					error: "",
 				},
@@ -69,7 +69,7 @@ const ShowForm = ({ update }) => {
 
 	let defaultFormData = {
 		movie: "",
-		cinemaHall: "",
+		screen: "",
 		price: 0,
 		dateTime: "",
 	};
@@ -91,7 +91,7 @@ const ShowForm = ({ update }) => {
 
 	const [formData, setFormData] = useState(defaultFormData);
 
-	let { movie, cinemaHall, price, dateTime } = formData;
+	let { movie, screen, price, dateTime } = formData;
 
 	const formateDate = (dateTime) => {
 		const date = new Date(dateTime);
@@ -121,9 +121,9 @@ const ShowForm = ({ update }) => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		const { movie, cinemaHall, price, dateTime } = formData;
+		const { movie, screen, price, dateTime } = formData;
 
-		if (!movie || !cinemaHall || !price || !dateTime) {
+		if (!movie || !screen || !price || !dateTime) {
 			toast.error("Please select all fields");
 			return;
 		}
@@ -199,20 +199,20 @@ const ShowForm = ({ update }) => {
 						</select>
 					</div>
 
-					{/* cinema hall */}
+					{/* screen */}
 					<div className="mb-6">
 						<label htmlFor="lang" className={styles.label}>
-							Cinema Hall
+						screens
 						</label>
-						<select name="cinemaHall" onChange={handleChange} id="lang" className={`${styles.input} p-2`}>
+						<select name="screen" onChange={handleChange} id="lang" className={`${styles.input} p-2`}>
 							{update ? (
-								<option defaultValue={cinemaHall._id}>{cinemaHall.screenName}</option>
+								<option defaultValue={screen._id}>{screen.screenName}</option>
 							) : (
 								<option value="">Select Movie</option>
 							)}
-							{cinemaHalls.map((hall) => (
-								<option value={hall._id} key={hall._id}>
-									{hall.screenName}
+							{screens.map((screen) => (
+								<option value={screen._id} key={screen._id}>
+									{screen.screenName}
 								</option>
 							))}
 						</select>

@@ -16,7 +16,7 @@ const initialState = {
 	error: "",
 	availableSeats: [],
 	bookedSeats: [],
-	cinemaHall: {},
+	screen: {},
 	price: 0,
 };
 
@@ -25,8 +25,8 @@ const reducer = (state, action) => {
 
 	switch (type) {
 		case "FETCH_SUCCESS":
-			const { availableSeats, bookedSeats, cinemaHall, price } = payload.show;
-			return { ...state, loading: false, availableSeats, bookedSeats, cinemaHall, price };
+			const { availableSeats, bookedSeats, screen, price } = payload.show;
+			return { ...state, loading: false, availableSeats, bookedSeats, screen, price };
 
 		case "FETCH_ERROR":
 			return { ...state, error: payload };
@@ -44,7 +44,7 @@ const SeatSelector = () => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const [multipleSeatConflict, setMultipleSeatConflict] = useState(false);
 
-	const { loading, error, availableSeats, bookedSeats, cinemaHall, price } = state;
+	const { loading, error, availableSeats, bookedSeats, screen, price } = state;
 
 	const fetchSeats = () => {
 		axios
@@ -175,8 +175,8 @@ const SeatSelector = () => {
 					<SeatMap
 						availableSeats={availableSeats}
 						bookedSeats={bookedSeats}
-						rows={cinemaHall?.totalRows}
-						cols={cinemaHall?.totalColumns}
+						rows={screen?.totalRows}
+						cols={screen?.totalColumns}
 						handleSelectedSeats={handleSelectedSeats}
 					/>
 				</div>

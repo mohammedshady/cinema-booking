@@ -153,7 +153,7 @@ const Shows = () => {
 							<p className={styles.td_p}>{show?.totalBookings}</p>
 						</td>
 						<td className={styles.td}>
-							<p className={styles.td_p}>{show?.cinemaHall?.screenName}</p>
+							<p className={styles.td_p}>{show?.screen?.screenName}</p>
 						</td>
 						<td className={styles.td}>
 							<Link

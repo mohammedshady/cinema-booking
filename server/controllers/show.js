@@ -19,7 +19,7 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 	let { movie, price, dateTime, screen } = req.body;
 
 	if (!movie || !screen)
-		return next(new CustomError("Provide movie & cinema hall", 400));
+		return next(new CustomError("Provide movie & cinema screen", 400));
 
 	dateTime = new Date(dateTime);
 
@@ -35,10 +35,10 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 	if (!movieDoc)
 		return next(new CustomError("Can't add show for this movie", 400));
 
-	// check cinema hall
-	const hall = await Screen.findOne({ _id: screen });
+	// check cinema screen
+	const cinemaScreen = await Screen.findOne({ _id: screen });
 
-	if (!hall) return next(new CustomError("Cinema hall doesn't exist", 400));
+	if (!cinemaScreen) return next(new CustomError("Cinema screen doesn't exist", 400));
 
 	let startTime = new Date(dateTime);
 
@@ -68,7 +68,7 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 	if (show)
 		return next(
 			new CustomError(
-				"There is already a show for selected time & cinema hall 💥",
+				"There is already a show for selected time & cinema screen 💥",
 				400
 			)
 		);
@@ -79,8 +79,8 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 	const seatMap = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 	// create seat document for each seat for booking purpose
-	for (let row = 0; row < hall.totalRows; row++) {
-		for (let col = 0; col < hall.totalColumns; col++) {
+	for (let row = 0; row < cinemaScreen.totalRows; row++) {
+		for (let col = 0; col < cinemaScreen.totalColumns; col++) {
 			let seatName = seatMap[row] + (col + 1);
 
 			const seatDoc = {
@@ -258,7 +258,7 @@ exports.updateShowDetails = asyncHandler(async (req, res, next) => {
 	 */
 	if (screen) {
 		// finding screen
-		const hall = await screen.findOne({ _id: screen });
+		const cinemaScreen = await Screen.findOne({ _id: screen });
 
 		// assign new screen to show
 		show.screen = screen;
@@ -266,9 +266,9 @@ exports.updateShowDetails = asyncHandler(async (req, res, next) => {
 
 		const seatMap = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-		// assign new seats of new cinema hall to show
-		for (let row = 0; row < hall.totalRows; row++) {
-			for (let col = 0; col < hall.totalColumns; col++) {
+		// assign new seats of new cinema screen to show
+		for (let row = 0; row < cinemaScreen.totalRows; row++) {
+			for (let col = 0; col < cinemaScreen.totalColumns; col++) {
 				let seatName = seatMap[row] + (col + 1);
 
 				const seatDoc = {

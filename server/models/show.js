@@ -36,9 +36,9 @@ const showSchema = new Schema(
 			enum: ["starting soon", "started", "ended"],
 			default: "starting soon",
 		},
-		cinemaHall: {
+		screen: {
 			type: SchemaTypes.ObjectId,
-			ref: "CinemaHall",
+			ref: "screen",
 			required: true,
 		},
 		availableSeats: [

@@ -40,6 +40,6 @@ module.exports = Booking;
  * user -> _id
  * booking id -> generate random
  * seats -> name, row, col, _id
- * show -> _id, cinemaHall, time, date, movie, price
+ * show -> _id, screen, time, date, movie, price
  * total amount -> generate from number of tickets & price
  */
