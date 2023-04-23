@@ -81,7 +81,13 @@ User.findOne({ email: "admin@gmail.com" }, (err, existingUser) => {
 	}
 
 	if (existingUser) {
-		console.log("Default user already exists");
+		console.log(
+			"Default user already exists",
+			"\n",
+			`email: ${existingUser.email}`,
+			"\n",
+			`password: admin`
+		);
 		return;
 	}
 
@@ -102,7 +108,13 @@ User.findOne({ email: "admin@gmail.com" }, (err, existingUser) => {
 		if (err) {
 			console.error(err);
 		} else {
-			console.log("Default user created");
+			console.log(
+				"Default user created",
+				"\n",
+				`email: ${defaultUser.email}`,
+				"\n",
+				`password: admin`
+			);
 		}
 	});
 });
