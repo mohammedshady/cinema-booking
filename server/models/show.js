@@ -6,6 +6,10 @@ const seatSchema = new Schema({
 	name: String,
 	row: Number,
 	col: Number,
+	available: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const showSchema = new Schema(
@@ -41,12 +45,7 @@ const showSchema = new Schema(
 			ref: "screen",
 			required: true,
 		},
-		availableSeats: [
-			{
-				type: seatSchema,
-			},
-		],
-		bookedSeats: [
+		seats: [
 			{
 				type: seatSchema,
 			},

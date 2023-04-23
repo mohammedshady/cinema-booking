@@ -25,8 +25,28 @@ const reducer = (state, action) => {
 
 	switch (type) {
 		case "FETCH_SUCCESS":
-			const { availableSeats, bookedSeats, screen, price } = payload.show;
-			return { ...state, loading: false, availableSeats, bookedSeats, screen, price };
+			const { screen, price } = payload.show;
+			let availableSeats = [];
+			let bookedSeats = [];
+			let availableIndex = 0;
+			let bookedIndex = 0;
+			for (let i = 0; i < payload.show.seats.length; i++) {
+				if (payload.show.seats[i].available === true) {
+					availableSeats[availableIndex] = payload.show.seats[i];
+					availableIndex++;
+				} else {
+					bookedSeats[bookedIndex] = payload.show.seats[i];
+					bookedIndex++;
+				}
+			}
+			return {
+				...state,
+				loading: false,
+				availableSeats,
+				bookedSeats,
+				screen,
+				price,
+			};
 
 		case "FETCH_ERROR":
 			return { ...state, error: payload };
@@ -53,7 +73,8 @@ const SeatSelector = () => {
 				dispatch({ type: "FETCH_SUCCESS", payload: res.data.data });
 			})
 			.catch((err) => {
-				if (err.response.status == 403) navigate("/login", { state: { from: location } });
+				if (err.response.status == 403)
+					navigate("/login", { state: { from: location } });
 				dispatch({ type: "FETCH_ERROR", payload: "Something went wrong" });
 			});
 	};
@@ -107,7 +128,8 @@ const SeatSelector = () => {
 						navigate("/movies");
 					})
 					.catch((error) => {
-						if (error.response.status == 403) navigate("/login", { state: { from: location } });
+						if (error.response.status == 403)
+							navigate("/login", { state: { from: location } });
 						else {
 							setMultipleSeatConflict(true);
 							// toast.error(error?.response?.data?.message);
@@ -148,7 +170,8 @@ const SeatSelector = () => {
 			<div className={styles.main_container}>
 				<BackButton />
 				<p className={styles.price}>
-					Price Per Ticket : <span className={styles.price_p}>{price} INR.</span>
+					Price Per Ticket :{" "}
+					<span className={styles.price_p}>{price} INR.</span>
 				</p>
 
 				<div className={styles.seat_map_container}>
@@ -181,7 +204,11 @@ const SeatSelector = () => {
 					/>
 				</div>
 				<div className="mt-5">
-					<button onClick={handleSubmit} type="button" className={styles.submit_btn}>
+					<button
+						onClick={handleSubmit}
+						type="button"
+						className={styles.submit_btn}
+					>
 						Pay {price * seats.length} INR.
 					</button>
 				</div>
@@ -191,16 +218,19 @@ const SeatSelector = () => {
 };
 
 const styles = {
-	main_container: "w-full md:w-[1100px] my-10 mx-auto p-10 bg-slate-800 relative flex flex-col items-center",
+	main_container:
+		"w-full md:w-[1100px] my-10 mx-auto p-10 bg-slate-800 relative flex flex-col items-center",
 	price: "text-xl absolute top-12 left-5 text-blue-400",
 	price_p: "text-white ml-2",
-	seat_map_container: "w-full md:w-[50%] mt-14 m-auto flex flex-col justify-center items-center",
+	seat_map_container:
+		"w-full md:w-[50%] mt-14 m-auto flex flex-col justify-center items-center",
 	screen: "h-[30px] w-[100%] bg-white mb-3 flex justify-center items-center",
 	screen_p: "text-black font-bold px-10",
 	selected_options_span: "ml-2 text-blue-400",
 	availability: "my-3 flex justify-between",
 	avail_div: "flex flex-col items-center justify-around mx-3",
-	submit_btn: "bg-blue-600 w-[200px] rounded-md font-medium px-3 py-2 text-white",
+	submit_btn:
+		"bg-blue-600 w-[200px] rounded-md font-medium px-3 py-2 text-white",
 };
 
 export default SeatSelector;

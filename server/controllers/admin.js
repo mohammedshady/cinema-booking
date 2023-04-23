@@ -217,9 +217,12 @@ exports.getScheduledShowsAndAnalytics = asyncHandler(async (req, res, next) => {
 	]);
 
 	shows.forEach((show) => {
-		show.totalBookings = show.bookedSeats.length;
-		show.availableSeats = undefined;
-		show.bookedSeats = undefined;
+		let bookedSeats = 0;
+		for (let i = 0; i < show.seats.length; i++) {
+			if (show.seats[i].available === false) bookedSeats++;
+		}
+		show.totalBookings = bookedSeats;
+		show.seats = undefined;
 	});
 
 	if (sortBy == "totalBookings") {
@@ -296,9 +299,13 @@ exports.getShowsHistoryAndAnalytics = asyncHandler(async (req, res, next) => {
 	]);
 
 	shows.forEach((show) => {
-		show.totalBookings = show.bookedSeats.length;
-		show.totalEarnings = show.price * show.bookedSeats.length;
-		show.bookedSeats = undefined;
+		let bookedSeats = 0;
+		for (let i = 0; i < show.seats.length; i++) {
+			if (show.seats[i].available === false) bookedSeats++;
+		}
+		show.totalBookings = bookedSeats;
+		show.totalEarnings = show.price * bookedSeats;
+		show.seats = undefined;
 	});
 
 	if (sortBy == "totalBookings") {
@@ -374,17 +381,23 @@ exports.getShowDetails = asyncHandler(async (req, res, next) => {
 			$limit: limitCount,
 		},
 	]);
+	let availableSeats = 0;
+	let bookedSeats = 0;
+	for (let i = 0; i < show.seats.length; i++) {
+		if (show.seats[i].available === true) availableSeats++;
+		else bookedSeats++;
+	}
 
 	return res.status(200).json({
 		status: "success",
 		message: "show booking history fetched",
 		data: {
 			totalBookings,
-			totalSeats: show.availableSeats.length + show.bookedSeats.length,
-			bookedSeats: show.bookedSeats.length,
-			availableSeats: show.availableSeats.length,
+			totalSeats: show.seats.length,
+			bookedSeats: bookedSeats,
+			availableSeats: availableSeats,
 			price: show.price,
-			totalEarnings: show.price * show.bookedSeats.length,
+			totalEarnings: show.price * bookedSeats,
 			bookings,
 		},
 	});
