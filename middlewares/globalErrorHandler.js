@@ -1,4 +1,4 @@
-const { NODE_ENV } = require("../config");
+const NODE_ENV = "development";
 
 const sendError = (err, res) => {
 	let message = err.message;

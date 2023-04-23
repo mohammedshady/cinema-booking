@@ -8,7 +8,7 @@ const cors = require("cors");
 const path = require("path");
 const globalErrorHandler = require("./middlewares/globalErrorHandler");
 
-const { NODE_ENV } = require("./config");
+const NODE_ENV = process.env.NODE_ENV;
 
 // security packages
 const mongoSanitize = require("express-mongo-sanitize");
@@ -34,7 +34,7 @@ app.use(cookieParser());
 app.use(fileUpload());
 
 // middleware for access frontend
-const buildPath = path.normalize(path.join(__dirname, "/client/dist"));
+const buildPath = path.normalize(path.join(__dirname, "../client/dist"));
 app.use(express.static(buildPath));
 app.use(express.static(path.join(__dirname, "uploads")));
 

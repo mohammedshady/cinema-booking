@@ -7,14 +7,6 @@ const Movie = require("../models/movie");
 const CinemaHall = require("../models/cinemaHall");
 const Booking = require("../models/booking");
 
-// mail sender
-const { sendMail } = require("../helper/mailer");
-
-const { formatDate, formatTime, formatSeats } = require("../helper/formater");
-
-// booking id generater
-const { generateBookingID } = require("../helper/generateBookingID");
-
 // add new show
 exports.addNewShow = asyncHandler(async (req, res, next) => {
 	/**
@@ -26,16 +18,22 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 
 	let { movie, price, dateTime, cinemaHall } = req.body;
 
-	if (!movie || !cinemaHall) return next(new CustomError("Provide movie & cinema hall", 400));
+	if (!movie || !cinemaHall)
+		return next(new CustomError("Provide movie & cinema hall", 400));
 
 	dateTime = new Date(dateTime);
 
-	if (+dateTime <= Date.now()) return next(new CustomError("Please select appropriate date & time", 400));
+	if (+dateTime <= Date.now())
+		return next(new CustomError("Please select appropriate date & time", 400));
 
 	// cinema can add show only for released movies
-	const movieDoc = await Movie.findOne({ _id: movie, status: "released" }, { duration: 1, title: 1 });
+	const movieDoc = await Movie.findOne(
+		{ _id: movie, status: "released" },
+		{ duration: 1, title: 1 }
+	);
 
-	if (!movieDoc) return next(new CustomError("Can't add show for this movie", 400));
+	if (!movieDoc)
+		return next(new CustomError("Can't add show for this movie", 400));
 
 	// check cinema hall
 	const hall = await CinemaHall.findOne({ _id: cinemaHall });
@@ -45,7 +43,9 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 	let startTime = new Date(dateTime);
 
 	// endtime = startTime + movie duration + 10 minutes (of interval)
-	let endTime = new Date(startTime.getTime() + movieDoc.duration * 60 * 1000 + 10 * 60 * 1000);
+	let endTime = new Date(
+		startTime.getTime() + movieDoc.duration * 60 * 1000 + 10 * 60 * 1000
+	);
 
 	// create show data object to create show document
 	const showData = {
@@ -65,7 +65,13 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 	});
 
 	// if show exist => can't create a new show
-	if (show) return next(new CustomError("There is already a show for selected time & cinema hall 💥", 400));
+	if (show)
+		return next(
+			new CustomError(
+				"There is already a show for selected time & cinema hall 💥",
+				400
+			)
+		);
 
 	// create show
 	show = await Show.create(showData);
@@ -100,14 +106,22 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 exports.bookShow = asyncHandler(async (req, res, next) => {
 	const { seats, show } = req.body;
 
-	if (!seats || seats.length === 0) return next(new CustomError("Please select a seat", 400));
+	if (!seats || seats.length === 0)
+		return next(new CustomError("Please select a seat", 400));
 
 	if (!show) return next(new CustomError("Please select a show", 400));
 
 	// remove selected seats from show.availableSeats and insert into show.bookedSeats
 	const showDoc = await Show.findOne(
 		{ _id: show },
-		{ availableSeats: 1, bookedSeats: 1, price: 1, date: 1, startTime: 1, movie: 1 }
+		{
+			availableSeats: 1,
+			bookedSeats: 1,
+			price: 1,
+			date: 1,
+			startTime: 1,
+			movie: 1,
+		}
 	).populate([
 		{
 			path: "cinemaHall",
@@ -130,7 +144,9 @@ exports.bookShow = asyncHandler(async (req, res, next) => {
 	// check if selected seats are available or not
 
 	for (let seatId of seats) {
-		const aSeat = availableSeats.find((seat) => seat._id.toString() === seatId.toString());
+		const aSeat = availableSeats.find(
+			(seat) => seat._id.toString() === seatId.toString()
+		);
 		if (!aSeat) return next(new CustomError("Seat not available"));
 	}
 
@@ -152,7 +168,12 @@ exports.bookShow = asyncHandler(async (req, res, next) => {
 	await showDoc.save();
 
 	// generate booking id
-	const bookingId = generateBookingID();
+	let bookingId = "";
+
+	for (let i = 0; i < 10; i++)
+		bookingId += "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[
+			Math.floor(Math.random() * 10)
+		];
 
 	let totalAmount = showDoc.price * userSeats.length;
 
@@ -172,23 +193,6 @@ exports.bookShow = asyncHandler(async (req, res, next) => {
 	};
 
 	const booking = await Booking.create(bookingDoc);
-
-	// send mail & sms after booking
-
-	if (booking) {
-		const mailDetails = {
-			banner: showDoc.movie.images.banner,
-			title: showDoc.movie.title,
-			date: formatDate(showDoc.date),
-			startTime: formatTime(showDoc.startTime),
-			bookingId: booking.bookingId,
-			screenName: showDoc.cinemaHall.screenName,
-			seats: formatSeats(booking.seats),
-			totalAmount: booking.totalAmount,
-		};
-
-		sendMail(req.user.email, "Show Booked", mailDetails);
-	}
 
 	res.status(201).json({
 		status: "success",
@@ -221,7 +225,10 @@ exports.updateShowDetails = asyncHandler(async (req, res, next) => {
 
 	const isAnyBooking = await Booking.findOne({ show: showId }, { _id: 1 });
 
-	if (isAnyBooking) return next(new CustomError("Can't update this show, because there is booking", 400));
+	if (isAnyBooking)
+		return next(
+			new CustomError("Can't update this show, because there is booking", 400)
+		);
 
 	// destructure update data
 	let { movie, price, dateTime, cinemaHall } = req.body;
@@ -266,7 +273,9 @@ exports.updateShowDetails = asyncHandler(async (req, res, next) => {
 		const movieDoc = await Movie.findOne({ _id: movie }, { duration: 1 });
 
 		// endtime = startTime + movie duration + 10 minutes (of interval)
-		show.endTime = new Date(show.startTime.getTime() + movieDoc.duration * 60 * 1000 + 10 * 60 * 1000);
+		show.endTime = new Date(
+			show.startTime.getTime() + movieDoc.duration * 60 * 1000 + 10 * 60 * 1000
+		);
 	}
 
 	// save the updated show document
@@ -310,7 +319,15 @@ exports.getShowByMovie = asyncHandler(async (req, res, next) => {
 
 	shows = await Show.find(
 		{ movie: movieId, status: "starting soon" },
-		{ movie: 0, endTime: 0, status: 0, availableSeats: 0, bookedSeats: 0, createdAt: 0, updatedAt: 0 }
+		{
+			movie: 0,
+			endTime: 0,
+			status: 0,
+			availableSeats: 0,
+			bookedSeats: 0,
+			createdAt: 0,
+			updatedAt: 0,
+		}
 	)
 		.sort({ [`${sortBy}`]: order })
 		.populate([
@@ -338,7 +355,10 @@ exports.getShowSeatsDetails = asyncHandler(async (req, res, next) => {
 
 	if (!showId) return next(new CustomError("Please add showId", 400));
 
-	const show = await Show.findOne({ _id: showId }, { price: 1, availableSeats: 1, bookedSeats: 1 }).populate({
+	const show = await Show.findOne(
+		{ _id: showId },
+		{ price: 1, availableSeats: 1, bookedSeats: 1 }
+	).populate({
 		path: "cinemaHall",
 		model: "CinemaHall",
 		select: "totalRows totalColumns -_id",

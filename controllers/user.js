@@ -4,11 +4,6 @@ const { cookieToken } = require("../utils/cookieToken");
 const CustomError = require("../utils/customError");
 const jwt = require("jsonwebtoken");
 
-const { BASE_URL, JWT_SECRET } = require("../config");
-
-// mail sender
-const { sendMail } = require("../helper/mailer");
-
 // models
 const User = require("../models/user");
 const Feedback = require("../models/feedback");
@@ -122,59 +117,88 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
 	if (!email) return next(new CustomError("Please enter email", 400));
 
+	// Find user by email
 	const user = await User.findOne({ email });
 
-	if (!user)
+	if (!user) {
 		return next(new CustomError("User not found with this email", 400));
-
-	const token = crypto.randomBytes(32).toString("hex");
-	const expiry = Date.now() + 100000000000 * 60 * 1000;
+	}
+	// Generate password reset token and expiration date
+	const resetToken = crypto.randomBytes(20).toString("hex");
+	const resetExpires = Date.now() + 3600000; // 1 hour from now
 
 	await User.updateOne(
 		{ email },
-		{ $set: { forgotPasswordToken: token, forgotPasswordTokenExpiry: expiry } }
+		{
+			$set: {
+				resetPasswordToken: resetToken,
+				resetPasswordExpires: resetExpires,
+			},
+		}
 	);
 
-	/**
-	 * send mail to user
-	 * form url =  http://{{url}}/#/user/reset-password/:userId/:token
-	 * api url = http://{{url}}/api/user/resetPassword/:userId/:token
-	 */
+	// Redirect user to password reset page with reset token and user id
+	const resetPasswordUrl = `http://localhost:500/#/user/reset-password/${user.email}/${resetToken}`;
+	console.log("redirecting");
+	res.redirect(resetPasswordUrl)
+	//
+	// const { email } = req.body;
 
-	const url = `${BASE_URL}/#/user/reset-password/${user._id}/${token}`;
+	// if (!email) return next(new CustomError("Please enter email", 400));
 
-	const mailDetails = {
-		link: url,
-	};
+	// const user = await User.findOne({ email });
 
-	sendMail(email, "Password reset", mailDetails, false);
+	// if (!user)
+	// 	return next(new CustomError("User not found with this email", 400));
 
-	return res.status(200).json({
-		status: "success",
-		message:
-			"Reset link set to your email, please check your inbox to continue",
-		data: {
-			email,
-			url,
-		},
-	});
+	// await User.updateOne(
+	// 	{ email },
+	// 	{ $set: { forgotPasswordToken: token, forgotPasswordTokenExpiry: expiry } }
+	// );
+
+	// /**
+	//  * send mail to user
+	//  * form url =  http://{{url}}/#/user/reset-password/:userId/:token
+	//  * api url = http://{{url}}/api/user/resetPassword/:userId/:token
+	//  */
+
+	// const url = `${BASE_URL}/#/user/reset-password/${user._id}/${token}`;
+
+	// const mailDetails = {
+	// 	link: url,
+	// };
+
+	// sendMail(email, "Password reset", mailDetails, false);
+
+	// return res.status(200).json({
+	// 	status: "success",
+	// 	message:
+	// 		"Reset link set to your email, please check your inbox to continue",
+	// 	data: {
+	// 		email,
+	// 		url,
+	// 	},
+	// });
 });
 
 // reset password
 exports.resetPassword = asyncHandler(async (req, res, next) => {
-	const { token, userId } = req.params;
+	const { userId, token } = req.params;
 
-	if (!token || !userId)
+	if (!userId || !token)
 		return next(new CustomError("Please provide token", 400));
 
-	const user = await User.findOne({ _id: userId, token });
+	const user = await User.findOne({
+		email: userId,
+		resetPasswordToken: token,
+	});
 
 	if (!user)
 		return next(
 			new CustomError("Something went wrong, try again after sometime", 400)
 		);
 
-	if (user.forgotPasswordTokenExpiry < Date.now())
+	if (user.resetPasswordExpires < Date.now())
 		return next(new CustomError("This link is expired 💥", 400));
 
 	const { password } = req.body;
@@ -190,6 +214,34 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 		message: "password reset successfully",
 		data: {},
 	});
+	// const { token, userId } = req.params;
+
+	// if (!token || !userId)
+	// 	return next(new CustomError("Please provide token", 400));
+
+	// const user = await User.findOne({ _id: userId, token });
+
+	// if (!user)
+	// 	return next(
+	// 		new CustomError("Something went wrong, try again after sometime", 400)
+	// 	);
+
+	// if (user.forgotPasswordTokenExpiry < Date.now())
+	// 	return next(new CustomError("This link is expired 💥", 400));
+
+	// const { password } = req.body;
+
+	// if (!password) return next(new CustomError("Please enter password", 400));
+
+	// user.password = password;
+
+	// await user.save();
+
+	// return res.status(200).json({
+	// 	status: "success",
+	// 	message: "password reset successfully",
+	// 	data: {},
+	// });
 });
 
 // load user
@@ -205,7 +257,7 @@ exports.loadUser = asyncHandler(async (req, res, next) => {
 			},
 		});
 
-	const decode = jwt.verify(token, JWT_SECRET);
+	const decode = jwt.verify(token, process.env.JWT_SECRET);
 
 	// token invalid or expired
 	if (!decode) return next(new CustomError("Login again", 403));

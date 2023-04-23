@@ -1,9 +1,7 @@
 const asyncHandler = require("../middlewares/asyncHandler");
 const CustomError = require("../utils/customError");
 
-const { uploadToLocal } = require("../helper/imageUploader");
-
-const { AWS_BUCKET_NAME } = require("../config");
+const { uploadToLocal } = require("../utils/imageUploader");
 
 // models
 const Movie = require("../models/movie");
@@ -112,8 +110,6 @@ exports.addMovie = asyncHandler(async (req, res, next) => {
 	let status =
 		new Date(release_date) <= Date.now() ? "released" : "coming soon";
 
-	console.log(status);
-	console.log(AWS_BUCKET_NAME);
 	console.log(new Date(release_date) <= Date.now());
 
 	const posterURL = await uploadToLocal(poster, "movies/poster", false);
