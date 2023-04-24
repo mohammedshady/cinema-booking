@@ -46,7 +46,9 @@ exports.deleteScreen = asyncHandler(async (req, res, next) => {
 
 	if (!id) return next(new CustomError("Please provide screen id"));
 
-	await Screen.updateOne({ _id: id }, { $set: { deleted: true } });
+	const screenId = await Screen.findByIdAndDelete({ _id: id });
+
+	await Show.deleteMany({ screen: screenId._id.toString() });
 
 	res.status(201).json({
 		status: "success",
