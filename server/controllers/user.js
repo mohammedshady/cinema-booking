@@ -142,7 +142,7 @@ exports.deleteBooking = asyncHandler(async (req, res, next) => {
 		}
 	}
 	show.save();
-	
+
 	// remove booking
 	await booking.remove();
 
@@ -156,72 +156,31 @@ exports.deleteBooking = asyncHandler(async (req, res, next) => {
 	});
 });
 
-// forgot password
-exports.forgotPassword = asyncHandler(async (req, res, next) => {
-	const { email } = req.body;
+// reset password
+exports.resetPassword = async (req, res, next) => {
+	const { email, date_of_birth, newPassword } = req.body;
 
-	if (!email) return next(new CustomError("Please enter email", 400));
+	if (!email) return next(new CustomError("enter your email please", 400))
 
-	// Find user by email
+	if (!newPassword) return next(new CustomError("enter password please", 400))
+
+	if (!date_of_birth) return next(new CustomError("enter birthdate please", 400))
+
+	// Verify user with old password
 	const user = await User.findOne({ email });
 
-	if (!user) {
-		return next(new CustomError("User not found with this email", 400));
+	if (!user) return next(new CustomError("email doesnt exist", 400))
+
+	if (user.date_of_birth.toISOString() !== new Date(date_of_birth).toISOString()) {
+
+		return next(new CustomError("birthdate mismatch", 400))
 	}
-	// Generate password reset token and expiration date
-	const resetToken = crypto.randomBytes(20).toString("hex");
-	const resetExpires = Date.now() + 3600000; // 1 hour from now
-
-	await User.updateOne(
-		{ email },
-		{
-			$set: {
-				resetPasswordToken: resetToken,
-				resetPasswordExpires: resetExpires,
-			},
-		}
-	);
-
-	// Redirect user to password reset page with reset token and user id
-	const resetPasswordUrl = `http://localhost:500/#/user/reset-password/${user.email}/${resetToken}`;
-	console.log("redirecting");
-	res.redirect(resetPasswordUrl);
-});
-
-// reset password
-exports.resetPassword = asyncHandler(async (req, res, next) => {
-	const { userId, token } = req.params;
-
-	if (!userId || !token)
-		return next(new CustomError("Please provide token", 400));
-
-	const user = await User.findOne({
-		email: userId,
-		resetPasswordToken: token,
-	});
-
-	if (!user)
-		return next(
-			new CustomError("Something went wrong, try again after sometime", 400)
-		);
-
-	if (user.resetPasswordExpires < Date.now())
-		return next(new CustomError("This link is expired 💥", 400));
-
-	const { password } = req.body;
-
-	if (!password) return next(new CustomError("Please enter password", 400));
-
-	user.password = password;
-
+	user.password = newPassword;
+	// Save user
 	await user.save();
-
-	return res.status(200).json({
-		status: "success",
-		message: "password reset successfully",
-		data: {},
-	});
-});
+	// Return success message
+	return res.status(200).json({ message: 'Password reset successful' });
+};
 
 // load user
 exports.loadUser = asyncHandler(async (req, res, next) => {

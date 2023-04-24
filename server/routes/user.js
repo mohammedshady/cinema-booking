@@ -42,10 +42,8 @@ router.get(
 //delete booking
 router.delete("/bookings/:bookingId", userController.deleteBooking);
 
-// forgot password
-router.post("/forgotPassword", userController.forgotPassword);
 
 // reset password
-router.post("/resetPassword/:userId/:token", userController.resetPassword);
+router.post("/resetPassword", userController.resetPassword);
 
 module.exports = router;
