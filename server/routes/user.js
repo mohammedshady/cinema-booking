@@ -6,7 +6,6 @@ const { bookShow } = require("../controllers/show");
 
 // auth middleware
 const { authToken } = require("../middlewares/authenticateToken");
-const { authorizeRole } = require("../middlewares/authorizer");
 
 // sign up
 router.post("/signup", userController.signUp);
@@ -15,33 +14,22 @@ router.post("/signup", userController.signUp);
 router.post("/login", userController.logIn);
 
 // logout
-router.get("/logout", authToken, userController.logout);
+router.get("/logout", userController.logout);
 
 // load user
-router.get("/load", authToken, userController.loadUser);
+router.get("/load", userController.loadUser);
 
 // book show
-router.post("/bookShow", authToken, authorizeRole(0), bookShow);
+router.post("/bookShow", authToken, bookShow);
 
 // give feedback
-router.post(
-	"/feedback",
-	authToken,
-	authorizeRole(0),
-	userController.giveFeedback
-);
+router.post("/feedback", authToken, userController.giveFeedback);
 
 // view my bookings
-router.get(
-	"/bookings",
-	authToken,
-	authorizeRole(0),
-	userController.getMyBookings
-);
+router.get("/bookings", authToken, userController.getMyBookings);
 
 //delete booking
-router.delete("/bookings/:bookingId", userController.deleteBooking);
-
+router.delete("/bookings/:bookingId", authToken, userController.deleteBooking);
 
 // reset password
 router.post("/resetPassword", userController.resetPassword);

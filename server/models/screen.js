@@ -20,10 +20,6 @@ const screenSchema = new Schema(
 			type: Number,
 			required: [true, "total number of cinema screen columns is required"],
 		},
-		deleted: {
-			type: Boolean,
-			default: false,
-		},
 	},
 	{ timestamps: true, versionKey: false }
 );
