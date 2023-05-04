@@ -16,17 +16,13 @@ const userSchema = new Schema(
 			required: true,
 			select: [false, "password is required"],
 		},
-		fname: {
-			type: String,
-			required: false,
-		},
-		lname: {
+		name: {
 			type: String,
 			required: false,
 		},
 		sex: {
 			type: String,
-			enum: ["male", "female", "other"],
+			enum: ["male", "female"],
 			required: false,
 		},
 		mobileno: {
@@ -95,11 +91,6 @@ User.findOne({ email: "admin@gmail.com" }, (err, existingUser) => {
 	const defaultUser = new User({
 		email: "admin@gmail.com",
 		password: "admin",
-		fname: "Admin",
-		lname: "User",
-		sex: "other",
-		mobileno: "1234567890",
-		date_of_birth: new Date("1990-01-01"),
 		role: 1, // 1 => application admin (cinema)
 	});
 

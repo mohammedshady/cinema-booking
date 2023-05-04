@@ -36,7 +36,7 @@ const MovieDetails = () => {
 
 	const { loading, error, movie } = state;
 
-	const { _id, title, images, description, trailer_link, release_date, language, duration, genre, actors, status } =
+	const { _id, title, images, description, release_date, language, duration, genre, actors, status } =
 		movie;
 
 	useEffect(() => {
@@ -99,9 +99,6 @@ const MovieDetails = () => {
 								</h2>
 								<p className="text-gray-400">{description}</p>
 							</div>
-							<a href={trailer_link} target={"_blank"} className={styles.trailer_btn}>
-								Watch Trailer
-							</a>
 							{status === "released" ? (
 								<Link to={`/shows/${_id}`} className={styles.book_btn}>
 									Book Your Show
@@ -141,7 +138,6 @@ const styles = {
 	tr: "text-gray-400",
 	table_fields: "border-b-2 border-gray-600 p-3 text-white",
 	table_td: "border-b-2 border-gray-600 p-3",
-	trailer_btn: "bg-purple-600 w-full text-center rounded mt-10 px-5 py-3 text-white",
 	book_btn: "bg-blue-600 w-full text-center rounded mt-5 px-5 py-3 text-white",
 };
 

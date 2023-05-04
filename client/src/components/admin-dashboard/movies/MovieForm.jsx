@@ -1,80 +1,77 @@
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-
-// components
-import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import Navbar from "../navigation/Navbar";
+import notify from "../common/notify";
+import { validateMovieInput } from "../common/validate";
 import Loader from "../../util/Loader";
+import Form from "../common/Form";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import Input from "@mui/material/Input";
+import { Date } from "../common/DateTime";
+import { styles } from "../common/styles";
+import InputAdornment from "@mui/material/InputAdornment";
+import MultipleSelect from "../common/MultipleSelect";
+import Buttons from "../common/Buttons";
 
-// toast
-import { toast } from "react-toastify";
+const initialFormData = {
+	title: "",
+	description: "",
+	actors: [],
+	poster: null,
+	banner: null,
+	release_date: null,
+	duration: "",
+	language: [],
+	genre: [],
+	rating: "",
+};
 
-import { movieGenres, languages } from "../../../../constants";
-
-const MovieForm = () => {
-	const defaultFormData = {
-		title: "",
-		description: "",
-		actors: "",
-		trailer_link: "",
-		poster: null,
-		banner: null,
-		release_date: "",
-		duration: "",
-		language: [],
-		genre: [],
-		adult: false,
-	};
-
-	const [formData, setFormData] = useState(defaultFormData);
+const MovieForm = (props) => {
+	const [formData, setFormData] = useState(initialFormData);
 	const [formErrors, setFormErrors] = useState({});
 	const [loading, setLoading] = useState(false);
-	const location = useLocation();
+	const { id } = useParams();
 	const navigate = useNavigate();
-	const [isSubmitting, setIsSubmitting] = useState("");
 
-	const validateInput = (values) => {
-		const { title, description, actors, trailer_link, poster, banner, release_date, duration, language, genre } =
-			values;
-
-		const errors = {};
-
-		if (!title) errors.title = "Title is required";
-		if (!description) errors.description = "Description is required";
-		if (!actors) errors.actors = "Cast is required";
-		if (!trailer_link) errors.trailer_link = "Trailer link is required";
-		if (!poster) errors.poster = "Poster is required";
-		if (!banner) errors.banner = "Banner is required";
-		if (!release_date) errors.release_date = "Release date is required";
-		if (!duration) errors.duration = "Movie duration is required";
-		if (language.length == 0) errors.language = "Please select languages";
-		if (genre.length == 0) errors.genre = "Please select genres";
-
-		setFormErrors(errors);
-		if (Object.keys(errors).length > 0) return true;
-		return false;
+	const populateFormFields = () => {
+		props.update &&
+			axios
+				.get(`/api/admin/movies/populate/${id}`)
+				.then((res) => {
+					setFormData((prev) => ({
+						...prev,
+						...res.data.data.movie,
+						poster: res.data.data.movie.images.poster,
+						banner: res.data.data.movie.images.banner,
+					}));
+					setLoading(false);
+				})
+				.catch((err) => {
+					if (err?.response?.status == 403) navigate("/login");
+					else notify(err?.response?.data?.message || err.toString());
+					!err.toString().includes("Network Error") && setLoading(false);
+				});
 	};
 
+	useEffect(() => {
+		populateFormFields();
+	}, []);
+
 	const handleChange = (e) => {
-		const { target } = e;
+		setFormErrors({ ...formErrors, [e.target.name]: "" });
 
-		const name = target.name;
-		const value = target.type == "checkbox" ? target.checked : target.value;
+		e.target.type == "file"
+			? setFormData({ ...formData, [e.target.name]: e.target.files[0] })
+			: setFormData({ ...formData, [e.target.name]: e.target.value });
+	};
 
-		if (target.type == "file") {
-			setFormData({ ...formData, [e.target.name]: e.target.files[0] });
-		} else if (target.type == "select-multiple") {
-			const vals = [];
-
-			let options = new Array(...target.options);
-
-			for (let opt of options) {
-				if (opt.selected) vals.push(opt.value);
-			}
-
-			setFormData({ ...formData, [e.target.name]: vals });
-		} else setFormData({ ...formData, [name]: value });
+	const handleCancel = () => {
+		navigate("/admin/movies");
 	};
 
 	const handleSubmit = (e) => {
@@ -82,253 +79,287 @@ const MovieForm = () => {
 
 		let uploadData = new FormData();
 
-		if (validateInput(formData)) return;
+		if (!validateMovieInput(formData, setFormErrors)) return;
 
 		for (let key in formData) {
-			if (key == "poster" || key == "banner") uploadData.set(key, formData[key], formData[key].name);
+			if (
+				(key == "poster" && typeof key == "object") ||
+				(key == "banner" && typeof key == "object")
+			)
+				uploadData.set(key, formData[key], formData[key].name);
 			else uploadData.set(key, formData[key]);
 		}
 
-		setIsSubmitting("Adding new movie ...");
-		axios
-			.post(`/api/admin/movies`, uploadData)
-			.then((res) => {
-				setLoading(false);
-				window.history.back();
-				toast.success("Movie added successfully");
-			})
-			.catch((error) => {
-				if (error?.response?.status == 403) navigate("/login", { state: { from: location } });
-				else toast.error(error?.response?.data?.message);
-				setLoading(false);
-			});
+		setLoading(true);
+		props.update
+			? axios
+					.patch(`/api/admin/movies/${id}`, uploadData)
+					.then(() => {
+						setLoading(false);
+						handleCancel();
+					})
+					.catch((err) => {
+						if (err?.response?.status == 403) navigate("/login");
+						else notify(err?.response?.data?.message || err.toString());
+						!err.toString().includes("Network Error") && setLoading(false);
+					})
+			: axios
+					.post(`/api/admin/movies`, uploadData)
+					.then(() => {
+						setLoading(false);
+						handleCancel();
+					})
+					.catch((err) => {
+						if (err?.response?.status == 403) navigate("/login");
+						else notify(err?.response?.data?.message || err.toString());
+						!err.toString().includes("Network Error") && setLoading(false);
+					});
 	};
 
 	if (loading) return <Loader msg="loading" />;
 
 	return (
-		<div className="h-[100vh] overflow-auto">
-			<Navbar child={<h1 className={styles.nav_h1}>Add New Movie</h1>} />
+		<Form
+			title={props.update ? "Update Movie" : "Add New Movie"}
+			onSubmit={handleSubmit}
+		>
+			{/* Movie Title */}
+			<TextField
+				name="title"
+				label="Title"
+				value={formData.title}
+				sx={styles.global}
+				onChange={handleChange}
+				required
+				error={formErrors.title}
+				helperText={formErrors.title}
+			/>
 
-			<div className="m-5 p-5 bg-slate-800 rounded-lg">
-				<form
-					onSubmit={handleSubmit}
-					className="w-[60%] m-auto"
-					autoComplete="off"
-					encType="multipart/form-data"
-				>
-					{/* movie title */}
-					<div className="mb-6">
-						<label className={styles.label} htmlFor="title">
-							Title *
-						</label>
-						<input
-							onChange={handleChange}
-							id="title"
-							name="title"
-							type="text"
-							className={`${styles.input} px-3 py-2 w-[100%]`}
-							placeholder="Movie title"
-						/>
-						<p className={`${styles.error}`}>{formErrors.title}</p>
-					</div>
+			{/* Movie Description */}
+			<TextField
+				name="description"
+				label="Description"
+				value={formData.description}
+				multiline
+				sx={styles.global}
+				onChange={handleChange}
+				required
+				error={formErrors.description}
+				helperText={formErrors.description}
+			/>
 
-					{/* movie description */}
-					<div className="mb-6">
-						<label className={styles.label} htmlFor="desc">
-							Description *
-						</label>
-						<textarea
-							onChange={handleChange}
-							id="desc"
-							name="description"
-							className={`${styles.input} px-3 py-2 w-[100%] resize-none`}
-							rows={1}
-							placeholder="Enter Movie Description"
-						/>
-						<p className={`${styles.error}`}>{formErrors.description}</p>
-					</div>
+			{/* Cast */}
+			<Autocomplete
+				name="actors"
+				multiple
+				options={[]}
+				freeSolo
+				value={formData.actors}
+				onChange={(e, value) => {
+					setFormData({ ...formData, actors: value });
+				}}
+				renderTags={(value, getTagProps) =>
+					value.map((option, index) => (
+						<Chip label={option} {...getTagProps({ index })} />
+					))
+				}
+				renderInput={(params) => (
+					<TextField
+						{...params}
+						label="Cast"
+						placeholder="Enter an actor"
+						onChange={() => setFormErrors({ ...formErrors, actors: "" })}
+						error={formErrors.actors}
+						helperText={formErrors.actors}
+						sx={styles.global}
+						required
+						onBlur={(e) => {
+							e.target.value &&
+								!formData.actors.includes(e.target.value) &&
+								setFormData({
+									...formData,
+									actors: [...formData.actors, e.target.value],
+								});
+						}}
+					/>
+				)}
+				clearOnBlur
+			/>
 
-					{/* actors */}
-					<div className="mb-6">
-						<label className={styles.label} htmlFor="cast">
-							Actors (cast) *
-						</label>
-						<input
-							onChange={handleChange}
-							id="cast"
-							type="text"
-							name="actors"
-							className={`${styles.input} px-3 py-2 w-[100%]`}
-							placeholder="Enter comma separated values"
-						/>
-						<p className={`${styles.error}`}>{formErrors.actors}</p>
-					</div>
+			{/* Rating */}
+			<TextField
+				name="rating"
+				select
+				label="Rating"
+				value={formData.rating}
+				required
+				sx={styles.global}
+				onChange={handleChange}
+				error={formErrors.rating}
+				helperText={formErrors.rating}
+			>
+				{[1, 2, 3, 4, 5].map((option) => (
+					<MenuItem key={option} value={option}>
+						{option}
+					</MenuItem>
+				))}
+			</TextField>
 
-					{/* trailer link */}
-					<div className="mb-6">
-						<label className={styles.label} htmlFor="trailer">
-							Trailer Link *
-						</label>
-						<input
-							onChange={handleChange}
-							id="trailer"
-							type="text"
-							name="trailer_link"
-							className={`${styles.input} px-3 py-2 w-[100%]`}
-							placeholder="Enter youtube trailer link"
-						/>
-						<p className={`${styles.error}`}>{formErrors.trailer_link}</p>
-					</div>
-
-					{/* image upload */}
-					<div className="mb-6 flex justify-between">
-						<div>
-							<label className={styles.label} htmlFor="poster">
-								Poster Image *
-							</label>
-							<input
-								onChange={handleChange}
-								className={styles.input}
-								id="poster"
-								type="file"
-								name="poster"
-							/>
-							<p className={`${styles.error}`}>{formErrors.poster}</p>
-						</div>
-						<div>
-							<label className={styles.label} htmlFor="banner">
-								Banner Image *
-							</label>
-							<input
-								onChange={handleChange}
-								className={styles.input}
-								id="banner"
-								type="file"
-								name="banner"
-							/>
-							<p className={`${styles.error}`}>{formErrors.banner}</p>
-						</div>
-					</div>
-
-					<div className="mb-6 flex justify-start space-x-20">
-						{/* date & duration */}
-						<div className="w-[40%]">
-							<div>
-								<label className={styles.label} htmlFor="release-date">
-									Release Date *
-								</label>
-								<input
-									onChange={handleChange}
-									className={`${styles.input} px-3 py-2`}
-									id="release-date"
-									name="release_date"
-									type="date"
-								/>
-								<p className={`${styles.error}`}>{formErrors.release_date}</p>
-							</div>
-							<div className="mt-3">
-								<label className={styles.label} htmlFor="duration">
-									Movie Duration *
-								</label>
-								<input
-									onChange={handleChange}
-									className={`${styles.input} px-3 py-2`}
-									id="duration"
-									name="duration"
-									type="time"
-								/>
-								<p className={`${styles.error}`}>{formErrors.duration}</p>
-							</div>
-						</div>
-
-						{/* labguage & genres */}
-						<div className="flex w-[60%]">
-							<div className="mr-2">
-								<label htmlFor="lang" className={styles.label}>
-									Languages *
-								</label>
-								<select
-									id="lang"
-									onChange={handleChange}
-									name="language"
-									multiple
-									className={`${styles.input} p-2`}
+			<Stack direction="row" spacing={2}>
+				{/* Poster */}
+				<TextField
+					label="Poster"
+					sx={styles.file}
+					required
+					placeholder={!formData.poster && "No File Selected"}
+					value={formData.poster ? "File Selected" : ""}
+					error={formErrors.poster}
+					helperText={formErrors.poster}
+					focused
+					InputProps={{
+						readOnly: true,
+						startAdornment: (
+							<InputAdornment>
+								<Button
+									sx={styles.fileButton}
+									variant="contained"
+									component="label"
 								>
-									{languages.map((lang) => (
-										<option value={lang} key={lang}>
-											{lang}
-										</option>
-									))}
-								</select>
-								<p className={`${styles.error}`}>{formErrors.language}</p>
-							</div>
-							<div>
-								<label htmlFor="genres" className={styles.label}>
-									Genres *
-								</label>
-								<select
-									multiple
-									onChange={handleChange}
-									id="genres"
-									name="genre"
-									className={`${styles.input} p-2`}
-								>
-									{movieGenres.map((genre) => (
-										<option value={genre} key={genre}>
-											{genre}
-										</option>
-									))}
-								</select>
-								<p className={`${styles.error}`}>{formErrors.genre}</p>
-							</div>
-						</div>
-					</div>
+									Select file
+									<Input
+										name="poster"
+										onChange={handleChange}
+										inputProps={{ accept: "image/*" }}
+										sx={{ display: "none" }}
+										type="file"
+									/>
+								</Button>
+							</InputAdornment>
+						),
+					}}
+				/>
 
-					{/* radio & checkbox */}
-					<div className="my-5 flex justify-start">
-						<div>
-							<div className="flex items-center mb-4">
-								<input
-									onChange={handleChange}
-									id="adult"
-									type="checkbox"
-									name="adult"
-									className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 "
-									checked={formData.adult}
-								/>
-								<label
-									htmlFor="adult"
-									className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+				{/* Banner */}
+				<TextField
+					label="Banner"
+					sx={styles.file}
+					required
+					error={formErrors.banner}
+					helperText={formErrors.banner}
+					placeholder={!formData.banner && "No File Selected"}
+					value={formData.banner ? "File Selected" : ""}
+					focused
+					InputProps={{
+						readOnly: true,
+						startAdornment: (
+							<InputAdornment>
+								<Button
+									sx={styles.fileButton}
+									variant="contained"
+									component="label"
 								>
-									Adult Movie ?
-								</label>
-							</div>
-						</div>
-					</div>
+									Select file
+									<Input
+										name="banner"
+										onChange={handleChange}
+										inputProps={{ accept: "image/*" }}
+										sx={{ display: "none" }}
+										type="file"
+									/>
+								</Button>
+							</InputAdornment>
+						),
+					}}
+				/>
+			</Stack>
+			<Stack direction="row" spacing={2}>
+				{/* Date Picker */}
+				<Date
+					formData={formData}
+					formErrors={formErrors}
+					setFormData={setFormData}
+					setFormErrors={setFormErrors}
+				/>
 
-					<button
-						type="submit"
-						disabled={isSubmitting}
-						className={!isSubmitting ? `${styles.btn}` : `${styles.btn_disabled}`}
-					>
-						<FileUploadOutlinedIcon /> {isSubmitting ? isSubmitting : "Add movie"}
-					</button>
-				</form>
-			</div>
-		</div>
+				{/* Duration */}
+				<TextField
+					label="Duration"
+					name="duration"
+					sx={styles.global}
+					value={formData.duration}
+					onChange={handleChange}
+					type="number"
+					InputProps={{
+						endAdornment: (
+							<InputAdornment position="start">mins</InputAdornment>
+						),
+					}}
+					required
+					error={formErrors.duration}
+					helperText={formErrors.duration}
+				/>
+			</Stack>
+
+			{/* Languages */}
+			<Stack direction="row" spacing={2} sx={{ minHeight: 79 }}>
+				<MultipleSelect
+					value={formData.language}
+					label="Languages"
+					setValue={(value) => {
+						setFormData({ ...formData, language: value });
+						setFormErrors({ ...formErrors, language: "" });
+					}}
+					options={languages}
+					sx={styles.global}
+					error={formErrors.language}
+					helperText={formErrors.language}
+				/>
+
+				{/* Genres */}
+				<MultipleSelect
+					value={formData.genre}
+					label="Genres"
+					setValue={(value) => {
+						setFormData({ ...formData, genre: value });
+						setFormErrors({ ...formErrors, genre: "" });
+					}}
+					options={movieGenres}
+					sx={styles.global}
+					error={formErrors.genre}
+					helperText={formErrors.genre}
+				/>
+			</Stack>
+
+			{/* Buttons */}
+			<Buttons update={props.update} handleCancel={handleCancel} />
+		</Form>
 	);
 };
 
-const styles = {
-	nav_h1: "text-2xl font-semibold text-blue-400",
-	radio_input: "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 ",
-	radio_label: "ml-2 text-sm font-medium text-gray-900 dark:text-gray-300",
-	input: "block w-full text-sm text-gray-400 border border-gray-500 rounded-lg cursor-pointer bg-gray-800",
-	label: "block mb-1 font-extralight text-blue-400",
-	btn: "w-full px-6 py-2.5 bg-blue-600 text-white font-medium text-md rounded hover:bg-blue-700",
-	btn_disabled: "w-full px-6 py-2.5 bg-blue-400 cursor-not-allowed text-white font-medium text-md rounded",
-	error: "text-xs text-red-400 px-1 pt-1 font-light",
-};
+const languages = [
+	"English",
+	"Arabic",
+	"Spanish",
+	"German",
+	"French",
+	"Italian",
+	"Russian",
+	"Japanese",
+	"Korean",
+];
+
+const movieGenres = [
+	"Action",
+	"Adventure",
+	"Comedy",
+	"Drama",
+	"Horror",
+	"Romance",
+	"Science Fiction",
+	"Fantasy ",
+	"Thriller",
+	"Animation",
+	"Crime",
+];
 
 export default MovieForm;

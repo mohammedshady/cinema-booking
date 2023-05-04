@@ -7,37 +7,25 @@ import Table from "../common/Table";
 
 const tableHeaderCells = [
 	{
-		id: "title",
-		label: "Title",
+		id: "screenName",
+		label: "Screen Name",
 	},
 	{
-		id: "duration",
-		label: "Duration",
-	},
-	{
-		id: "shows",
-		label: "Shows",
-	},
-	{
-		id: "date",
-		label: "Release Date",
-	},
-	{
-		id: "status",
-		label: "Status",
+		id: "totalSeats",
+		label: "Total Seats",
 	},
 ];
 
-const Movies = () => {
-	const [movies, setMovies] = useState([]);
+const Screens = () => {
+	const [screens, setScreens] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 
-	const fetchMovies = () => {
+	const fetchScreens = () => {
 		axios
-			.get(`/api/admin/movies`)
+			.get(`/api/admin/screens`)
 			.then((res) => {
-				setMovies(res.data.data.movies);
+				setScreens(res.data.data.screens);
 				setLoading(false);
 			})
 			.catch((err) => {
@@ -48,15 +36,15 @@ const Movies = () => {
 	};
 
 	useEffect(() => {
-		fetchMovies();
+		fetchScreens();
 	}, []);
 
-	const deleteMovies = (ids) => {
+	const deleteScreen = (ids) => {
 		setLoading(true);
 		axios
-			.delete(`/api/admin/movies/?movieIds=${ids.join(",")}`)
+			.delete(`/api/admin/screens?screenIds=${ids.join(",")}`)
 			.then(() => {
-				fetchMovies();
+				fetchScreens();
 				setLoading(false);
 			})
 			.catch((err) => {
@@ -70,21 +58,19 @@ const Movies = () => {
 
 	return (
 		<Table
-			data={movies}
-			tableTitle="Movies"
-			altTableTitle="Deleted Movies"
+			data={screens}
+			tableTitle="Screens"
 			headCells={tableHeaderCells}
-			searchBy="title"
-			addLink="/admin/movies/add"
-			historyStatus="deleted"
+			searchBy="screenName"
+			addLink="/admin/screens/add"
 			navigate={navigate}
 			showHeader
 			showSort
 			showCheckBox
 			showEdit
-			onDelete={deleteMovies}
+			onDelete={deleteScreen}
 		/>
 	);
 };
 
-export default Movies;
+export default Screens;

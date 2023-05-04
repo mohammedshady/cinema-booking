@@ -20,11 +20,6 @@ const movieSchema = new Schema(
 			type: Date,
 			required: [true, "Provide movie releaseDate"],
 		},
-		trailer_link: {
-			type: String,
-			required: [true, "Provide movie trailer link"],
-			// link required
-		},
 		images: {
 			poster: {
 				type: String,
@@ -44,10 +39,9 @@ const movieSchema = new Schema(
 		},
 		genre: [String],
 		actors: [String],
-		adult: {
-			type: Boolean,
-			required: true,
-			default: false,
+		rating: {
+			type: String,
+			required: false,
 		},
 		status: {
 			type: String,

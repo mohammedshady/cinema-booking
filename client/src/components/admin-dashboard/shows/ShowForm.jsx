@@ -1,286 +1,189 @@
-import { useState, useEffect, useReducer } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-
-// components
-import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import DesignServicesOutlinedIcon from "@mui/icons-material/DesignServicesOutlined";
-import Navbar from "../navigation/Navbar";
+import notify from "../common/notify";
+import { validateShowInput } from "../common/validate";
 import Loader from "../../util/Loader";
-
-// toast
-import { toast } from "react-toastify";
+import Form from "../common/Form";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import { DateTime } from "../common/DateTime";
+import Buttons from "../common/Buttons";
+import { styles } from "../common/styles";
 
 const initialState = {
-	loading: true,
-	error: "",
 	movies: [],
 	screens: [],
+	movie: "",
+	screen: "",
+	price: "",
+	dateTime: null,
 };
 
-const reducer = (state, action) => {
-	const { type, payload } = action;
-
-	switch (type) {
-		case "FETCH_SUCCESS":
-			return payload;
-
-		case "FETCH_ERROR":
-			return { ...state, error: payload };
-
-		default:
-			return state;
-	}
-};
-
-const ShowForm = ({ update }) => {
-	const [state, dispatch] = useReducer(reducer, initialState);
-
+const ShowForm = (props) => {
+	const [formData, setFormData] = useState(initialState);
+	const [formErrors, setFormErrors] = useState({});
+	const [loading, setLoading] = useState(false);
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const location = useLocation();
-	const [isSubmitting, setIsSubmitting] = useState("");
 
-	const { movies, screens, loading, error } = state;
-
-	const fetchDetails = async () => {
-		try {
-			const { data: movieData } = await axios.get(`/api/admin/released-movies`);
-			const { data: screenData } = await axios.get(`/api/admin/screens`);
-
-			dispatch({
-				type: "FETCH_SUCCESS",
-				payload: {
-					movies: movieData.data.movies,
-					screens: screenData.data.screens,
-					loading: false,
-					error: "",
-				},
+	const populateFormCombobox = () => {
+		axios
+			.get(`/api/admin/shows/populate`)
+			.then((res) => {
+				setFormData((prev) => ({
+					...prev,
+					...res.data.data,
+				}));
+				setLoading(false);
+			})
+			.catch((err) => {
+				if (err?.response?.status == 403) navigate("/login");
+				else notify(err?.response?.data?.message || err.toString());
+				!err.toString().includes("Network Error") && setLoading(false);
 			});
-		} catch (error) {
-			if (error?.response?.status == 403) navigate("/login", { state: { from: location } });
-			else dispatch({ type: "FETCH_ERROR", payload: "Something went wrong" });
-		}
 	};
 
-	useEffect(() => {
-		fetchDetails();
-	}, []);
-
-	let defaultFormData = {
-		movie: "",
-		screen: "",
-		price: 0,
-		dateTime: "",
-	};
-
-	if (update) {
-		useEffect(() => {
+	const populateFormFields = () => {
+		props.update &&
 			axios
 				.get(`/api/admin/shows/populate/${id}`)
 				.then((res) => {
-					const data = res.data.data.show;
-					setFormData((prev) => ({ ...prev, ...data, dateTime: data.date }));
+					setFormData((prev) => ({
+						...prev,
+						...res.data.data.show,
+						dateTime: res.data.data.show.date,
+						movie: res.data.data.show.movie._id,
+						screen: res.data.data.show.screen._id,
+					}));
 				})
-				.catch((error) => {
-					if (error?.response?.status == 403) navigate("/login", { state: { from: location } });
-					dispatch({ type: "FETCH_ERROR", payload: "Something went wrong" });
+				.catch((err) => {
+					if (err?.response?.status == 403) navigate("/login");
+					else notify(err?.response?.data?.message || err.toString());
+					!err.toString().includes("Network Error") && setLoading(false);
 				});
-		}, []);
-	}
-
-	const [formData, setFormData] = useState(defaultFormData);
-
-	let { movie, screen, price, dateTime } = formData;
-
-	const formateDate = (dateTime) => {
-		const date = new Date(dateTime);
-
-		const checkLessThan10 = (val) => {
-			if (val < 10) {
-				return "0" + val;
-			}
-			return val;
-		};
-
-		return (
-			date.getFullYear() +
-			"-" +
-			checkLessThan10(Number(date.getMonth() + 1)) +
-			"-" +
-			checkLessThan10(date.getDate()) +
-			"T" +
-			checkLessThan10(date.getHours()) +
-			":" +
-			checkLessThan10(date.getMinutes())
-		);
 	};
 
-	dateTime = formateDate(dateTime);
+	useEffect(() => {
+		populateFormCombobox();
+		populateFormFields();
+	}, []);
+
+	const handleChange = (e) => {
+		setFormData((prevState) => ({
+			...prevState,
+			[e.target.name]: e.target.value,
+		}));
+		setFormErrors((prevState) => ({
+			...prevState,
+			[e.target.name]: "",
+		}));
+	};
+
+	const handleCancel = () => {
+		navigate("/admin/shows");
+	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		const { movie, screen, price, dateTime } = formData;
+		if (!validateShowInput(formData, setFormErrors)) return;
 
-		if (!movie || !screen || !price || !dateTime) {
-			toast.error("Please select all fields");
-			return;
-		}
-
-		if (update) {
-			setIsSubmitting("Updating show ...");
-			axios
-				.patch(`/api/admin/show/${id}`, formData)
-				.then((res) => {
-					toast.success("Show updated");
-					setIsSubmitting("");
-					navigate(-1);
-				})
-				.catch((error) => {
-					if (error?.response?.status == 403) navigate("/login", { state: { from: location } });
-					else toast.error(error?.response?.data?.message);
-				});
-		} else {
-			setIsSubmitting("Adding new show ...");
-			axios
-				.post(`/api/admin/show`, formData)
-				.then((res) => {
-					toast.success("Show added succesfully");
-					setIsSubmitting("");
-					navigate(-1);
-				})
-				.catch((error) => {
-					if (error?.response?.status == 403) navigate("/login", { state: { from: location } });
-					else toast.error(error?.response?.data?.message);
-				});
-		}
+		setLoading(true);
+		props.update
+			? axios
+					.patch(`/api/admin/show/${id}`, formData)
+					.then(() => {
+						setLoading(false);
+						handleCancel();
+					})
+					.catch((err) => {
+						if (err?.response?.status == 403) navigate("/login");
+						else notify(err?.response?.data?.message || err.toString());
+						!err.toString().includes("Network Error") && setLoading(false);
+					})
+			: axios
+					.post(`/api/admin/show`, formData)
+					.then(() => {
+						setLoading(false);
+						handleCancel();
+					})
+					.catch((err) => {
+						if (err?.response?.status == 403) navigate("/login");
+						else notify(err?.response?.data?.message || err.toString());
+						!err.toString().includes("Network Error") && setLoading(false);
+					});
 	};
 
-	const handleChange = (e) => {
-		setFormData((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
-	};
-
-	if (error) return <Loader msg="err" />;
 	if (loading) return <Loader msg="loading" />;
 
 	return (
-		<div className="h-[100vh] overflow-auto">
-			<Navbar
-				child={
-					<>
-						{update ? (
-							<h1 className={styles.nav_h1}>Update show details</h1>
-						) : (
-							<h1 className={styles.nav_h1}>Add New Show</h1>
-						)}
-					</>
-				}
+		<Form
+			title={props.update ? "Update Show" : "Add New Show"}
+			onSubmit={handleSubmit}
+		>
+			{/* Movie */}
+			<TextField
+				select
+				label="Movie"
+				name="movie"
+				value={formData.movie}
+				required
+				sx={styles.global}
+				onChange={handleChange}
+				error={formErrors.movie}
+				helperText={formErrors.movie}
+			>
+				{formData.movies.map((option) => (
+					<MenuItem key={option._id} value={option._id}>
+						{option.title}
+					</MenuItem>
+				))}
+			</TextField>
+
+			{/* Screen Name */}
+			<TextField
+				select
+				label="Screen"
+				name="screen"
+				value={formData.screen}
+				required
+				sx={styles.global}
+				onChange={handleChange}
+				error={formErrors.screen}
+				helperText={formErrors.screen}
+			>
+				{formData.screens.map((option) => (
+					<MenuItem key={option._id} value={option._id}>
+						{option.screenName}
+					</MenuItem>
+				))}
+			</TextField>
+
+			{/* Date Time Picker */}
+			<DateTime
+				formData={formData}
+				formErrors={formErrors}
+				setFormData={setFormData}
+				setFormErrors={setFormErrors}
 			/>
 
-			<div className="m-5 p-5 bg-slate-800 rounded-lg">
-				<form className="w-[60%] m-auto" autoComplete="off">
-					{/* Movie */}
-					<div className="mb-6">
-						<label htmlFor="lang" className={styles.label}>
-							Movie
-						</label>
-						<select name="movie" onChange={handleChange} id="lang" className={`${styles.input} p-2`}>
-							{update ? (
-								<option defaultValue={movie._id}>{movie.title}</option>
-							) : (
-								<option value="">Select Movie</option>
-							)}
-							{movies.map((movie) => (
-								<option value={movie._id} key={movie._id}>
-									{movie.title}
-								</option>
-							))}
-						</select>
-					</div>
+			{/* Price */}
+			<TextField
+				label="Price"
+				name="price"
+				value={formData.price}
+				sx={styles.global}
+				onChange={handleChange}
+				required
+				error={formErrors.price}
+				helperText={formErrors.price}
+			/>
 
-					{/* screen */}
-					<div className="mb-6">
-						<label htmlFor="lang" className={styles.label}>
-						screens
-						</label>
-						<select name="screen" onChange={handleChange} id="lang" className={`${styles.input} p-2`}>
-							{update ? (
-								<option defaultValue={screen._id}>{screen.screenName}</option>
-							) : (
-								<option value="">Select Movie</option>
-							)}
-							{screens.map((screen) => (
-								<option value={screen._id} key={screen._id}>
-									{screen.screenName}
-								</option>
-							))}
-						</select>
-					</div>
-
-					<div className="mb-6 flex justify-start space-x-20">
-						{/* Price */}
-						<div className="w-[50%]">
-							<label className={styles.label} htmlFor="title">
-								Price
-							</label>
-							<input
-								onChange={handleChange}
-								value={price}
-								id="title"
-								type="number"
-								name="price"
-								className={`${styles.input} px-3 py-2 w-[100%]`}
-								placeholder="Show price"
-								required
-							/>
-						</div>
-
-						{/* Date & time */}
-						<div className="w-[50%]">
-							<label className={styles.label} htmlFor="release-date">
-								Show Date & Time
-							</label>
-							<input
-								onChange={handleChange}
-								value={dateTime}
-								min={new Date().toISOString()}
-								id="release-date"
-								type="datetime-local"
-								name="dateTime"
-								className={`${styles.input} w-[100%] px-3 py-2`}
-								required
-							/>
-						</div>
-					</div>
-					<button
-						disabled={isSubmitting}
-						onClick={handleSubmit}
-						type="button"
-						className={isSubmitting ? `${styles.btn_disabled}` : `${styles.btn}`}
-					>
-						{update ? (
-							<>
-								<DesignServicesOutlinedIcon /> {isSubmitting ? isSubmitting : "Update show details"}
-							</>
-						) : (
-							<>
-								<FileUploadOutlinedIcon /> {isSubmitting ? isSubmitting : "Add new show"}
-							</>
-						)}
-					</button>
-				</form>
-			</div>
-		</div>
+			{/* Buttons */}
+			<Buttons update={props.update} handleCancel={handleCancel} />
+		</Form>
 	);
-};
-
-const styles = {
-	nav_h1: "text-2xl font-semibold text-blue-400",
-	input: "block w-full mb-5 text-sm text-gray-400 border border-gray-500 rounded-lg cursor-pointer bg-gray-800",
-	label: "block mb-2 font-extralight text-blue-400",
-	btn: "w-full px-6 py-2.5 bg-blue-600 text-white font-medium text-md rounded hover:bg-blue-700",
-	btn_disabled: "w-full px-6 py-2.5 bg-blue-400 cursor-not-allowed text-white font-medium text-md rounded",
 };
 
 export default ShowForm;

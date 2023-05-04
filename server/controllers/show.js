@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const asyncHandler = require("../middlewares/asyncHandler");
 const CustomError = require("../utils/customError");
 
@@ -39,11 +40,19 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 
 	// check if there is already a show for the given time and screen
 	const existingShow = await Show.findOne({
+		status: { $ne: "ended" },
 		screen,
-		startTime: { $lte: startTime },
-		endTime: { $gte: startTime },
+		$or: [
+			{ startTime: { $gte: startTime, $lte: endTime } },
+			{ endTime: { $gte: startTime, $lte: endTime } },
+			{
+				$and: [
+					{ startTime: { $lte: startTime } },
+					{ endTime: { $gte: endTime } },
+				],
+			},
+		],
 	});
-
 	if (existingShow)
 		return next(
 			new CustomError(
@@ -88,17 +97,24 @@ exports.addNewShow = asyncHandler(async (req, res, next) => {
 
 //delete a show
 exports.deleteShow = asyncHandler(async (req, res, next) => {
-	const { showId } = req.params;
+	const { showIds } = req.query;
 
-	if (!showId) return next(new CustomError("Provide showId", 400));
+	if (!showIds) return next(new CustomError("Provide showIds", 400));
+	
+	const objectIdArray = showIds.split(",");
 
-	await Show.findByIdAndDelete(showId);
+	const date = new Date();
+
+	const result = await Show.updateMany(
+		{ _id: { $in: objectIdArray } },
+		{ $set: { status: "ended", endTime: date } }
+	);
 
 	return res.status(200).json({
 		status: "success",
-		message: "Show deleted successfully",
+		message: `${result.modifiedCount} shows deleted successfully`,
 		data: {
-			showId,
+			showIds,
 		},
 	});
 });
@@ -211,7 +227,10 @@ exports.updateShowDetails = asyncHandler(async (req, res, next) => {
 
 	if (!show) return next(new CustomError("Show not found", 400));
 
-	const isAnyBooking = await Booking.findOne({ show: showId }, { _id: 1 });
+	const isAnyBooking = await Booking.findOne(
+		{ show: { _id: showId } },
+		{ _id: 1 }
+	);
 
 	if (isAnyBooking)
 		return next(
@@ -220,6 +239,44 @@ exports.updateShowDetails = asyncHandler(async (req, res, next) => {
 
 	// destructure update data
 	let { movie, price, dateTime, screen } = req.body;
+
+	if (new Date(dateTime).getTime() <= Date.now())
+		return next(new CustomError("Please select appropriate date & time", 400));
+
+	const selectedMovie = await Movie.findById(movie);
+
+	if (!selectedMovie) {
+		return next(new CustomError("Movie not found", 404));
+	}
+
+	const duration = selectedMovie.duration;
+	const showStart = new Date(dateTime);
+	const showEnd = new Date(
+		showStart.getTime() + duration * 60 * 1000 + 10 * 60 * 1000
+	);
+
+	const existingShow = await Show.findOne({
+		_id: { $ne: showId },
+		status: { $ne: "ended" },
+		screen,
+		$or: [
+			{ startTime: { $gte: showStart, $lte: showEnd } },
+			{ endTime: { $gte: showStart, $lte: showEnd } },
+			{
+				$and: [
+					{ startTime: { $lte: showStart } },
+					{ endTime: { $gte: showEnd } },
+				],
+			},
+		],
+	});
+	if (existingShow)
+		return next(
+			new CustomError(
+				"There is already a show for this time and cinema screen",
+				400
+			)
+		);
 
 	// update screen and available seats
 	if (screen) {
@@ -261,6 +318,7 @@ exports.updateShowDetails = asyncHandler(async (req, res, next) => {
 	}
 
 	// save the updated show document
+	await Booking.deleteMany({ "show.id": showId });
 	await show.save();
 
 	res.status(200).json({

@@ -17,9 +17,23 @@ body {
 	background-color: #0d1117;
 }
 
-::-webkit-scrollbar {
-	display: none;
+.apexcharts-svg {
+	border-radius: 8px;
 }
-/* .css-1l8j5k8 {
-	background-color: #161b22!important;
-} */
+
+.MuiTextField-root {
+	min-height: 79px
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+    display: none;
+}
+
+.css-1ez2eqb.Mui-error .MuiOutlinedInput-notchedOutline {
+	border-color: #f44336!important;
+}
+
+.css-190sipk.Mui-error {
+	color: #f44336!important;
+}

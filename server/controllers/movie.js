@@ -79,8 +79,7 @@ exports.addMovie = asyncHandler(async (req, res, next) => {
 		duration,
 		genre,
 		actors,
-		adult,
-		trailer_link,
+		rating,
 	} = req.body;
 
 	if (!req.files)
@@ -100,22 +99,15 @@ exports.addMovie = asyncHandler(async (req, res, next) => {
 	if (!poster || !banner)
 		return next(new CustomError("Please upload poster and banner image", 400));
 
-	genre = genre.split(",");
-	language = language.split(",");
-	actors = actors.split(",");
-
-	const time = duration.split(":");
-	duration = Number(time[0]) * 60 + Number(time[1]);
-
 	let status =
 		new Date(release_date) <= Date.now() ? "released" : "coming soon";
 
-	console.log(new Date(release_date) <= Date.now());
-
 	const posterURL = await uploadToLocal(poster, "movies/poster", false);
 	const bannerURL = await uploadToLocal(banner, "movies/banner", true);
-	// const posterURL = await s3_upload(poster, "movies/poster", false);
-	// const bannerURL = await s3_upload(banner, "movies/banner", true);
+
+	genre = genre.split(",");
+	language = language.split(",");
+	actors = actors.split(",");
 
 	const movieData = {
 		title,
@@ -126,11 +118,9 @@ exports.addMovie = asyncHandler(async (req, res, next) => {
 		duration,
 		genre,
 		actors,
-		adult,
-		trailer_link,
+		rating,
 		images: { poster: posterURL, banner: bannerURL },
 	};
-
 	const movie = await Movie.create(movieData);
 
 	res.status(201).json({
@@ -142,31 +132,63 @@ exports.addMovie = asyncHandler(async (req, res, next) => {
 
 // delete movie
 exports.deleteMovie = asyncHandler(async (req, res, next) => {
-	const { movieId } = req.params;
+	const { movieIds } = req.query;
 
-	if (!movieId) return next(new CustomError("Provide MovieId", 400));
+	if (!movieIds) return next(new CustomError("Provide MovieId(s)", 400));
 
-	await Movie.updateOne({ _id: movieId }, { $set: { status: "deleted" } });
+	const objectIdArray = movieIds.split(",");
+
+	const result = await Movie.updateMany(
+		{ _id: { $in: objectIdArray } },
+		{ $set: { status: "deleted" } }
+	);
+
+	await Show.updateMany(
+		{ movie: { $in: objectIdArray } },
+		{ $set: { status: "ended" } }
+	);
 
 	return res.status(200).json({
 		status: "success",
-		message: "Movie deleted successfully",
-		data: {},
+		message: `${result.modifiedCount} movies deleted successfully`,
+		data: {
+			movieIds,
+		},
 	});
 });
-
 
 //update movie
 exports.updateMovie = asyncHandler(async (req, res, next) => {
 	const { movieId } = req.params;
-
 	if (!movieId) return next(new CustomError("Provide MovieId", 400));
 
-	const updatedMovie = await Movie.findByIdAndUpdate(
-		movieId,
-		req.body,
-		{ new: true, runValidators: true }
-	);
+	if (req.files && req.files.poster) {
+		const posterURL = await uploadToLocal(
+			req.files.poster,
+			"movies/poster",
+			false
+		);
+		req.body.poster = posterURL;
+	}
+
+	if (req.files && req.files.banner) {
+		const bannerURL = await uploadToLocal(
+			req.files.banner,
+			"movies/banner",
+			true
+		);
+		req.body.banner = bannerURL;
+	}
+
+	req.body.images = { poster: req.body.poster, banner: req.body.banner };
+
+	req.body.status =
+		new Date(req.body.release_date) <= Date.now() ? "released" : "coming soon";
+
+	const updatedMovie = await Movie.findByIdAndUpdate(movieId, req.body, {
+		new: true,
+		runValidators: true,
+	});
 
 	if (!updatedMovie) {
 		return next(new CustomError("Movie not found", 404));
@@ -180,81 +202,54 @@ exports.updateMovie = asyncHandler(async (req, res, next) => {
 
 // get all added movies
 exports.getAllMovies = asyncHandler(async (req, res, next) => {
-	let { sortBy, order, page, perPage } = req.query;
+	const updateMovies = await Movie.find({ status: "coming soon" });
 
-	sortBy = sortBy || "title";
-	order = order || 1;
-	page = page || 1;
-	perPage = perPage || 5;
+	for (let movie of updateMovies) {
+		const isReleased = movie.release_date <= Date.now();
 
-	const totalMovies = await Movie.countDocuments({
-		status: { $ne: "deleted" },
-	});
-	const releasedMovies = await Movie.countDocuments({ status: "released" });
-	const comingSoonMovies = await Movie.countDocuments({
-		status: "coming soon",
-	});
-
-	const movies = await Movie.find(
-		{ status: { $ne: "deleted" } },
-		{ title: 1, status: 1, release_date: 1 }
-	)
-		.sort({
-			[`${sortBy}`]: order,
-		})
-		.skip(page * parseInt(perPage))
-		.limit(perPage);
-
-	for (let movie of movies) {
-		movie._doc.shows = await Show.countDocuments({
-			movie: movie._id,
-			status: "starting soon",
-		});
+		if (isReleased) {
+			movie.status = "released";
+			await movie.save();
+		}
 	}
+	
+	const movies = await Movie.aggregate([
+		{
+			$lookup: {
+				from: "shows",
+				let: { movieId: "$_id" },
+				pipeline: [
+					{
+						$match: {
+							$expr: {
+								$and: [
+									{ $eq: ["$movie", "$$movieId"] },
+									{ $eq: ["$status", "starting soon"] },
+								],
+							},
+						},
+					},
+					{ $count: "count" },
+				],
+				as: "shows",
+			},
+		},
+		{
+			$project: {
+				title: 1,
+				status: 1,
+				date: "$release_date",
+				duration: 1,
+				shows: { $ifNull: [{ $arrayElemAt: ["$shows.count", 0] }, 0] },
+			},
+		},
+	]);
 
 	return res.status(200).json({
 		status: "success",
 		message: "movies list fetched",
 		data: {
-			totalMovies,
-			releasedMovies,
-			comingSoonMovies,
 			movies,
-		},
-	});
-});
-
-// get all released movies
-exports.getAllReleasedMovies = asyncHandler(async (req, res, next) => {
-	const movies = await Movie.find({ status: "released" }, { title: 1 }).sort({
-		release_date: -1,
-	});
-
-	if (movies.length === 0) return next(new CustomError("found no Movies", 404));
-
-	return res.status(200).json({
-		status: "success",
-		message: "movies list fetched",
-		data: {
-			totalMovies: movies.length,
-			movies,
-		},
-	});
-});
-// get all deleted movies
-exports.getAllDeletedMovies = asyncHandler(async (req, res, next) => {
-	const deletedMovies = await Movie.find({ status: "deleted" }, { title: 1 }).sort({
-		release_date: -1,
-	});
-
-	if (deletedMovies.length === 0) return next(new CustomError("found no deleted Movies", 404));
-
-	return res.status(200).json({
-		status: "success",
-		message: "deleted movies list fetched",
-		data: {
-			totalMovies: deletedMovies.length,
-			deletedMovies,
 		},
 	});
 });

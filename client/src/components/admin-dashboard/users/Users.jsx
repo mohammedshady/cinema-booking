@@ -7,61 +7,57 @@ import Table from "../common/Table";
 
 const tableHeaderCells = [
 	{
-		id: "title",
-		label: "Title",
+		id: "name",
+		label: "Name",
 	},
 	{
-		id: "duration",
-		label: "Duration",
+		id: "email",
+		label: "Email",
 	},
 	{
-		id: "shows",
-		label: "Shows",
+		id: "mobileno",
+		label: "Mobile Number",
 	},
 	{
-		id: "date",
-		label: "Release Date",
-	},
-	{
-		id: "status",
-		label: "Status",
+		id: "dateTime",
+		label: "Joined On",
 	},
 ];
 
-const Movies = () => {
-	const [movies, setMovies] = useState([]);
+const Bookings = () => {
+	const [users, setUsers] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 
-	const fetchMovies = () => {
+	const fetchUsers = () => {
 		axios
-			.get(`/api/admin/movies`)
+			.get(`/api/admin/users`)
 			.then((res) => {
-				setMovies(res.data.data.movies);
+				setUsers(res.data.data.users);
 				setLoading(false);
 			})
 			.catch((err) => {
 				if (err?.response?.status == 403) navigate("/login");
-				else notify(err?.response?.data?.message  || err.toString());
+				else notify(err?.response?.data?.message || err.toString());
 				!err.toString().includes("Network Error") && setLoading(false);
 			});
 	};
 
 	useEffect(() => {
-		fetchMovies();
+		fetchUsers();
 	}, []);
 
-	const deleteMovies = (ids) => {
+	const deleteUsers = (ids) => {
 		setLoading(true);
 		axios
-			.delete(`/api/admin/movies/?movieIds=${ids.join(",")}`)
+			.delete(`/api/admin/users?userIds=${ids.join(",")}`)
 			.then(() => {
-				fetchMovies();
+				fetchUsers();
 				setLoading(false);
 			})
 			.catch((err) => {
 				if (err?.response?.status == 403) navigate("/login");
-				else notify(err?.response?.data?.message  || err.toString());
+				else notify(err?.response?.data?.message || err.toString());
 				!err.toString().includes("Network Error") && setLoading(false);
 			});
 	};
@@ -70,21 +66,16 @@ const Movies = () => {
 
 	return (
 		<Table
-			data={movies}
-			tableTitle="Movies"
-			altTableTitle="Deleted Movies"
+			data={users}
+			tableTitle="Users"
 			headCells={tableHeaderCells}
-			searchBy="title"
-			addLink="/admin/movies/add"
-			historyStatus="deleted"
 			navigate={navigate}
+			searchBy="name"
 			showHeader
-			showSort
 			showCheckBox
-			showEdit
-			onDelete={deleteMovies}
+			showSort
+			onDelete={deleteUsers}
 		/>
 	);
 };
-
-export default Movies;
+export default Bookings;

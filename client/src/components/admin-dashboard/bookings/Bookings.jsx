@@ -7,61 +7,65 @@ import Table from "../common/Table";
 
 const tableHeaderCells = [
 	{
-		id: "title",
-		label: "Title",
+		id: "name",
+		label: "Name",
 	},
 	{
-		id: "duration",
-		label: "Duration",
+		id: "email",
+		label: "Email",
 	},
 	{
-		id: "shows",
-		label: "Shows",
+		id: "seats",
+		label: "Seats",
 	},
 	{
-		id: "date",
-		label: "Release Date",
+		id: "movie",
+		label: "Movie",
 	},
 	{
-		id: "status",
-		label: "Status",
+		id: "dateTime",
+		label: "Show Time",
+	},
+	{
+		id: "screenName",
+		label: "Screen",
 	},
 ];
 
-const Movies = () => {
-	const [movies, setMovies] = useState([]);
+const Bookings = () => {
+	const [bookings, setBookings] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 
-	const fetchMovies = () => {
+	const fetchBookings = () => {
 		axios
-			.get(`/api/admin/movies`)
+			.get(`/api/admin/bookings`)
 			.then((res) => {
-				setMovies(res.data.data.movies);
+				setBookings(res.data.data.bookings);
 				setLoading(false);
 			})
 			.catch((err) => {
 				if (err?.response?.status == 403) navigate("/login");
-				else notify(err?.response?.data?.message  || err.toString());
+				else notify(err?.response?.data?.message || err.toString());
 				!err.toString().includes("Network Error") && setLoading(false);
 			});
 	};
 
 	useEffect(() => {
-		fetchMovies();
+		fetchBookings();
 	}, []);
 
-	const deleteMovies = (ids) => {
+	const deleteBookings = (ids) => {
 		setLoading(true);
 		axios
-			.delete(`/api/admin/movies/?movieIds=${ids.join(",")}`)
+			.delete(`/api/admin/bookings?bookingIds=${ids.join(",")}`)
 			.then(() => {
-				fetchMovies();
+				fetchBookings();
 				setLoading(false);
 			})
 			.catch((err) => {
 				if (err?.response?.status == 403) navigate("/login");
-				else notify(err?.response?.data?.message  || err.toString());
+				else notify(err?.response?.data?.message || err.toString());
 				!err.toString().includes("Network Error") && setLoading(false);
 			});
 	};
@@ -70,21 +74,16 @@ const Movies = () => {
 
 	return (
 		<Table
-			data={movies}
-			tableTitle="Movies"
-			altTableTitle="Deleted Movies"
+			data={bookings}
+			tableTitle="Bookings"
 			headCells={tableHeaderCells}
-			searchBy="title"
-			addLink="/admin/movies/add"
-			historyStatus="deleted"
 			navigate={navigate}
+			searchBy="name"
 			showHeader
-			showSort
 			showCheckBox
-			showEdit
-			onDelete={deleteMovies}
+			showSort
+			onDelete={deleteBookings}
 		/>
 	);
 };
-
-export default Movies;
+export default Bookings;
