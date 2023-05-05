@@ -1,0 +1,27 @@
+.movies-leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+  padding: 20px;
+}
+.movies-leaderboard-list-container {
+  align-self: flex-start;
+  width: 400px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: azure;
+  border-radius: 4px;
+}
+
+.movies-leaderboard-list-p {
+  font-size: 2rem;
+  color: black;
+}
+.list-btn {
+  margin: 10px;
+  padding: 8px;
+  align-self: flex-end;
+  background-color: black;
+}

@@ -2,235 +2,186 @@ import { useEffect, useReducer, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import SeatMap from "../util/SeatMap";
-import BackButton from "../util/BackButton";
 import Loader from "../util/Loader";
-import Swal from "sweetalert2";
 
 import axios from "axios";
 
 // toast
-import { toast } from "react-toastify";
+import "./SeatSelector.css";
+import Navbar from "../Navbar";
+
+import screenLogo from "./../../assets/images/screen.png";
+import SeatsConfirm from "./seatsConfirm";
 
 const initialState = {
-	loading: true,
-	error: "",
-	availableSeats: [],
-	bookedSeats: [],
-	screen: {},
-	price: 0,
+  loading: true,
+  error: "",
+  availableSeats: [],
+  bookedSeats: [],
+  screen: {},
+  price: 0,
 };
 
 const reducer = (state, action) => {
-	const { type, payload } = action;
+  const { type, payload } = action;
 
-	switch (type) {
-		case "FETCH_SUCCESS":
-			const { screen, price } = payload.show;
-			let availableSeats = [];
-			let bookedSeats = [];
-			let availableIndex = 0;
-			let bookedIndex = 0;
-			for (let i = 0; i < payload.show.seats.length; i++) {
-				if (payload.show.seats[i].available === true) {
-					availableSeats[availableIndex] = payload.show.seats[i];
-					availableIndex++;
-				} else {
-					bookedSeats[bookedIndex] = payload.show.seats[i];
-					bookedIndex++;
-				}
-			}
-			return {
-				...state,
-				loading: false,
-				availableSeats,
-				bookedSeats,
-				screen,
-				price,
-			};
+  switch (type) {
+    case "FETCH_SUCCESS":
+      const { screen, price } = payload.show;
+      let availableSeats = [];
+      let bookedSeats = [];
+      let availableIndex = 0;
+      let bookedIndex = 0;
+      for (let i = 0; i < payload.show.seats.length; i++) {
+        if (payload.show.seats[i].available === true) {
+          availableSeats[availableIndex] = payload.show.seats[i];
+          availableIndex++;
+        } else {
+          bookedSeats[bookedIndex] = payload.show.seats[i];
+          bookedIndex++;
+        }
+      }
+      return {
+        ...state,
+        loading: false,
+        availableSeats,
+        bookedSeats,
+        screen,
+        price,
+      };
 
-		case "FETCH_ERROR":
-			return { ...state, error: payload };
+    case "FETCH_ERROR":
+      return { ...state, error: payload };
 
-		default:
-			return state;
-	}
+    default:
+      return state;
+  }
 };
 
 const SeatSelector = () => {
-	const { id } = useParams();
-	const navigate = useNavigate();
-	const location = useLocation();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-	const [state, dispatch] = useReducer(reducer, initialState);
-	const [multipleSeatConflict, setMultipleSeatConflict] = useState(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [msg, setMsg] = useState({});
+  const [show, setShow] = useState(false);
+  const [submit, setSubmit] = useState(false);
+  const [multipleSeatConflict, setMultipleSeatConflict] = useState(false);
 
-	const { loading, error, availableSeats, bookedSeats, screen, price } = state;
+  const { loading, error, availableSeats, bookedSeats, screen, price } = state;
 
-	const fetchSeats = () => {
-		axios
-			.get(`/api/shows/seats/${id}`)
-			.then((res) => {
-				dispatch({ type: "FETCH_SUCCESS", payload: res.data.data });
-			})
-			.catch((err) => {
-				if (err.response.status == 403)
-					navigate("/login", { state: { from: location } });
-				dispatch({ type: "FETCH_ERROR", payload: "Something went wrong" });
-			});
-	};
+  const fetchSeats = () => {
+    axios
+      .get(`/api/shows/seats/${id}`)
+      .then((res) => {
+        dispatch({ type: "FETCH_SUCCESS", payload: res.data.data });
+        console.log(res.data.data);
+      })
+      .catch((err) => {
+        if (err.response.status == 403)
+          navigate("/login", { state: { from: location } });
+        dispatch({ type: "FETCH_ERROR", payload: "Something went wrong" });
+      });
+  };
 
-	useEffect(() => {
-		fetchSeats();
-	}, [multipleSeatConflict]);
+  useEffect(() => {
+    fetchSeats();
+  }, [multipleSeatConflict]);
 
-	const [seats, setSeats] = useState([]);
+  const [seats, setSeats] = useState([]);
 
-	const handleSelectedSeats = (seatSet) => {
-		setSeats([...seatSet]);
-	};
+  const handleSelectedSeats = (seatSet) => {
+    setSeats([...seatSet]);
+  };
+  const handleModal = () => {
+    if (seats.length == 0) {
+      setMsg({
+        status: "error",
+        header: "no seats selected",
+        msg: "there wasnt any selected seats please try again",
+      });
+    } else {
+      setMsg({
+        status: "success",
+        header: "Your Seats Were Selected",
+        msg: "Are you sure you want to book them",
+      });
+    }
+    setShow(true);
+  };
+  const handleSubmit = async (e) => {
+    setShow(false);
+    e.preventDefault();
+    const formData = {
+      show: id,
+      seats,
+    };
+    axios
+      .post(`/api/user/bookShow`, formData)
+      .then((response) => {
+        console.log("booked the " + response);
+        navigate("/bookings");
+      })
+      .catch((error) => {
+        if (error.response.status == 403)
+          navigate("/login", { state: { from: location } });
+        else {
+          setMultipleSeatConflict(true);
+        }
+      });
+  };
 
-	const handleSubmit = async (e) => {
-		if (seats.length == 0) {
-			Swal.fire({
-				title: "Please select a seat",
-				text: "You haven't selected any seat",
-				icon: "warning",
-				confirmButtonColor: "#2563eb",
-			});
-			return;
-		}
+  // if (error) return <Loader msg="error" />;
+  // else if (loading) return <Loader msg="loading" />;
 
-		const formData = {
-			show: id,
-			seats,
-		};
-
-		Swal.fire({
-			title: "Confirm your booking ?",
-			text: "You won't be able to revert this!",
-			icon: "question",
-			showCancelButton: true,
-			confirmButtonColor: "#2563eb",
-			cancelButtonColor: "#d33",
-			confirmButtonText: "Yes, book it!",
-		}).then((result) => {
-			if (result.isConfirmed) {
-				axios
-					.post(`/api/user/bookShow`, formData)
-					.then(() => {
-						Swal.fire({
-							title: "Seats are booked",
-							text: "Congrats, your tickets are sent on your mail",
-							icon: "success",
-							confirmButtonColor: "#2563eb",
-						});
-						// toast.success("Your tickets are booked and sent on your mail 🤩");
-						navigate("/movies");
-					})
-					.catch((error) => {
-						if (error.response.status == 403)
-							navigate("/login", { state: { from: location } });
-						else {
-							setMultipleSeatConflict(true);
-							// toast.error(error?.response?.data?.message);
-							Swal.fire({
-								title: error?.response?.data?.message,
-								text: "Something went wrong, sorry for inconvience !",
-								icon: "error",
-								confirmButtonColor: "#2563eb",
-							});
-						}
-					});
-			}
-		});
-
-		// const formData = {
-		// 	show: id,
-		// 	seats,
-		// };
-
-		// try {
-		// 	await axios.post(`/api/user/bookShow`, formData);
-		// 	toast.success("Your tickets are booked and sent on your mail 🤩");
-		// 	navigate("/movies");
-		// } catch (error) {
-		// 	if (error.response.status == 403) navigate("/login", { state: { from: location } });
-		// 	else {
-		// 		setMultipleSeatConflict(true);
-		// 		toast.error(error?.response?.data?.message);
-		// 	}
-		// }
-	};
-
-	if (error) return <Loader msg="error" />;
-	else if (loading) return <Loader msg="loading" />;
-
-	return (
-		<div className="flex justify-center items-center">
-			<div className={styles.main_container}>
-				<BackButton />
-				<p className={styles.price}>
-					Price Per Ticket :{" "}
-					<span className={styles.price_p}>{price} INR.</span>
-				</p>
-
-				<div className={styles.seat_map_container}>
-					<div>
-						<div className={styles.screen}>
-							<p className={styles.screen_p}>Screen this side</p>
-						</div>
-					</div>
-					<div className={styles.availability}>
-						<div className={styles.avail_div}>
-							<p className="text-sm">Booked </p>
-							<input type="checkbox" checked={true} disabled />
-						</div>
-						<div className={styles.avail_div}>
-							<p className="text-sm">Available </p>
-							<input type="checkbox" checked={false} readOnly={true} />
-						</div>
-						<div className={styles.avail_div}>
-							<p className="text-sm">Selected </p>
-							<input type="checkbox" checked={true} readOnly />
-						</div>
-					</div>
-
-					<SeatMap
-						availableSeats={availableSeats}
-						bookedSeats={bookedSeats}
-						rows={screen?.totalRows}
-						cols={screen?.totalColumns}
-						handleSelectedSeats={handleSelectedSeats}
-					/>
-				</div>
-				<div className="mt-5">
-					<button
-						onClick={handleSubmit}
-						type="button"
-						className={styles.submit_btn}
-					>
-						Pay {price * seats.length} INR.
-					</button>
-				</div>
-			</div>
-		</div>
-	);
-};
-
-const styles = {
-	main_container:
-		"w-full md:w-[1100px] my-10 mx-auto p-10 bg-slate-800 relative flex flex-col items-center",
-	price: "text-xl absolute top-12 left-5 text-blue-400",
-	price_p: "text-white ml-2",
-	seat_map_container:
-		"w-full md:w-[50%] mt-14 m-auto flex flex-col justify-center items-center",
-	screen: "h-[30px] w-[100%] bg-white mb-3 flex justify-center items-center",
-	screen_p: "text-black font-bold px-10",
-	selected_options_span: "ml-2 text-blue-400",
-	availability: "my-3 flex justify-between",
-	avail_div: "flex flex-col items-center justify-around mx-3",
-	submit_btn:
-		"bg-blue-600 w-[200px] rounded-md font-medium px-3 py-2 text-white",
+  return (
+    <>
+      {show ? (
+        <SeatsConfirm
+          msg={msg}
+          handleSubmit={handleSubmit}
+          setState={setShow}
+        />
+      ) : null}
+      <div
+        className={`seat-selector-page  ${show ? "modal-background" : null}`}
+      >
+        <Navbar />
+        <div className="seat-selector-container">
+          <div className="seat-selector-inner-container ">
+            <div className="seat-selector-header">
+              <div className="seat-selector-header-text">
+                Select Your Seats Below
+              </div>
+              <div className="seat-selector-header-price"></div>
+            </div>
+            <div className="seat-selector-screen">
+              <img src={screenLogo} alt="screen" />
+            </div>
+            <div className="seat-selector-seat-map">
+              <SeatMap
+                availableSeats={availableSeats}
+                bookedSeats={bookedSeats}
+                rows={screen?.totalRows}
+                cols={screen?.totalColumns}
+                handleSelectedSeats={handleSelectedSeats}
+              />
+            </div>
+            <div className="seat-selector-controls">
+              <button
+                onClick={handleModal}
+                type="button"
+                className="seat-selector-pay-btn"
+              >
+                Pay
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default SeatSelector;

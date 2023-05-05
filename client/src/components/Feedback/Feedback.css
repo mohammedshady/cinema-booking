@@ -1,0 +1,40 @@
+.feedback-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feedback-container {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  /* resize-none text-sm rounded-lg block w-full p-5 bg-gray-700 placeholder-gray-200 text-white focus:outline-blue-400 */
+}
+.feedback-container h1 {
+  font-size: 3rem;
+  margin: 20px;
+}
+.text-area {
+  margin: 0 auto;
+  width: 70%;
+  padding: 10px;
+  height: 300px;
+  border-radius: 8px;
+  background-color: rgb(51, 51, 80);
+  color: white;
+}
+.text-area:focus {
+  outline: #3b82f6;
+}
+.error-text-area {
+  color: red;
+  font-size: 0.8rem;
+}
+.feedback-submit-btn {
+  width: 50%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #3b82f6;
+  color: white;
+}

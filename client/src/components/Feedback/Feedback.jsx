@@ -2,78 +2,71 @@ import Navbar from "../Navbar";
 import BackButton from "../util/BackButton";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import "./Feedback.css";
 
 // toast
 import { toast } from "react-toastify";
 import axios from "axios";
 
 const Feedback = () => {
-	const [message, setMessage] = useState("");
-	const [formError, setFormError] = useState({});
-	const location = useLocation();
-	const navigate = useNavigate();
+  const [message, setMessage] = useState("");
+  const [formError, setFormError] = useState({});
+  const location = useLocation();
+  const navigate = useNavigate();
 
-	const validateInput = (message) => {
-		const errors = {};
+  const validateInput = (message) => {
+    const errors = {};
 
-		if (!message) errors.message = "Please write your message";
+    if (!message) errors.message = "Please write your message";
 
-		setFormError(errors);
+    setFormError(errors);
 
-		if (Object.keys(errors).length > 0) return true;
-		return false;
-	};
+    if (Object.keys(errors).length > 0) return true;
+    return false;
+  };
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+  const handleSubmit = async (e) => {
+    console.log(message);
+    e.preventDefault();
 
-		if (validateInput(message)) return;
+    if (validateInput(message)) return;
 
-		try {
-			const res = await axios.post(`/api/user/feedback`, { message });
-			if (res) {
-				toast.success("Thanks for your valuable feedback");
-				navigate(-1);
-			}
-		} catch (error) {
-			if (error.response.status == 403) navigate("/login", { state: { from: location } });
-		}
-	};
+    try {
+      const res = await axios.post(`/api/user/feedback`, { message });
+      if (res) {
+        toast.success("Thanks for your valuable feedback");
+        navigate(-1);
+      }
+    } catch (error) {
+      if (error.response.status == 403)
+        navigate("/login", { state: { from: location } });
+    }
+  };
 
-	return (
-		<>
-			<Navbar />
-			<div className="my-5 w-full md:w-[1296px] m-auto">
-				<div className="bg-slate-800 p-5 relative">
-					<BackButton />
-					<div className="text-center my-3 mt-10">
-						<h1 className=" text-2xl md:text-4xl font-semibold">Your Feedback is importtant for us !</h1>
-					</div>
-					<div className="w-full md:w-[50%] m-auto mt-5">
-						<form onSubmit={handleSubmit} autoComplete="off">
-							<textarea
-								onChange={(e) => {
-									validateInput(e.target.value);
-									setMessage(e.target.value);
-								}}
-								id="feedback"
-								rows={10}
-								className="resize-none text-sm rounded-lg block w-full p-5 bg-gray-700 placeholder-gray-200 text-white focus:outline-blue-400"
-								placeholder="Write your message here !"
-							></textarea>
-							<p className="text-xs text-red-400 px-1 pt-1 font-light">{formError.message}</p>
-							<button
-								type="submit"
-								className="bg-blue-600 w-full rounded-md font-medium my-6 px-3 py-3 text-white"
-							>
-								Submit your feedback
-							</button>
-						</form>
-					</div>
-				</div>
-			</div>
-		</>
-	);
+  return (
+    <>
+      <Navbar />
+      <div className="feedback-page">
+        <form className="feedback-container" onSubmit={handleSubmit}>
+          <h1>Your Feedback is important to us</h1>
+          <textarea
+            onChange={(e) => {
+              validateInput(e.target.value);
+              setMessage(e.target.value);
+            }}
+            id="feedback"
+            rows={10}
+            className="text-area"
+            placeholder="Write your message here !"
+          ></textarea>
+          {formError ? <p className="error-text-area"></p> : null}
+          <button type="submit" className="feedback-submit-btn">
+            Submit
+          </button>
+        </form>
+      </div>
+    </>
+  );
 };
 
 export default Feedback;

@@ -1,42 +1,73 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import User from "./UserProfileButton";
+import { useNavigate } from "react-router-dom";
+
+import "./Navbar.css";
 
 import { useAuthState } from "../context";
+import { useLocation } from "react-router-dom";
 
-const Navbar = ({ children }) => {
-	const { user } = useAuthState();
+const Navbar = () => {
+  const { user } = useAuthState();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-	return (
-		<nav className="bg-slate-800 mb-5 mx-auto w-[100vw] shadow-sm shadow-gray-400 sticky top-0 z-50">
-			<div className="mx-auto px-4 md:px-8 max-w-[1400px]">
-				<div className="flex items-center justify-between">
-					<div className="w-full justify-between flex items-center py-5">
-						<Link className="font-bold text-3xl md:text-4xl" to="/">
-							<p className="main-title">MovieBuzz</p>
-						</Link>
-						<>{children}</>
-						<div>
-							<div className=" flex space-x-4 items-center">
-								{user != null ? (
-									<User icon={user.email[0].toUpperCase()} />
-								) : (
-									<Link to="/login">
-										<button
-											type="button"
-											className="py-2 px-5 bg-blue-600 text-white text-center font-medium rounded-md"
-										>
-											Login
-										</button>
-									</Link>
-								)}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</nav>
-	);
+  return (
+    <header>
+      <h1>LOGO</h1>
+
+      <nav>
+        <ul>
+          <li
+            className="nav-list-item"
+            style={
+              location.pathname === "/"
+                ? { borderBottom: "2px solid #3b82f6" }
+                : null
+            }
+            onClick={() => navigate("/")}
+          >
+            Home
+          </li>
+          <li
+            className="nav-list-item"
+            style={
+              location.pathname === "/movies"
+                ? { borderBottom: "2px solid  #3b82f6" }
+                : null
+            }
+            onClick={() => navigate("/movies")}
+          >
+            Movies
+          </li>
+          <li
+            className="nav-list-item"
+            style={
+              location.pathname === "/movies"
+                ? { borderBottom: "2px solid  #3b82f6" }
+                : null
+            }
+          >
+            Search
+          </li>
+        </ul>
+      </nav>
+      <div className="user-controls">
+        {user != null ? (
+          <User icon={user.email[0].toUpperCase()} />
+        ) : (
+          <button
+            type="button"
+            className="nav-login-btn"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </button>
+        )}
+      </div>
+    </header>
+  );
 };
 
 export default Navbar;

@@ -1,0 +1,13 @@
+.seat-map-container {
+}
+
+.seat-map-row-item {
+  padding: 5px 20px;
+}
+.seat-map-col-item {
+  margin: 15px;
+}
+.input-seat {
+  width: 30px;
+  height: 30px;
+}

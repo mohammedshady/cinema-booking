@@ -10,7 +10,7 @@ exports.uploadToLocal = async (file, folderName, banner = true) => {
 	if (banner) {
 		// banner_image=944 * 472
 		buffer = await sharp(file.data)
-			.resize({ height: 472, width: 944, fit: "contain" })
+			.resize({ height: 1080, width: 1920, fit: "contain" })
 			.toBuffer();
 	} else {
 		// poster_image = 261 * 392 ;

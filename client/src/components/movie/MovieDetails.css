@@ -1,0 +1,145 @@
+.movie-details-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  /* background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgb(0, 0, 0)),
+    url("../../assets/images/205815.jpg");
+  background-size: cover; */
+}
+.movie-details-inner-container {
+  margin: 70px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.movie-details-img {
+  border: 2px solid white;
+  width: 290px;
+  height: 420px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.movie-img-text {
+  display: flex;
+  flex-wrap: wrap;
+}
+.movie-details-text {
+  max-width: 490px;
+  display: flex;
+  flex-direction: column;
+  justify-self: flex-end;
+  padding: 30px;
+}
+.movie-desc-title {
+  font-size: 3rem;
+  margin-top: 80px;
+}
+.movie-desc-desc {
+  margin: 20px 0px;
+  font-size: 1rem;
+}
+.movie-data {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+.movie-extra-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 20px;
+}
+.movie-options-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.movie-cast-details {
+  margin: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+.movie-cast-details-item {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.movie-controls {
+  display: flex;
+  flex-direction: column;
+}
+.movie-genre-item {
+  font-size: 0.8rem;
+  padding: 6px;
+  border: 1px solid white;
+  border-radius: 2px;
+  margin: 5px;
+}
+
+.movie-details-first-btn,
+.movie-details-sec-btn {
+  padding: 20px 95px;
+  border-radius: 2px;
+  border: 1px solid white;
+  margin: 10px 0px;
+}
+.cast-img {
+  width: 130px;
+  height: 130px;
+  border: 2px solid white;
+}
+.cast-name {
+  margin: 5px;
+  font-size: 0.8rem;
+  text-align: center;
+}
+.movie-card-img {
+  width: 100%;
+  height: 90%;
+  background-color: azure;
+  background-size: "cover";
+  position: "relative";
+  cursor: pointer;
+}
+.movie-card-title {
+  height: 10%;
+  font-size: 1rem;
+  color: azure;
+}
+.movie-card-container {
+  margin: 20px;
+  width: 200px;
+  height: 310px;
+}
+.movie-cards {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+}
+.movie-cards-header {
+  margin: 30px;
+}
+.movie-cards-header {
+  font-size: 3rem;
+}
+.first-section,
+.second-section,
+.third-section {
+  margin: 40px 0px;
+}
+.see-more-button {
+  margin: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: darkcyan;
+  position: absolute;
+  right: 0;
+  border-radius: 50%;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.movie-title {
+  text-align: center;
+}

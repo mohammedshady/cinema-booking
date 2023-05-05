@@ -1,0 +1,39 @@
+.seat-selector-page {
+  position: relative;
+}
+.modal-background {
+  opacity: 0.5;
+}
+.seat-selector-container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+.seat-selector-inner-container {
+  margin: 80px auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  height: 100%;
+}
+.seat-selector-header-text {
+  font-size: 3rem;
+  margin: 20px;
+}
+.seat-selector-filter {
+  display: flex;
+  justify-content: space-between;
+}
+.seat-selector-select {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  width: 60%;
+}
+.seat-selector-pay-btn {
+  margin: 20px;
+  padding: 10px 30px;
+  border: 2px solid white;
+  border-radius: 2px;
+}

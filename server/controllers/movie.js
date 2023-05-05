@@ -30,6 +30,8 @@ exports.userGetAllMovies = asyncHandler(async (req, res, next) => {
 			title: 1,
 			status: 1,
 			release_date: 1,
+			genre: 1,
+			description: 1,
 		}
 	).sort({
 		release_date: -1,
@@ -45,6 +47,7 @@ exports.userGetAllMovies = asyncHandler(async (req, res, next) => {
 	});
 });
 
+
 // get movie detail
 exports.getMovieById = asyncHandler(async (req, res, next) => {
 	const { movieId } = req.params;
@@ -55,13 +58,43 @@ exports.getMovieById = asyncHandler(async (req, res, next) => {
 		{ _id: movieId },
 		{ createdAt: 0, updatedAt: 0 }
 	);
+	if (!movie) return next(new CustomError("Movie not found with this id", 400));
+
+	const shows = await Show.find({ status: "starting soon", movie: movieId });
+	for (const show of shows) {
+		if (show.endTime <= Date.now()) show.status = "ended";
+		else if (show.startTime <= Date.now()) show.status = "started";
+		await show.save();
+	}
+
+	// Get shows for the movie
+	const showsForMovie = await Show.find(
+		{ movie: movieId, status: "starting soon" },
+		{
+			movie: 0,
+			endTime: 0,
+			status: 0,
+			seats: 0,
+			createdAt: 0,
+			updatedAt: 0,
+		}
+	).sort({ startTime: 1 })
+		.populate({
+			path: "screen",
+			model: "screen",
+			select: "screenName",
+		});
 
 	res.status(200).json({
+
 		status: "success",
 		message: "movies details fetched",
 		data: {
 			movie,
+			totalShows: showsForMovie.length,
+			shows: showsForMovie,
 		},
+
 	});
 });
 
@@ -212,7 +245,7 @@ exports.getAllMovies = asyncHandler(async (req, res, next) => {
 			await movie.save();
 		}
 	}
-	
+
 	const movies = await Movie.aggregate([
 		{
 			$lookup: {

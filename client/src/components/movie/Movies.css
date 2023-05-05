@@ -1,0 +1,83 @@
+.welcome-home-page {
+  padding: 40px;
+}
+.welcome-msg-hdr {
+  font-size: 4rem;
+  font-weight: 600;
+}
+.welcome-msg-text {
+  font-size: 1rem;
+}
+.chip-selectors-container {
+  margin: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 25%;
+}
+
+.chip-selector {
+  margin: 5px;
+  cursor: pointer;
+  font-weight: 300;
+  font-size: 0.9rem;
+  background-color: rgb(169, 181, 194);
+  border-radius: 12px;
+  padding: 4px;
+  border: 1px solid lightslategray;
+}
+.chip-selector:hover {
+  background-color: lightslategray;
+}
+
+.movies-home-page {
+  margin: 30px 0px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+.movie-heading {
+  margin: 30px;
+  text-align: center;
+  font-size: 2rem;
+}
+.movie-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+.movies-container {
+  width: 100%;
+}
+.movies-leaderboard-container {
+  margin: 70px 0px;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+/* amongus */
+.movies-filter-bar {
+  padding: 30px;
+  width: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 20px;
+  background-color: white;
+  border: 1px solid white;
+}
+.filter-sort-item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-left: auto;
+}
+.search-bar {
+  flex-grow: 0.5;
+  align-self: flex-end;
+  margin: 8px 0px;
+}
