@@ -19,10 +19,5 @@ export const colsnums = (total_rocks) => {
         let group1 = Math.floor((total_rocks - group3) / 2);
         let group2 = Math.ceil((total_rocks - group3) / 2);
     }
-
-    // output the 3 groups of rocks
-    console.log("Group 1: ", group1);
-    console.log("Group 2: ", group2);
-    console.log("Group 3: ", group3);
 }
 

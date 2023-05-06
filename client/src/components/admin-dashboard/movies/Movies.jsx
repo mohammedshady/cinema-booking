@@ -54,7 +54,7 @@ const Movies = () => {
 	const deleteMovies = (ids) => {
 		setLoading(true);
 		axios
-			.delete(`/api/admin/movies/?movieIds=${ids.join(",")}`)
+			.delete(`/api/admin/movies/?ids=${ids.join(",")}`)
 			.then(() => {
 				fetchMovies();
 				setLoading(false);

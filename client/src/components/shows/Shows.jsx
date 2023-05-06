@@ -50,7 +50,7 @@ const Shows = () => {
 
   useEffect(() => {
     axios
-      .get(`/api/shows/${id}`)
+      .get(`/api/user/shows/${id}`)
       .then((res) => {
         dispatch({ type: "FETCH_SUCCESS", payload: res.data.data });
       })

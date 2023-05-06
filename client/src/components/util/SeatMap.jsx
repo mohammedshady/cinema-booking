@@ -55,7 +55,7 @@ const SeatMap = (props) => {
     //   newArr[myIndex] = false;
     //   setCheckedSeats([...newArr]);
     // }
-    console.log(checkedSeats[myIndex]);
+
 
     if (checkedSeats[myIndex] == false || checkedSeats[myIndex] == undefined) {
       seatSet.add(e.target.dataset.value);

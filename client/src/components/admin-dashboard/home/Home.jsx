@@ -89,15 +89,8 @@ const AdminDashboard = () => {
 					<Grid item xs={12} sm={6} md={3} lg={3}>
 						<Card value={totalTicketSales} title="Ticket Sales" />
 					</Grid>
-				</Grid>
 
 				{/* Table */}
-				<Grid
-					container
-					sx={{ p: "24px" }}
-					rowSpacing={4.5}
-					columnSpacing={2.75}
-				>
 					<Grid item xs={12} sm={12} md={6} lg={6}>
 						<Table
 							data={messages}

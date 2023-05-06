@@ -28,7 +28,7 @@ const Ticket = ({ booking }) => {
       name: "",
       value: (
         <div>
-          <Date date={date} /> | <Time date={date} />
+          <Date date={date} /> | <Time time={date} />
         </div>
       ),
     },
@@ -38,7 +38,7 @@ const Ticket = ({ booking }) => {
     },
     {
       name: "Amount : ",
-      value: `${totalAmount} INR`,
+      value: `${totalAmount} EGP`,
     },
   ];
 

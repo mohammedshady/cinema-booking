@@ -36,13 +36,12 @@ const HomeMovies = () => {
   const { loading, error, movies } = state;
 
   const clickHandler = (e) => {
-    console.log(e.target.textContent);
     setMoviesType(e.target.textContent);
   };
 
   const fetchMovies = async () => {
     axios
-      .get("/api/movies")
+      .get("/api/user/movies")
       .then((res) => {
         dispatch({ type: "FETCH_SUCCESS", payload: res.data.data.movies });
       })
@@ -65,7 +64,6 @@ const HomeMovies = () => {
       Date.parse(movie.release_date) >= Date.now()
   );
 
-  console.log(recentComingSoonMovie);
   if (error) return <Loader msg="error" />;
   else if (loading) return <Loader msg="loading" />;
 
@@ -173,7 +171,7 @@ const HomeMovies = () => {
                 </div> */}
                 <div className="exclusive-coming-soon-movie">
                   <div className="coming-soon-movie-container">
-                    <img src={""} alt="" />
+                    {/* <img src={""} alt="" /> */}
                     <div className="coming-soon-movie-details"></div>
                   </div>
                 </div>

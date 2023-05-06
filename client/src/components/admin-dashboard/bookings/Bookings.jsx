@@ -58,7 +58,7 @@ const Bookings = () => {
 	const deleteBookings = (ids) => {
 		setLoading(true);
 		axios
-			.delete(`/api/admin/bookings?bookingIds=${ids.join(",")}`)
+			.delete(`/api/admin/bookings?ids=${ids.join(",")}`)
 			.then(() => {
 				fetchBookings();
 				setLoading(false);

@@ -53,7 +53,7 @@ const MovieDetails = () => {
 
   useEffect(() => {
     axios
-      .get(`/api/movies/${id}`)
+      .get(`/api/user/movies/${id}`)
       .then((res) => {
         dispatch({ type: "FETCH_SUCCESS", payload: res.data.data.movie });
         //add related movies fetch

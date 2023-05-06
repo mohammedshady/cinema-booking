@@ -35,11 +35,3 @@ const bookingSchema = new Schema(
 const Booking = mongoose.model("Booking", bookingSchema);
 
 module.exports = Booking;
-
-/**
- * user -> _id
- * booking id -> generate random
- * seats -> name, row, col, _id
- * show -> _id, screen, time, date, movie, price
- * total amount -> generate from number of tickets & price
- */

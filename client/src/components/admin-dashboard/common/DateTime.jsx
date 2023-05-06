@@ -6,28 +6,31 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { styles } from "./styles";
 
 export const Date = (props) => {
-	const { formData, formErrors, setFormData, setFormErrors } = props;
+	const { value, setFormData, setFormErrors, error, name, label } = props;
+
+	const handleChange = (value) => {
+		value !== null &&
+			setFormData((prev) => ({
+				...prev,
+				[name]: `${value.$y}-${value.$M + 1}-${value.$D}`,
+			}));
+		setFormErrors((prev) => ({ ...prev, [name]: "" }));
+	};
+
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<DatePicker
-				label="Release Date"
-				value={formData.release_date}
+				label={label}
+				value={value}
 				inputFormat="DD-MM-YYYY"
-				onChange={(value) => {
-					value !== null &&
-						setFormData({
-							...formData,
-							release_date: `${value.$y}-${value.$M + 1}-${value.$D}`,
-						});
-					setFormErrors({ ...formErrors, release_date: "" });
-				}}
+				onChange={handleChange}
 				renderInput={(params) => (
 					<TextField
 						required
 						sx={styles.global}
-						helperText={formErrors.release_date}
+						helperText={error}
 						{...params}
-						error={formErrors.release_date}
+						error={error}
 					/>
 				)}
 			/>
@@ -36,28 +39,31 @@ export const Date = (props) => {
 };
 
 export const DateTime = (props) => {
-	const { formData, formErrors, setFormData, setFormErrors } = props;
+	const { value, setFormData, setFormErrors, error, name, label } = props;
+
+	const handleChange = (value) => {
+		value !== null &&
+			setFormData((prev) => ({
+				...prev,
+				[name]: value.$d,
+			}));
+		setFormErrors((prev) => ({ ...prev, [name]: "" }));
+	};
+
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<DateTimePicker
-				label="Show Date & Time"
-				value={formData.dateTime}
+				label={label}
+				value={value}
 				inputFormat="DD-MM-YYYY hh:mm A"
-				onChange={(value) => {
-					value !== null &&
-						setFormData({
-							...formData,
-							dateTime: value.$d,
-						});
-					setFormErrors({ ...formErrors, dateTime: "" });
-				}}
+				onChange={handleChange}
 				renderInput={(params) => (
 					<TextField
 						required
 						sx={styles.global}
 						{...params}
-						error={formErrors.dateTime}
-						helperText={formErrors.dateTime}
+						error={error}
+						helperText={error}
 					/>
 				)}
 			/>

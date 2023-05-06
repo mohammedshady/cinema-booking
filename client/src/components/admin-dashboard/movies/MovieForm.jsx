@@ -7,11 +7,9 @@ import Loader from "../../util/Loader";
 import Form from "../common/Form";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import Chip from "@mui/material/Chip";
-import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
-import Input from "@mui/material/Input";
+import ComboBox from "../common/ComboBox";
+import MultiInput from "../common/MultiInput";
+import FileUpload from "../common/FileUpload";
 import { Date } from "../common/DateTime";
 import { styles } from "../common/styles";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -38,8 +36,10 @@ const MovieForm = (props) => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 
+	const { update } = props;
+
 	const populateFormFields = () => {
-		props.update &&
+		update &&
 			axios
 				.get(`/api/admin/movies/populate/${id}`)
 				.then((res) => {
@@ -91,7 +91,7 @@ const MovieForm = (props) => {
 		}
 
 		setLoading(true);
-		props.update
+		update
 			? axios
 					.patch(`/api/admin/movies/${id}`, uploadData)
 					.then(() => {
@@ -120,7 +120,7 @@ const MovieForm = (props) => {
 
 	return (
 		<Form
-			title={props.update ? "Update Movie" : "Add New Movie"}
+			title={update ? "Update Movie" : "Add New Movie"}
 			onSubmit={handleSubmit}
 		>
 			{/* Movie Title */}
@@ -149,134 +149,52 @@ const MovieForm = (props) => {
 			/>
 
 			{/* Cast */}
-			<Autocomplete
+			<MultiInput
 				name="actors"
-				multiple
-				options={[]}
-				freeSolo
+				label="Cast"
+				placeholder="Enter an actor"
 				value={formData.actors}
-				onChange={(e, value) => {
-					setFormData({ ...formData, actors: value });
-				}}
-				renderTags={(value, getTagProps) =>
-					value.map((option, index) => (
-						<Chip label={option} {...getTagProps({ index })} />
-					))
-				}
-				renderInput={(params) => (
-					<TextField
-						{...params}
-						label="Cast"
-						placeholder="Enter an actor"
-						onChange={() => setFormErrors({ ...formErrors, actors: "" })}
-						error={formErrors.actors}
-						helperText={formErrors.actors}
-						sx={styles.global}
-						required
-						onBlur={(e) => {
-							e.target.value &&
-								!formData.actors.includes(e.target.value) &&
-								setFormData({
-									...formData,
-									actors: [...formData.actors, e.target.value],
-								});
-						}}
-					/>
-				)}
-				clearOnBlur
+				setFormData={setFormData}
+				error={formErrors.actors}
+				setFormErrors={setFormErrors}
 			/>
 
 			{/* Rating */}
-			<TextField
+			<ComboBox
 				name="rating"
-				select
 				label="Rating"
 				value={formData.rating}
-				required
-				sx={styles.global}
 				onChange={handleChange}
 				error={formErrors.rating}
-				helperText={formErrors.rating}
-			>
-				{[1, 2, 3, 4, 5].map((option) => (
-					<MenuItem key={option} value={option}>
-						{option}
-					</MenuItem>
-				))}
-			</TextField>
+				options={[1, 2, 3, 4, 5]}
+			/>
 
 			<Stack direction="row" spacing={2}>
 				{/* Poster */}
-				<TextField
+				<FileUpload
 					label="Poster"
-					sx={styles.file}
-					required
-					placeholder={!formData.poster && "No File Selected"}
-					value={formData.poster ? "File Selected" : ""}
+					value={formData.poster}
+					name="poster"
 					error={formErrors.poster}
-					helperText={formErrors.poster}
-					focused
-					InputProps={{
-						readOnly: true,
-						startAdornment: (
-							<InputAdornment>
-								<Button
-									sx={styles.fileButton}
-									variant="contained"
-									component="label"
-								>
-									Select file
-									<Input
-										name="poster"
-										onChange={handleChange}
-										inputProps={{ accept: "image/*" }}
-										sx={{ display: "none" }}
-										type="file"
-									/>
-								</Button>
-							</InputAdornment>
-						),
-					}}
+					onChange={handleChange}
 				/>
 
 				{/* Banner */}
-				<TextField
+				<FileUpload
 					label="Banner"
-					sx={styles.file}
-					required
+					value={formData.banner}
+					name="banner"
 					error={formErrors.banner}
-					helperText={formErrors.banner}
-					placeholder={!formData.banner && "No File Selected"}
-					value={formData.banner ? "File Selected" : ""}
-					focused
-					InputProps={{
-						readOnly: true,
-						startAdornment: (
-							<InputAdornment>
-								<Button
-									sx={styles.fileButton}
-									variant="contained"
-									component="label"
-								>
-									Select file
-									<Input
-										name="banner"
-										onChange={handleChange}
-										inputProps={{ accept: "image/*" }}
-										sx={{ display: "none" }}
-										type="file"
-									/>
-								</Button>
-							</InputAdornment>
-						),
-					}}
+					onChange={handleChange}
 				/>
 			</Stack>
 			<Stack direction="row" spacing={2}>
-				{/* Date Picker */}
+				{/* Release Date */}
 				<Date
-					formData={formData}
-					formErrors={formErrors}
+					name="release_date"
+					label="Release Date"
+					value={formData.release_date}
+					error={formData.release_date}
 					setFormData={setFormData}
 					setFormErrors={setFormErrors}
 				/>
@@ -300,38 +218,32 @@ const MovieForm = (props) => {
 				/>
 			</Stack>
 
-			{/* Languages */}
 			<Stack direction="row" spacing={2} sx={{ minHeight: 79 }}>
+				{/* Languages */}
 				<MultipleSelect
 					value={formData.language}
 					label="Languages"
-					setValue={(value) => {
-						setFormData({ ...formData, language: value });
-						setFormErrors({ ...formErrors, language: "" });
-					}}
+					setFormData={setFormData}
+					setFormErrors={setFormErrors}
+					name="language"
 					options={languages}
-					sx={styles.global}
 					error={formErrors.language}
-					helperText={formErrors.language}
 				/>
 
 				{/* Genres */}
 				<MultipleSelect
 					value={formData.genre}
 					label="Genres"
-					setValue={(value) => {
-						setFormData({ ...formData, genre: value });
-						setFormErrors({ ...formErrors, genre: "" });
-					}}
+					setFormData={setFormData}
+					setFormErrors={setFormErrors}
+					name="genre"
 					options={movieGenres}
-					sx={styles.global}
 					error={formErrors.genre}
-					helperText={formErrors.genre}
 				/>
 			</Stack>
 
 			{/* Buttons */}
-			<Buttons update={props.update} handleCancel={handleCancel} />
+			<Buttons update={update} handleCancel={handleCancel} />
 		</Form>
 	);
 };

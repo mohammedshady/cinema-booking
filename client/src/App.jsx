@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
 // components
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import HomeMovies from "./components/Home/HomeMovies";
 import Login from "./components/auth/Login.jsx";
 import Signup from "./components/auth/Signup";
@@ -27,53 +28,64 @@ import PrivateRoute from "./components/PrivateRoute";
 import PersistLogin from "./components/PersistLogin";
 import ResetPass from "./components/auth/ResetPass";
 
+const darkTheme = createTheme({
+	palette: {
+		mode: "dark",
+	},
+});
+
 const App = () => {
-  return (
-    <Routes>
-      <Route element={<PersistLogin />}>
-        {/* public routes */}
-        <Route path="/" element={<HomeMovies />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/movies" element={<Movies />} />
-        <Route path="/movies/details/:id" element={<HomeMovieDetails />} />
-        <Route path="/shows/:id" element={<Shows />} />
-        <Route path="/user/resetPassword" element={<ResetPass />} />
+	return (
+		<ThemeProvider theme={darkTheme}>
+			<Routes>
+				<Route element={<PersistLogin />}>
+					{/* public routes */}
+					<Route path="/" element={<HomeMovies />} />
+					<Route path="/login" element={<Login />} />
+					<Route path="/signup" element={<Signup />} />
+					<Route path="/movies" element={<Movies />} />
+					<Route path="/movies/details/:id" element={<HomeMovieDetails />} />
+					<Route path="/shows/:id" element={<Shows />} />
+					<Route path="/user/resetPassword" element={<ResetPass />} />
 
-        {/* protected routes for user */}
-        <Route element={<PrivateRoute allowedRoles={[0]} />}>
-          <Route path="/shows/seat-map/:id" element={<SeatSelector />} />
-          <Route path="/bookings" element={<Booking />} />
-          <Route path="/feedback" element={<Feedback />} />
-        </Route>
+					{/* protected routes for user */}
+					<Route element={<PrivateRoute allowedRoles={[0]} />}>
+						<Route path="/shows/seat-map/:id" element={<SeatSelector />} />
+						<Route path="/bookings" element={<Booking />} />
+						<Route path="/feedback" element={<Feedback />} />
+					</Route>
 
-        {/* protected routes for admin */}
-        <Route element={<PrivateRoute allowedRoles={[1]} />}>
-          <Route path="/admin" element={<AdminPanel />}>
-            <Route path="" element={<AdminHome />} />
-            <Route path="movies" element={<AdminMovies />} />
-            <Route path="movies/add" element={<MovieForm />} />
-            <Route path="movies/update/:id" element={<MovieForm update />} />
-            <Route path="shows" element={<AdminShows />} />
-            <Route path="shows/add" element={<ShowForm />} />
-            <Route path="shows/update/:id" element={<ShowForm update />} />
-            <Route path="feedbacks" element={<AdminFeedback />} />
-            <Route path="screens" element={<Screen />} />
-            <Route path="screens/add" element={<ScreenForm />} />
-            <Route path="screens/update/:id" element={<ScreenForm update />} />
-            <Route path="bookings" element={<ViewBookings />} />
-            <Route path="users" element={<ViewUsers />} />
-          </Route>
-        </Route>
+					{/* protected routes for admin */}
+					<Route element={<PrivateRoute allowedRoles={[1]} />}>
+						<Route path="/admin" element={<AdminPanel />}>
+							<Route path="" element={<AdminHome />} />
+							<Route path="movies" element={<AdminMovies />} />
+							<Route path="movies/add" element={<MovieForm />} />
+							<Route path="movies/update/:id" element={<MovieForm update />} />
+							<Route path="shows" element={<AdminShows />} />
+							<Route path="shows/add" element={<ShowForm />} />
+							<Route path="shows/update/:id" element={<ShowForm update />} />
+							<Route path="feedbacks" element={<AdminFeedback />} />
+							<Route path="screens" element={<Screen />} />
+							<Route path="screens/add" element={<ScreenForm />} />
+							<Route
+								path="screens/update/:id"
+								element={<ScreenForm update />}
+							/>
+							<Route path="bookings" element={<ViewBookings />} />
+							<Route path="users" element={<ViewUsers />} />
+						</Route>
+					</Route>
 
-        {/* unauthorized */}
-        <Route path="/unauthorized" element={<UnAuthorized />} />
+					{/* unauthorized */}
+					<Route path="/unauthorized" element={<UnAuthorized />} />
 
-        {/* 404 page */}
-        <Route path="*" element={<Error404 />} />
-      </Route>
-    </Routes>
-  );
+					{/* 404 page */}
+					<Route path="*" element={<Error404 />} />
+				</Route>
+			</Routes>
+		</ThemeProvider>
+	);
 };
 
 export default App;

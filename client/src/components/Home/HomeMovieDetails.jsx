@@ -54,7 +54,7 @@ const HomeMovieDetails = () => {
 
   useEffect(() => {
     axios
-      .get(`/api/movies/${id}`)
+      .get(`/api/user/movies/${id}`)
       .then((res) => {
         setData((prev) => ({ ...prev, ...res.data.data }));
         setLoading(false);
@@ -67,7 +67,7 @@ const HomeMovieDetails = () => {
       });
 
     axios
-      .get("/api/movies")
+      .get("/api/user/movies")
       .then((res) => {
         setState((prev) => ({ ...prev, ...res.data.data }));
       })
@@ -86,7 +86,6 @@ const HomeMovieDetails = () => {
     }
     return false;
   });
-  console.log(relatedMovies);
 
   const daysArray = getDates(shows);
 
@@ -161,7 +160,6 @@ const HomeMovieDetails = () => {
             <div className="show-date-times-container">
               {daysArray.length > 0 ? (
                 daysArray.map((date) => {
-                  console.log(daysArray);
                   return (
                     <div className="show-date-container">
                       <div className="show-date-day">

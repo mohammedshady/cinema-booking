@@ -7,16 +7,19 @@ exports.authToken = asyncHandler(async (req, res, next) => {
 	const token = req.cookies.token;
 
 	// if token unavailable send login again message
-	if (!token) return next(new CustomError("Login again", 403));
+	if (!token) return next(new CustomError("Please log in again.", 401));
 
-	const decode = jwt.verify(token, process.env.JWT_SECRET);
+	const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
 	// token invalid or expired
-	if (!decode) return next(new CustomError("Login again", 403));
+	if (!decoded)
+		return next(
+			new CustomError("Your session has expired. Please log in again.", 401)
+		);
 
-	let user = await User.findOne({ _id: decode.id }).select("+role");
+	let user = await User.findOne({ _id: decoded.id }).select("+role");
 
-	if (!user) return next(new CustomError("Login again", 403));
+	if (!user) return next(new CustomError("Your session has expired. Please log in again.", 401));
 
 	req.user = user;
 

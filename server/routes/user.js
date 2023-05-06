@@ -1,37 +1,42 @@
 const router = require("express").Router();
-
-// controllers
-const userController = require("../controllers/user");
-const { bookShow } = require("../controllers/show");
-
-// auth middleware
 const { authToken } = require("../middlewares/authenticateToken");
+const {
+	loadUser,
+	signUp,
+	logIn,
+	logOut,
+	resetPassword,
+} = require("../controllers/user");
+const { userGetAllMovies, userGetMovieById } = require("../controllers/movie");
+const { getShowByMovieId, getShowDetails } = require("../controllers/show");
+const {
+	userGetBookings,
+	addBooking,
+	deleteBooking,
+} = require("../controllers/booking");
+const { addFeedback } = require("../controllers/feedback");
 
-// sign up
-router.post("/signup", userController.signUp);
+// User routes
+router.get("/load", loadUser);
+router.post("/signup", signUp);
+router.post("/login", logIn);
+router.post("/logout", logOut);
+router.post("/resetPassword", resetPassword);
 
-// login
-router.post("/login", userController.logIn);
+// Movies routes
+router.get("/movies/", userGetAllMovies);
+router.get("/movies/:id", userGetMovieById);
 
-// logout
-router.get("/logout", userController.logout);
+// Shows routes
+router.get("/shows/:id", authToken, getShowByMovieId);
+router.get("/shows/seats/:id", authToken, getShowDetails);
 
-// load user
-router.get("/load", userController.loadUser);
+// Booking routes
+router.get("/bookings", authToken, userGetBookings);
+router.post("/addBooking", authToken, addBooking);
+router.delete("/bookings/:id", authToken, deleteBooking);
 
-// book show
-router.post("/bookShow", authToken, bookShow);
-
-// give feedback
-router.post("/feedback", authToken, userController.giveFeedback);
-
-// view my bookings
-router.get("/bookings", authToken, userController.getMyBookings);
-
-//delete booking
-router.delete("/bookings/:bookingId", authToken, userController.deleteBooking);
-
-// reset password
-router.post("/resetPassword", userController.resetPassword);
+// Feedback routes
+router.post("/feedback", authToken, addFeedback);
 
 module.exports = router;

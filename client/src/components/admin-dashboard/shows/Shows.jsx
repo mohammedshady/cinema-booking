@@ -35,7 +35,7 @@ const Shows = () => {
 
 	const fetchShows = () => {
 		axios
-			.get(`/api/admin/shows/scheduled`)
+			.get(`/api/admin/shows`)
 			.then((res) => {
 				setShows(res.data.data.shows);
 				setLoading(false);
@@ -54,7 +54,7 @@ const Shows = () => {
 	const deleteShows = (ids) => {
 		setLoading(true);
 		axios
-			.delete(`/api/admin/show/?showIds=${ids.join(",")}`)
+			.delete(`/api/admin/show/?ids=${ids.join(",")}`)
 			.then(() => {
 				fetchShows();
 				setLoading(false);

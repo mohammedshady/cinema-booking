@@ -6,7 +6,7 @@ import { validateShowInput } from "../common/validate";
 import Loader from "../../util/Loader";
 import Form from "../common/Form";
 import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
+import ComboBox from "../common/ComboBox";
 import { DateTime } from "../common/DateTime";
 import Buttons from "../common/Buttons";
 import { styles } from "../common/styles";
@@ -27,6 +27,8 @@ const ShowForm = (props) => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 
+	const { update } = props;
+
 	const populateFormCombobox = () => {
 		axios
 			.get(`/api/admin/shows/populate`)
@@ -45,7 +47,7 @@ const ShowForm = (props) => {
 	};
 
 	const populateFormFields = () => {
-		props.update &&
+		update &&
 			axios
 				.get(`/api/admin/shows/populate/${id}`)
 				.then((res) => {
@@ -90,7 +92,7 @@ const ShowForm = (props) => {
 		if (!validateShowInput(formData, setFormErrors)) return;
 
 		setLoading(true);
-		props.update
+		update
 			? axios
 					.patch(`/api/admin/show/${id}`, formData)
 					.then(() => {
@@ -119,53 +121,39 @@ const ShowForm = (props) => {
 
 	return (
 		<Form
-			title={props.update ? "Update Show" : "Add New Show"}
+			title={update ? "Update Show" : "Add New Show"}
 			onSubmit={handleSubmit}
 		>
 			{/* Movie */}
-			<TextField
-				select
-				label="Movie"
+			<ComboBox
 				name="movie"
+				label="Movie"
 				value={formData.movie}
-				required
-				sx={styles.global}
 				onChange={handleChange}
 				error={formErrors.movie}
-				helperText={formErrors.movie}
-			>
-				{formData.movies.map((option) => (
-					<MenuItem key={option._id} value={option._id}>
-						{option.title}
-					</MenuItem>
-				))}
-			</TextField>
+				options={formData.movies}
+				item="title"
+			/>
 
 			{/* Screen Name */}
-			<TextField
-				select
-				label="Screen"
+			<ComboBox
 				name="screen"
+				label="Screen"
 				value={formData.screen}
-				required
-				sx={styles.global}
 				onChange={handleChange}
 				error={formErrors.screen}
-				helperText={formErrors.screen}
-			>
-				{formData.screens.map((option) => (
-					<MenuItem key={option._id} value={option._id}>
-						{option.screenName}
-					</MenuItem>
-				))}
-			</TextField>
+				options={formData.screens}
+				item="screenName"
+			/>
 
-			{/* Date Time Picker */}
+			{/* Show Date & Time */}
 			<DateTime
-				formData={formData}
-				formErrors={formErrors}
+				value={formData.dateTime}
+				error={formErrors.dateTime}
+				name="dateTime"
 				setFormData={setFormData}
 				setFormErrors={setFormErrors}
+				label="Show Date & Time"
 			/>
 
 			{/* Price */}
@@ -181,7 +169,7 @@ const ShowForm = (props) => {
 			/>
 
 			{/* Buttons */}
-			<Buttons update={props.update} handleCancel={handleCancel} />
+			<Buttons update={update} handleCancel={handleCancel} />
 		</Form>
 	);
 };

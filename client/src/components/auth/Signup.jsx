@@ -43,7 +43,7 @@ const Signup = () => {
     if (!gender) errors.gender = "gender is required";
     if (!mobile_no) errors.mobile_no = "mobile no is required";
     else if (mobile_no.length < 11)
-      errors.password = "number must be 12 characters long";
+      errors.mobile_no = "number must be 12 characters long";
 
     setFormErrors(errors);
     if (Object.keys(errors).length > 0) return true;

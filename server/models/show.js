@@ -17,7 +17,7 @@ const showSchema = new Schema(
 		movie: {
 			type: SchemaTypes.ObjectId,
 			ref: "Movie",
-			required: [true, "movie is required"],
+			required: [true, "Movie is required"],
 		},
 		price: {
 			type: Number,
@@ -25,15 +25,15 @@ const showSchema = new Schema(
 		},
 		date: {
 			type: Date,
-			required: [true, "show date is required"],
+			required: [true, "Show date is required"],
 		},
 		startTime: {
 			type: Date,
-			required: [true, "show start time is required"],
+			required: [true, "Show start time is required"],
 		},
 		endTime: {
 			type: Date,
-			required: [true, "show end time is required"],
+			required: [true, "Show end time is required"],
 		},
 		status: {
 			type: String,

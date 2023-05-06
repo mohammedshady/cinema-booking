@@ -43,14 +43,12 @@ const ResetPass = () => {
 
     if (!validateInput()) {
       try {
-        console.log(birth_date);
         setLoading(true);
         const res = await axios.post("api/user/resetPassword", {
           email,
           date_of_birth: birth_date,
           newPassword: password,
         });
-        console.log(res.data.message);
         toast.success(res.data.message);
         navigate("/");
       } catch (error) {

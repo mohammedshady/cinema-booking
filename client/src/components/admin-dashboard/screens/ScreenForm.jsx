@@ -22,8 +22,10 @@ const ScreenForm = (props) => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 
+	const { update } = props;
+
 	const populateFormFields = () => {
-		props.update &&
+		update &&
 			axios
 				.get(`/api/admin/screens/populate/${id}`)
 				.then((res) => {
@@ -56,7 +58,7 @@ const ScreenForm = (props) => {
 		if (!validateScreenInput(formData, setFormErrors)) return;
 
 		setLoading(true);
-		props.update
+		update
 			? axios
 					.patch(`/api/admin/screens/${id}`, formData)
 					.then(() => {
@@ -108,10 +110,6 @@ const ScreenForm = (props) => {
 				onChange={handleChange}
 				error={formErrors.totalColumns}
 				helperText={formErrors.totalColumns}
-				inputProps={{
-					min: "7",
-					max: "40",
-				}}
 			/>
 
 			{/* Total Rows */}
@@ -125,14 +123,10 @@ const ScreenForm = (props) => {
 				onChange={handleChange}
 				error={formErrors.totalRows}
 				helperText={formErrors.totalRows}
-				inputProps={{
-					min: "7",
-					max: "40",
-				}}
 			/>
 
 			{/* Buttons */}
-			<Buttons update={props.update} handleCancel={handleCancel} />
+			<Buttons update={update} handleCancel={handleCancel} />
 		</Form>
 	);
 };

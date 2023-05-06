@@ -10,7 +10,7 @@ const movieSchema = new Schema(
 		},
 		language: {
 			type: [String],
-			required: [true, "Provide language of movie"],
+			required: [true, "Provide movies language(s)"],
 		},
 		description: {
 			type: String,
@@ -18,7 +18,7 @@ const movieSchema = new Schema(
 		},
 		release_date: {
 			type: Date,
-			required: [true, "Provide movie releaseDate"],
+			required: [true, "Provide movie release date"],
 		},
 		images: {
 			poster: {

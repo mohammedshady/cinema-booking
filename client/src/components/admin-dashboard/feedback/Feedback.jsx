@@ -46,7 +46,7 @@ const Feedbacks = () => {
 	const deleteFeedbacks = (ids) => {
 		setLoading(true);
 		axios
-			.delete(`/api/admin/feedback?feedBackIds=${ids.join(",")}`)
+			.delete(`/api/admin/feedback?ids=${ids.join(",")}`)
 			.then(() => {
 				fetchFeedbacks();
 				setLoading(false);

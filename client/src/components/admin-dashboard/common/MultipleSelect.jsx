@@ -6,19 +6,24 @@ import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
+import { styles } from "./styles";
 
 const MultipleSelect = (props) => {
-	const { value, setValue, options, sx, error, helperText, label } = props;
+	const { value, setFormData, setFormErrors, options, error, label, name } =
+		props;
 
 	const handleChange = (event) => {
 		const {
 			target: { value },
 		} = event;
-		setValue(typeof value === "string" ? value.split(",") : value);
+		typeof value === "string"
+			? setFormData((prev) => ({ ...prev, [name]: value.split(",") }))
+			: setFormData((prev) => ({ ...prev, [name]: value }));
+		setFormErrors((prev) => ({ ...prev, [name]: "" }));
 	};
 
 	return (
-		<FormControl sx={sx} error={error}>
+		<FormControl sx={styles.global} error={error}>
 			<InputLabel required id={label}>
 				{label}
 			</InputLabel>
@@ -53,7 +58,7 @@ const MultipleSelect = (props) => {
 				))}
 			</Select>
 
-			<FormHelperText>{helperText}</FormHelperText>
+			<FormHelperText>{error}</FormHelperText>
 		</FormControl>
 	);
 };

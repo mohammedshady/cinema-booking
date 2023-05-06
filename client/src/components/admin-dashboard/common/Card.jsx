@@ -5,6 +5,7 @@ import Divider from "@mui/material/Divider";
 
 const Card = (props) => {
 	const { value, title } = props;
+
 	return (
 		<MuiCard
 			sx={{

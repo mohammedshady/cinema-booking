@@ -6,10 +6,10 @@ export const validateScreenInput = (values, setFormErrors) => {
 	if (!screenName) errors.screenName = "Screen name is required";
 	if (!totalColumns) errors.totalColumns = "Column number is required";
 	if (!totalRows) errors.totalRows = "Row number is required";
-	if (totalColumns < 7) errors.totalColumns = "Columns should be more than 7";
-	if (totalRows < 7) errors.totalRows = "Rows should be more than 7";
-	if (totalColumns > 40) errors.totalColumns = "Columns should be less than 40";
-	if (totalRows > 40) errors.totalRows = "Rows should be less than 40";
+	if (totalColumns < 8) errors.totalColumns = "Columns should be more than 8";
+	if (totalRows < 8) errors.totalRows = "Rows should be more than 8";
+	if (totalColumns > 20) errors.totalColumns = "Columns should be less than 20";
+	if (totalRows > 20) errors.totalRows = "Rows should be less than 20";
 
 	setFormErrors(errors);
 	if (Object.keys(errors).length > 0) return false;
@@ -49,7 +49,6 @@ export const validateMovieInput = (values, setFormErrors) => {
 	if (!description) errors.description = "Description is required";
 	if (!poster) errors.poster = "Poster is required";
 	if (!banner) errors.banner = "Banner is required";
-	if (!release_date) errors.release_date = "Release date is required";
 	if (!duration) errors.duration = "Movie duration is required";
 	if (!rating) errors.rating = "Movie rating is required";
 	if (actors.length === 0) errors.actors = "Cast is required";

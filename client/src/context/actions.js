@@ -48,7 +48,7 @@ export async function signupUser(dispatch, loginPayload) {
 
 export async function logout(dispatch) {
 	try {
-		await axios.get("/api/user/logout");
+		await axios.post("/api/user/logout");
 		dispatch({ type: "LOGOUT" });
 	} catch (error) {
 		console.log(error);

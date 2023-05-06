@@ -23,9 +23,8 @@ const Movies = () => {
 
   const fetchMovies = async () => {
     axios
-      .get("/api/movies")
+      .get("/api/user/movies")
       .then((res) => {
-        console.log(res.data.data.movies);
         setMoviesList((prev) => ({
           ...prev,
           movies: res.data.data.movies,

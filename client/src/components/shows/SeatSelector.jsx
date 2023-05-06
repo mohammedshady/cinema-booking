@@ -81,7 +81,7 @@ const SeatSelector = () => {
 
   const fetchSeats = () => {
     axios
-      .get(`/api/shows/seats/${id}`)
+      .get(`/api/user/shows/seats/${id}`)
       .then((res) => {
         dispatch({ type: "FETCH_SUCCESS", payload: res.data.data });
       })
@@ -97,7 +97,6 @@ const SeatSelector = () => {
   }, [multipleSeatConflict]);
 
   const [seats, setSeats] = useState([]);
-  console.log(seats);
   const handleSelectedSeats = (seatSet) => {
     setSeats([...seatSet]);
   };
@@ -125,9 +124,8 @@ const SeatSelector = () => {
       seats,
     };
     axios
-      .post(`/api/user/bookShow`, formData)
+      .post(`/api/user/addBooking`, formData)
       .then((response) => {
-        console.log("booked the " + response);
         navigate("/bookings");
       })
       .catch((error) => {
@@ -138,7 +136,6 @@ const SeatSelector = () => {
         }
       });
   };
-  console.log(state);
   // if (error) return <Loader msg="error" />;
   // else if (loading) return <Loader msg="loading" />;
 

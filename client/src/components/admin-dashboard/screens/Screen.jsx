@@ -42,7 +42,7 @@ const Screens = () => {
 	const deleteScreen = (ids) => {
 		setLoading(true);
 		axios
-			.delete(`/api/admin/screens?screenIds=${ids.join(",")}`)
+			.delete(`/api/admin/screens?ids=${ids.join(",")}`)
 			.then(() => {
 				fetchScreens();
 				setLoading(false);

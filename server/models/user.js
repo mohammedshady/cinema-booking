@@ -40,16 +40,6 @@ const userSchema = new Schema(
 			// 0 => normal user
 			// 1 => application admin
 		},
-		resetPasswordToken: {
-			type: String,
-			required: false,
-			select: false,
-		},
-		resetPasswordExpires: {
-			type: Date,
-			required: false,
-			select: false,
-		},
 	},
 	{ timestamps: true, versionKey: false }
 );
@@ -91,7 +81,7 @@ User.findOne({ email: "admin@gmail.com" }, (err, existingUser) => {
 	const defaultUser = new User({
 		email: "admin@gmail.com",
 		password: "admin",
-		role: 1, // 1 => application admin (cinema)
+		role: 1, // 1 => application admin
 	});
 
 	// Save default user to database

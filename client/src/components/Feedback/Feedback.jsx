@@ -26,7 +26,6 @@ const Feedback = () => {
   };
 
   const handleSubmit = async (e) => {
-    console.log(message);
     e.preventDefault();
 
     if (validateInput(message)) return;
