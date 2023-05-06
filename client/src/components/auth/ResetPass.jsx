@@ -1,93 +1,128 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 
 // components
+import BackButton from "../util/BackButton";
 import Loader from "../util/Loader";
 import { toast } from "react-toastify";
+import "./form.css";
+import { useNavigate } from "react-router-dom";
 
 const ResetPass = () => {
+  const [email, setEmail] = useState("");
+  const [birth_date, setBirth_date] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
-  const { userId, token } = useParams();
+  const navigate = useNavigate();
+  const validateInput = () => {
+    const errors = {};
+    const emailRegex =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+    if (!email) errors.email = "Email is required";
+    else if (!emailRegex.test(email))
+      errors.email = "Please enter a valid email";
+    if (!password) errors.password = "Password is required";
+    else if (password.length < 6)
+      errors.password = "Password must be 6 characters long";
+    if (!password) errors.password = "Password is required";
+
+    if (!birth_date) {
+      errors.birth_date = "birthdate is required";
+    }
+
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) return true;
+    return false;
+  };
   // login handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      toast.error("Password doesn't match");
-      setPassword("");
-      setConfirmPassword("");
-      setLoading(false);
+    if (!validateInput()) {
+      try {
+        console.log(birth_date);
+        setLoading(true);
+        const res = await axios.post("api/user/resetPassword", {
+          email,
+          date_of_birth: birth_date,
+          newPassword: password,
+        });
+        console.log(res.data.message);
+        toast.success(res.data.message);
+        navigate("/");
+      } catch (error) {
+        toast.error(error.response.data.message);
+      } finally {
+        setLoading(false);
+      }
+    } else {
       return;
-    }
-
-    try {
-      setLoading(true);
-      const res = await axios.post(
-        `api/user/resetPassword/${userId}/${token}`,
-        { password }
-      );
-      toast.success(res.data.message);
-      setLoading(false);
-    } catch (error) {
-      toast.error(error.response.data.message);
-      setLoading(false);
     }
   };
 
   if (loading) return <Loader msg="loading" />;
 
   return (
-    <div className={styles.parent}>
-      <div className={styles.formContainer}>
-        <form onSubmit={handleSubmit} autoComplete="off">
-          <div className={styles.formGroup}>
-            <input
-              type="password"
-              name="password"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              className={styles.inputItem}
-              placeholder="Password"
-              required
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <input
-              type="password"
-              name="ConfirmPassword"
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-              }}
-              className={styles.inputItem}
-              placeholder="Confirm Password"
-              required
-            />
-          </div>
+    <div>
+      <div className="form-container">
+        <h1>ForgotPass</h1>
+        <form
+          action="submit"
+          className="form-actual-container reset-container"
+          onSubmit={handleSubmit}
+          autoComplete="off"
+        >
+          <div className="form-inputs-container">
+            <div className="full-width">
+              <p className="form-container-msg">
+                Enter your Email so we can reset Your Password
+              </p>
+              <label htmlFor="">email</label>
+              <input
+                type="text"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="form-container-input"
+              />
+              <p className={`form-container-p`}>{formErrors.email}</p>
+            </div>
 
-          <button type="submit" className={styles.login_btn}>
-            Submit
-          </button>
+            <div className="full-width">
+              <label htmlFor="">birth Date</label>
+              <input
+                type="date"
+                name="date"
+                value={birth_date}
+                onChange={(e) => setBirth_date(e.target.value)}
+                className="form-container-input"
+              />
+              <p className={`form-container-p`}>{formErrors.birth_date}</p>
+            </div>
+            <div className="full-width">
+              <label htmlFor="">new Password</label>
+              <input
+                type="password"
+                name="password"
+                value={password}
+                autocomplete="on"
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-container-input"
+              />
+              <p className={`form-container-p`}>{formErrors.password}</p>
+            </div>
+            <button type="submit" className="form-container-btn">
+              Submit
+            </button>
+          </div>
+          <BackButton />
         </form>
       </div>
     </div>
   );
-};
-
-const styles = {
-  parent: "flex justify-center items-center h-[100vh] relative",
-  formContainer: "block p-6 rounded-lg shadow bg-slate-800 w-80",
-  formGroup: "form-group mb-6",
-  inputItem:
-    "text-sm rounded-lg  block w-full p-2.5 bg-gray-700 placeholder-gray-200 text-white focus:outline-blue-600",
-  login_btn:
-    "w-full px-6 py-2.5 bg-blue-600 text-white font-medium text-sm rounded",
-  signup_link: "text-gray-200 mt-6 text-center",
 };
 
 export default ResetPass;

@@ -8,6 +8,7 @@ import { useState } from "react";
 
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@emotion/react";
+import { TextField } from "@mui/material";
 
 // const theme = createTheme({
 //   palette: {
@@ -60,30 +61,48 @@ export default function ControlledOpenSelect({ options, sortSet, sortOption }) {
   };
 
   return (
-    <div>
-      {/* <Button sx={{ display: "block", mt: 2 }} onClick={handleOpen}></Button> */}
-      <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-        <InputLabel id="demo-controlled-open-select-label">
-          {options.title}
-        </InputLabel>
-        <Select
-          sx={{
-            backgroundColor: "white",
-          }}
-          labelId="demo-controlled-open-select-label"
-          id="demo-controlled-open-select"
-          open={open}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          value={sortOption}
-          label={options.title}
-          onChange={handleChange}
-        >
-          {options.arr.map((option) => (
-            <MenuItem value={option.value}>{option.name}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </div>
+    <TextField
+      select
+      sx={{
+        width: { xs: 1, sm: 1, lg: 0.33, md: 0.33 },
+        color: "white !important",
+        "& label": {
+          color: "white",
+        },
+
+        "& .MuiInput-underline:after": {
+          borderBottomColor: "white",
+        },
+        "& .MuiOutlinedInput-root": {
+          "& .MuiOutlinedInput-input": {
+            color: "white",
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: "#d0d0d0",
+          },
+          "& fieldset": {
+            borderColor: "#d0d0d0",
+          },
+        },
+        "& label.Mui-focused": {
+          color: "white",
+        },
+      }}
+      size="small"
+      labelId="demo-controlled-open-select-label"
+      id="demo-controlled-open-select"
+      open={open}
+      onClose={handleClose}
+      onOpen={handleOpen}
+      value={sortOption}
+      label={options.title}
+      onChange={handleChange}
+    >
+      {options.arr.map((option) => (
+        <MenuItem value={option.value} key={option.name}>
+          {option.name}
+        </MenuItem>
+      ))}
+    </TextField>
   );
 }

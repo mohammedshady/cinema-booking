@@ -49,7 +49,9 @@ const User = ({ icon }) => {
               <Link to={"/bookings"} className="user-nav-menu-item-container">
                 <span className="user-nav-menu-item">
                   <span>
-                    <StyleOutlinedIcon />
+                    <span className="icon-in-nav">
+                      <StyleOutlinedIcon />
+                    </span>
                     My Bookings
                   </span>
                 </span>
@@ -57,7 +59,9 @@ const User = ({ icon }) => {
               <Link to={"/feedback"} className="user-nav-menu-item-container">
                 <span className="user-nav-menu-item">
                   <span>
-                    <TextsmsOutlinedIcon />
+                    <span className="icon-in-nav">
+                      <TextsmsOutlinedIcon />
+                    </span>
                     Give Feedback
                   </span>
                 </span>
@@ -71,7 +75,9 @@ const User = ({ icon }) => {
               >
                 <span className="user-nav-menu-item">
                   <span>
-                    <LogoutRoundedIcon />
+                    <span className="icon-in-nav">
+                      <LogoutRoundedIcon />
+                    </span>
                     Logout{" "}
                   </span>
                 </span>

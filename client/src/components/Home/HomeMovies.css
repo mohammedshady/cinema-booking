@@ -117,3 +117,6 @@
   width: 100%;
   flex-wrap: wrap;
 }
+.movies-leaderboard-header {
+  font-size: 2rem;
+}

@@ -9,4 +9,7 @@ router.get("/", userGetAllMovies);
 // user get movie details
 router.get("/:movieId", getMovieById);
 
+// user get movie details
+
+
 module.exports = router;

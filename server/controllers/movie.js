@@ -26,7 +26,11 @@ exports.userGetAllMovies = asyncHandler(async (req, res, next) => {
 			status: { $ne: "deleted" },
 		},
 		{
-			"images.poster": 1,
+			images: 1,
+			duration: 1,
+			language: 1,
+			actors: 1,
+			rating: 1,
 			title: 1,
 			status: 1,
 			release_date: 1,
@@ -277,7 +281,6 @@ exports.getAllMovies = asyncHandler(async (req, res, next) => {
 			},
 		},
 	]);
-
 	return res.status(200).json({
 		status: "success",
 		message: "movies list fetched",
@@ -286,3 +289,5 @@ exports.getAllMovies = asyncHandler(async (req, res, next) => {
 		},
 	});
 });
+
+

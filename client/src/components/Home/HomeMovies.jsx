@@ -56,12 +56,18 @@ const HomeMovies = () => {
   }, []);
 
   let releasedMovies = movies?.filter((movie) => movie.status === "released");
-
+  let topRatedMovies = movies?.filter((movie) => movie.rating == 5);
   let comingSoonMovies = movies?.filter((movie) => movie.status !== "released");
 
+  const recentComingSoonMovie = movies.find(
+    (movie) =>
+      movie.status === "coming soon" &&
+      Date.parse(movie.release_date) >= Date.now()
+  );
+
+  console.log(recentComingSoonMovie);
   if (error) return <Loader msg="error" />;
   else if (loading) return <Loader msg="loading" />;
-  console.log(movies);
 
   const DisplayMovies = ({ movies, heading }) => (
     <>
@@ -72,16 +78,24 @@ const HomeMovies = () => {
       </div>
     </>
   );
-  console.log(movies);
+
   return (
     <>
       <Navbar />
       <div className="home-main-page">
         <div className="welcome-home-page">
-          <p className="movie-top-rated-header">
-            Top rated movies in our cinema
-          </p>
-          <MovieReviewCard data={releasedMovies} />
+          {topRatedMovies.length > 0 ? (
+            <>
+              <p className="movie-top-rated-header">
+                Top rated movies in our cinema
+              </p>
+              {topRatedMovies.length > 0 ? (
+                <MovieReviewCard data={topRatedMovies} />
+              ) : null}
+            </>
+          ) : (
+            <NoItem item={"Found no Top Rated Movies"} />
+          )}
           {/* <p className="welcome-msg-hdr">Browse Movies</p>
           <p className="welcome-msg-text">
             Book a Movie To watch in our greatest cinemas with high quality
@@ -132,26 +146,36 @@ const HomeMovies = () => {
                     />
                   ) : null}
                 </div>
-
-                <div className="movies-leaderboard-container">
-                  <HomeMovieList
-                    heading={"Action"}
-                    movies={movies.filter((movie) =>
-                      movie.genre.includes("Action")
-                    )}
-                  ></HomeMovieList>
-                  <HomeMovieList
-                    heading={"Comedy"}
-                    movies={movies.filter((movie) =>
-                      movie.genre.includes("Comedy")
-                    )}
-                  ></HomeMovieList>
-                  <HomeMovieList
-                    heading={"Horror"}
-                    movies={movies.filter((movie) =>
-                      movie.genre.includes("Horror")
-                    )}
-                  ></HomeMovieList>
+                {/* <div className="movies-leaderheader-container">
+                  <div className="movies-leaderboard-header">
+                    Browse by Category
+                  </div>
+                  <div className="movies-leaderboard-container">
+                    <HomeMovieList
+                      heading={"Action"}
+                      movies={movies.filter((movie) =>
+                        movie.genre.includes("Action")
+                      )}
+                    ></HomeMovieList>
+                    <HomeMovieList
+                      heading={"Comedy"}
+                      movies={movies.filter((movie) =>
+                        movie.genre.includes("Comedy")
+                      )}
+                    ></HomeMovieList>
+                    <HomeMovieList
+                      heading={"Horror"}
+                      movies={movies.filter((movie) =>
+                        movie.genre.includes("Horror")
+                      )}
+                    ></HomeMovieList>
+                  </div>
+                </div> */}
+                <div className="exclusive-coming-soon-movie">
+                  <div className="coming-soon-movie-container">
+                    <img src={""} alt="" />
+                    <div className="coming-soon-movie-details"></div>
+                  </div>
                 </div>
               </div>
             </>

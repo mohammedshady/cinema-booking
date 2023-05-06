@@ -44,26 +44,50 @@ const SeatMap = (props) => {
      * 		user want to disselect seat =>
      * 			change defaultChecked option & remove from set
      * */
-    if (checkedSeats[myIndex] == false) {
-      seatSet.add(e.target.value);
+    // if (checkedSeats[myIndex] == (false || undefined)) {
+    //   seatSet.add(e.target.value);
+    //   const newArr = checkedSeats;
+    //   newArr[myIndex] = true;
+    //   setCheckedSeats([...newArr]);
+    // } else {
+    //   seatSet.delete(e.target.value);
+    //   const newArr = checkedSeats;
+    //   newArr[myIndex] = false;
+    //   setCheckedSeats([...newArr]);
+    // }
+    console.log(checkedSeats[myIndex]);
+
+    if (checkedSeats[myIndex] == false || checkedSeats[myIndex] == undefined) {
+      seatSet.add(e.target.dataset.value);
       const newArr = checkedSeats;
       newArr[myIndex] = true;
       setCheckedSeats([...newArr]);
     } else {
-      seatSet.delete(e.target.value);
+      seatSet.delete(e.target.dataset.value);
       const newArr = checkedSeats;
       newArr[myIndex] = false;
       setCheckedSeats([...newArr]);
     }
-
     handleSelectedSeats(seatSet);
   };
 
   const str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   myCols.push("");
 
-  for (let col = 0; col < cols; col++) {
-    myCols.push(col + 1);
+  let leftRightCols = 4;
+  let middleCols = cols - leftRightCols * 2;
+
+  while (leftRightCols * 2 > middleCols) {
+    leftRightCols--;
+    middleCols = cols - leftRightCols * 2;
+  }
+
+  for (let col = 1; col <= cols; col++) {
+    myCols.push(col);
+
+    if (col === leftRightCols || col === leftRightCols + middleCols) {
+      myCols.push(<div className="input-seat transparent" />);
+    }
   }
 
   for (let row = 1; row <= rows; row++) {
@@ -73,16 +97,30 @@ const SeatMap = (props) => {
       const seat = seats.find((seat) => seat.row === row && seat.col === col);
       const myIndex = cols * (seat.row - 1) + (seat.col - 1);
       tr.push(
-        <input
-          className="input-seat"
-          type="checkbox"
-          checked={checkedSeats[myIndex]}
-          disabled={seat?.isBooked}
-          value={seat?._id}
-          name={seat?.name}
-          onChange={(e) => handleSeatChange(myIndex, e)}
-        />
+        // <input
+        //   className="input-seat"
+        //   type="checkbox"
+        //   checked={checkedSeats[myIndex]}
+        //   disabled={seat?.isBooked}
+        //   value={seat?._id}
+        //   name={seat?.name}
+        //   onChange={(e) => handleSeatChange(myIndex, e)}
+        // />
+        <div
+          className={`input-seat ${
+            checkedSeats[myIndex]
+              ? "checked"
+              : `${seat?.isBooked ? "disabled" : ""}`
+          }`}
+          data-value={seat?._id}
+          id={seat?.name}
+          onClick={(e) => handleSeatChange(myIndex, e)}
+        ></div>
       );
+
+      if (col === leftRightCols || col === leftRightCols + middleCols) {
+        tr.push(<div className="input-seat transparent" />);
+      }
     }
 
     myRows.push(tr);

@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "./HomeMovieCard.css";
-import Amongus from "./amongus";
+import InImageRating from "./InImageRating";
 
 const HomeMovieCard = ({ movie }) => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const HomeMovieCard = ({ movie }) => {
         />
         <div className="in-image-details">
           <p className="in-image-header">{movie.title}</p>
-          {isHovered ? <Amongus /> : null}
+          {isHovered ? <InImageRating rating={movie.rating} /> : null}
         </div>
       </div>
     </div>

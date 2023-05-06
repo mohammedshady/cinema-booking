@@ -12,6 +12,7 @@ import Navbar from "../Navbar";
 
 import screenLogo from "./../../assets/images/screen.png";
 import SeatsConfirm from "./seatsConfirm";
+import Date from "../util/Date";
 
 const initialState = {
   loading: true,
@@ -20,6 +21,9 @@ const initialState = {
   bookedSeats: [],
   screen: {},
   price: 0,
+  duration: "",
+  title: "",
+  startTime: "",
 };
 
 const reducer = (state, action) => {
@@ -27,7 +31,8 @@ const reducer = (state, action) => {
 
   switch (type) {
     case "FETCH_SUCCESS":
-      const { screen, price } = payload.show;
+      const { screen, price, startTime } = payload.show;
+      const { title, duration } = payload.movie;
       let availableSeats = [];
       let bookedSeats = [];
       let availableIndex = 0;
@@ -48,6 +53,9 @@ const reducer = (state, action) => {
         bookedSeats,
         screen,
         price,
+        title,
+        duration,
+        startTime,
       };
 
     case "FETCH_ERROR":
@@ -76,7 +84,6 @@ const SeatSelector = () => {
       .get(`/api/shows/seats/${id}`)
       .then((res) => {
         dispatch({ type: "FETCH_SUCCESS", payload: res.data.data });
-        console.log(res.data.data);
       })
       .catch((err) => {
         if (err.response.status == 403)
@@ -90,7 +97,7 @@ const SeatSelector = () => {
   }, [multipleSeatConflict]);
 
   const [seats, setSeats] = useState([]);
-
+  console.log(seats);
   const handleSelectedSeats = (seatSet) => {
     setSeats([...seatSet]);
   };
@@ -131,7 +138,7 @@ const SeatSelector = () => {
         }
       });
   };
-
+  console.log(state);
   // if (error) return <Loader msg="error" />;
   // else if (loading) return <Loader msg="loading" />;
 
@@ -151,6 +158,15 @@ const SeatSelector = () => {
         <div className="seat-selector-container">
           <div className="seat-selector-inner-container ">
             <div className="seat-selector-header">
+              <div className="seat-selector-show-details">
+                <div className="show-movie-details-container">
+                  <div className="show-movie-details-h1">{state.title}</div>
+                  <div className="show-movie-details-h2">
+                    <Date date={state.startTime} />
+                    {"   (" + state.duration + ")" + "mins"}
+                  </div>
+                </div>
+              </div>
               <div className="seat-selector-header-text">
                 Select Your Seats Below
               </div>
@@ -167,6 +183,14 @@ const SeatSelector = () => {
                 cols={screen?.totalColumns}
                 handleSelectedSeats={handleSelectedSeats}
               />
+            </div>
+            <div className="selected-seats-price">
+              {seats.length > 0 ? (
+                <span>
+                  Price for{` ${seats.length} `}Tickets is
+                  {state.price * seats.length}Egp
+                </span>
+              ) : null}
             </div>
             <div className="seat-selector-controls">
               <button

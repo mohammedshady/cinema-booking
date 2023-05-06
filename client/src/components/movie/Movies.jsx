@@ -7,63 +7,47 @@ import Navbar from "../Navbar";
 import Loader from "../util/Loader";
 import NoItem from "../util/NoItem";
 import "./Movies.css";
+import { Container, Stack } from "@mui/material";
 import { TextField } from "@mui/material";
 import ControlledOpenSelect from "./ControlledOpenSelect";
-import { sortAlphabetically } from "./helper";
-import { searchInMovies } from "./helper";
-
-const initialState = {
-  loading: true,
-  error: null,
-  movies: [],
-};
-
-const reducer = (state, action) => {
-  const { type, payload } = action;
-
-  switch (type) {
-    case "FETCH_SUCCESS":
-      return { loading: false, error: "", movies: payload };
-    case "FETCH_ERROR":
-      return { ...state, error: payload };
-    default:
-      return state;
-  }
-};
+import { searchInMovies, sortByRating, sortAlphabetically } from "./helper";
+import { Box } from "@mui/material";
 
 const Movies = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
+  const [moviesList, setMoviesList] = useState({ movies: [], totalMovies: 0 });
   const [searchKey, setSearchKey] = useState("");
   const [sortAlph, setSortAlph] = useState("Asc");
   const [sortRating, setSortRating] = useState("High");
   const [sortCategory, setSortCategory] = useState("All");
-
-  const { loading, error, movies } = state;
+  const [loading, setLoading] = useState(true);
 
   const fetchMovies = async () => {
     axios
       .get("/api/movies")
       .then((res) => {
-        dispatch({ type: "FETCH_SUCCESS", payload: res.data.data.movies });
+        console.log(res.data.data.movies);
+        setMoviesList((prev) => ({
+          ...prev,
+          movies: res.data.data.movies,
+          totalMovies: res.data.data.totalMovies,
+        }));
+        setLoading(false);
       })
-      .catch((error) =>
-        dispatch({ type: "FETCH_ERROR", payload: "Something went wrong" })
-      );
+      .catch((err) => {
+        if (err?.response?.status == 403) navigate("/login");
+        else notify(err?.response?.data?.message || err.toString());
+        !err.toString().includes("Network Error") && setLoading(false);
+      });
   };
 
   useEffect(() => {
     fetchMovies();
   }, []);
 
-  let releasedMovies = movies?.filter((movie) => movie.status === "released");
+  const filteredMovies = searchInMovies(moviesList.movies, searchKey);
+  const sortedMovies = sortAlphabetically(filteredMovies, sortAlph);
 
-  releasedMovies = searchInMovies(releasedMovies, searchKey);
-  sortAlphabetically(releasedMovies, sortAlph);
-
-  if (error) return <Loader msg="error" />;
-  else if (loading) return <Loader msg="loading" />;
-  console.log(movies);
+  if (loading) return <Loader msg="loading" />;
 
   const DisplayMovies = ({ movies, heading }) => (
     <>
@@ -75,15 +59,36 @@ const Movies = () => {
       </div>
     </>
   );
-
   return (
     <>
       <Navbar />
       <div className="welcome-home-page">
         <div className="movies-home-page">
-          <div className="movies-filter-bar">
-            <div className="filter-sort-item search-bar">
+          <Container maxWidth="md">
+            <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
               <TextField
+                sx={{
+                  "& label": {
+                    color: "white",
+                  },
+                  "& .MuiSelect-iconOutlined": {
+                    color: "white",
+                  },
+                  "& .MuiInput-underline:after": {
+                    borderBottomColor: "white",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#d0d0d0",
+                    },
+                    "& fieldset": {
+                      borderColor: "#d0d0d0",
+                    },
+                  },
+                  "& label.Mui-focused": {
+                    color: "white",
+                  },
+                }}
                 fullWidth
                 label="Search Movies Here"
                 id="Search Movies Here"
@@ -93,47 +98,53 @@ const Movies = () => {
                   setSearchKey(e.target.value);
                 }}
               ></TextField>
-            </div>
-            <div className="filter-sort-item">
-              <ControlledOpenSelect
-                options={{
-                  title: "Rating",
-                  arr: [
-                    { name: "High to Low", value: "High" },
-                    { name: "Low to High", value: "Low" },
-                  ],
-                }}
-              />
-              <ControlledOpenSelect
-                options={{
-                  title: "A to Z",
-                  arr: [
-                    { name: "", value: "none" },
-                    { name: "Asc to Des", value: "Asc" },
-                    { name: "Des to Asc", value: "Des" },
-                  ],
-                }}
-                sortSet={setSortAlph}
-                sortOption={sortAlph}
-              />
-              <ControlledOpenSelect
-                options={{
-                  title: "Category",
-                  arr: [
-                    { name: "Action", value: "Action" },
-                    { name: "Comedy", value: "Comedy" },
-                    { name: "Thriller", value: "Thriller" },
-                    { name: "Horror", value: "Horror" },
-                  ],
-                }}
-              />
-            </div>
-          </div>
-          {movies.length > 0 ? (
+
+              <Stack
+                width={1}
+                spacing={1}
+                direction={{ xs: "column", sm: "row" }}
+              >
+                <ControlledOpenSelect
+                  options={{
+                    title: "Rating",
+                    arr: [
+                      { name: "High to Low", value: "High" },
+                      { name: "Low to High", value: "Low" },
+                    ],
+                  }}
+                />
+                <ControlledOpenSelect
+                  options={{
+                    title: "A to Z",
+                    arr: [
+                      { name: "", value: "none" },
+                      { name: "Asc to Des", value: "Asc" },
+                      { name: "Des to Asc", value: "Des" },
+                    ],
+                  }}
+                  sortSet={setSortAlph}
+                  sortOption={sortAlph}
+                />
+                <ControlledOpenSelect
+                  options={{
+                    title: "Category",
+                    arr: [
+                      { name: "Action", value: "Action" },
+                      { name: "Comedy", value: "Comedy" },
+                      { name: "Thriller", value: "Thriller" },
+                      { name: "Horror", value: "Horror" },
+                    ],
+                  }}
+                />
+              </Stack>
+            </Stack>
+          </Container>
+
+          {sortedMovies?.length > 0 ? (
             <>
               <div className="movies-container first-section">
-                {releasedMovies.length > 0 ? (
-                  <DisplayMovies movies={releasedMovies} />
+                {sortedMovies.length > 0 ? (
+                  <DisplayMovies movies={sortedMovies} />
                 ) : null}
               </div>
             </>

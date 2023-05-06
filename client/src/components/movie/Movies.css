@@ -46,7 +46,7 @@
 .movie-cards {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 }
 .movies-container {
@@ -67,8 +67,9 @@
   display: flex;
   flex-wrap: wrap;
   border-radius: 20px;
-  background-color: white;
-  border: 1px solid white;
+  align-items: center;
+  justify-content: space-between;
+  align-content: center;
 }
 .filter-sort-item {
   display: flex;
@@ -80,4 +81,8 @@
   flex-grow: 0.5;
   align-self: flex-end;
   margin: 8px 0px;
+}
+.css-1636szt,
+.css-1yhq19e {
+  color: white !important;
 }

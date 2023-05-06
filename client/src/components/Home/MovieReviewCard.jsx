@@ -1,10 +1,12 @@
 import React from "react";
 import { useRef } from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./MovieReviewCard.css";
 import StarIcon from "@mui/icons-material/Star";
 import BookIcon from "@mui/icons-material/Book";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import Time from "../util/Time";
 
 const MovieReviewCard = ({ data }) => {
   const ref = useRef(null);
@@ -15,6 +17,7 @@ const MovieReviewCard = ({ data }) => {
     };
   });
   const [movies, setMovies] = useState(newArr);
+  const navigate = useNavigate();
 
   const scrollRight = (scrollOffset) => {
     ref.current.scrollLeft += scrollOffset;
@@ -95,18 +98,17 @@ const MovieReviewCard = ({ data }) => {
                       <div className="movie-review-header">{movie.title}</div>
                       <div className="movie-review-details">
                         <div className="movie-review-description">
-                          Lorem ipsum dolor sit amet consectetur adipisicing
-                          elit. Quae sed molestiae laboriosam mollitia sequi
-                          ipsam veritatis tenetur tempora quas excepturi
-                          repudiandae saepe et, harum ab illum placeat vel
-                          doloribus ullam?
+                          {movie.description}
                         </div>
                         <div className="movie-detail-item">
-                          <div className="movie-review-duration">
+                          <div className="movie-review-duration contain">
                             <p className="detail-review-title">Duration</p>
-                            <p>{120 + " min"}</p>
+                            <p>
+                              {movie.duration}
+                              {" min"}
+                            </p>
                           </div>
-                          <div className="movie-review-genre">
+                          <div className="movie-review-genre contain">
                             <p className="detail-review-title">Genres</p>
                             <p>
                               {movie.genre.map((genre) => {
@@ -120,44 +122,51 @@ const MovieReviewCard = ({ data }) => {
                           </div>
                         </div>
                         <div className="movie-detail-item">
-                          <div className="movie-review-duration">
+                          <div className="movie-review-duration contain">
                             <p className="detail-review-title">Status</p>
                             <p>{movie.status}</p>
                           </div>
-                          <div className="movie-review-genre">
+                          <div className="movie-review-genre contain">
                             <p className="detail-review-title">Actors</p>
                             <p>
-                              The Rock Json Statham Amongus
-                              {/* {movie.actors.map((actor) => {
-                              return (
-                                <span className="movie-review-genre-item">
-                                  {actor}
-                                </span>
-                              );
-                            })} */}
+                              {movie.actors.map((actor) => {
+                                return (
+                                  <span className="movie-review-genre-item">
+                                    {actor}
+                                  </span>
+                                );
+                              })}
                             </p>
                           </div>
                         </div>
                         <div className="movie-review-detail-btn">
-                          <button className="see-more-btn">See More</button>
+                          <button
+                            className="see-more-btn"
+                            onClick={() =>
+                              navigate(`/movies/details/${movie._id}`)
+                            }
+                          >
+                            See More
+                          </button>
                         </div>
                       </div>
                       <div className="movie-review-controls">
                         <div className="movie-review-language">
                           <p className="detail-review-title">Languages</p>
                           <p>
-                            English Spanich
-                            {/* {movie.language.map((language) => {
-                            return (
-                              <span className="movie-review-genre-item">
-                                {language}
-                              </span>
-                            );
-                          })} */}
+                            {movie.language.map((lang) => {
+                              return (
+                                <span className="movie-review-genre-item">
+                                  {lang}
+                                </span>
+                              );
+                            })}
                           </p>
                         </div>
                         <div className="movie-review-rating">
-                          <span className="movie-review-rating-number">5</span>
+                          <span className="movie-review-rating-number">
+                            {movie.rating}
+                          </span>
                           <span>
                             <StarIcon color={"warning"} style={{ margin: 0 }} />
                           </span>

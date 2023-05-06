@@ -89,7 +89,7 @@ const Login = () => {
                 </Link>
               </p>
               <div>
-                <Link to="/user/forgot-password" className="text-blue-400">
+                <Link to="/user/resetPassword" className="text-blue-400">
                   Forgot password ?
                 </Link>
               </div>

@@ -2,12 +2,26 @@
 }
 
 .seat-map-row-item {
-  padding: 5px 20px;
+  padding: 5px 15px;
 }
 .seat-map-col-item {
   margin: 15px;
 }
 .input-seat {
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.384);
+  cursor: pointer;
   width: 30px;
   height: 30px;
+  transition: all 0.2s linear;
+}
+.checked {
+  background-color: rgba(0, 195, 255, 0.753);
+}
+.disabled {
+  background-color: rgba(255, 255, 255, 0.103);
+}
+.transparent {
+  background-color: transparent !important;
+  pointer-events: none;
 }

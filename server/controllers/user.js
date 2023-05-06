@@ -13,7 +13,12 @@ const Show = require("../models/show");
 // sign up
 exports.signUp = asyncHandler(async (req, res, next) => {
 	// distructure data from request body
-	let { email, password } = req.body;
+	let { name,
+		email,
+		mobile_no,
+		birth_date,
+		gender,
+		password } = req.body;
 
 	if (!email || !password) {
 		return next(new CustomError("Email & password are required", 400));
@@ -27,7 +32,11 @@ exports.signUp = asyncHandler(async (req, res, next) => {
 
 	// create user
 	user = await User.create({
+		name,
 		email,
+		mobileno: mobile_no,
+		date_of_birth: birth_date,
+		sex: gender,
 		password,
 	});
 
@@ -158,6 +167,7 @@ exports.deleteBooking = asyncHandler(async (req, res, next) => {
 
 // reset password
 exports.resetPassword = async (req, res, next) => {
+	console.log(req.body);
 	const { email, date_of_birth, newPassword } = req.body;
 
 	if (!email) return next(new CustomError("enter your email please", 400))
@@ -167,10 +177,10 @@ exports.resetPassword = async (req, res, next) => {
 	if (!date_of_birth) return next(new CustomError("enter birthdate please", 400))
 
 	// Verify user with old password
-	const user = await User.findOne({ email });
+	const user = await User.findOne({ email }).select('email date_of_birth');
 
 	if (!user) return next(new CustomError("email doesnt exist", 400))
-
+	console.log(user);
 	if (user.date_of_birth.toISOString() !== new Date(date_of_birth).toISOString()) {
 
 		return next(new CustomError("birthdate mismatch", 400))

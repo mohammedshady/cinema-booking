@@ -18,8 +18,12 @@
   height: 100%;
 }
 .seat-selector-header-text {
-  font-size: 3rem;
+  font-size: 1.5rem;
   margin: 20px;
+}
+.seat-selector-screen {
+  max-width: 800px;
+  margin: 20px 0px;
 }
 .seat-selector-filter {
   display: flex;
@@ -36,4 +40,28 @@
   padding: 10px 30px;
   border: 2px solid white;
   border-radius: 2px;
+
+  transition: all 0.3s ease;
+}
+.show-movie-details-container {
+  font-size: 2rem;
+  letter-spacing: 2px;
+  text-align: center;
+  font-weight: 300;
+  color: rgba(184, 184, 184, 0.801);
+}
+.show-movie-details-h2 {
+  font-size: 0.8rem;
+}
+.selected-seats-price {
+  text-align: center;
+  height: 30px;
+  width: 100%;
+  font-size: 1rem;
+  margin: 10px;
+}
+.seat-selector-pay-btn:hover,
+.seat-selector-pay-btn:focus {
+  box-shadow: inset 0 -3.25em 0 0 white;
+  color: #0d1117;
 }

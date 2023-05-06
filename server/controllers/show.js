@@ -100,7 +100,7 @@ exports.deleteShow = asyncHandler(async (req, res, next) => {
 	const { showIds } = req.query;
 
 	if (!showIds) return next(new CustomError("Provide showIds", 400));
-	
+
 	const objectIdArray = showIds.split(",");
 
 	const date = new Date();
@@ -390,8 +390,9 @@ exports.getShowSeatsDetails = asyncHandler(async (req, res, next) => {
 	if (!showId) return next(new CustomError("Please add showId", 400));
 
 	const show = await Show.findOne(
+
 		{ _id: showId },
-		{ price: 1, seats: 1 }
+		{ movie: 1, price: 1, seats: 1, startTime: 1 }
 	).populate({
 		path: "screen",
 		model: "screen",
@@ -400,11 +401,15 @@ exports.getShowSeatsDetails = asyncHandler(async (req, res, next) => {
 
 	if (!show) return next(new CustomError("Show not found", 400));
 
+	const movie = await Movie.findById(show.movie, { title: 1, duration: 1 });
+	if (!movie) return next(new CustomError("Movie for Show not found", 400));
+
 	return res.status(200).json({
 		status: "success",
 		message: "show details fetched",
 		data: {
 			show,
+			movie,
 		},
 	});
 });

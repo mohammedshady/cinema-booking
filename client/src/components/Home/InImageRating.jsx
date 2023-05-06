@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { useEffect } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import ProgressProvider from "./ProgressProvider";
 import "react-circular-progressbar/dist/styles.css";
 
-const Amongus = () => {
+const InImageRating = ({ rating }) => {
+  const goodRating = "#42f572";
+  const mehRating = "#ebf25c";
+  const badRating = "#f25e5c";
+
+  const [ratingColor, setRatingColor] = useState("");
+
+  useEffect(() => {
+    let color = "";
+    if (rating >= 3) {
+      color = goodRating;
+    } else if (rating > 1 && rating < 3) {
+      color = mehRating;
+    } else {
+      color = badRating;
+    }
+    setRatingColor(color);
+  }, []);
   return (
     <>
       <div
@@ -12,20 +29,26 @@ const Amongus = () => {
           width: 50,
           height: 50,
           margin: 10,
-          color: "red",
         }}
         className="in-image-rating"
       >
-        <ProgressProvider valueStart={0} valueEnd={4} maxValue={5}>
+        <ProgressProvider
+          valueStart={0}
+          valueEnd={parseInt(rating)}
+          maxValue={5}
+        >
           {(value) => (
             <CircularProgressbar
               strokeWidth={11}
               value={value}
               maxValue={5}
-              text={value}
+              text={rating}
               styles={buildStyles({
                 pathTransitionDuration: 1,
                 textSize: "28px",
+
+                pathColor: `${ratingColor}`,
+                textColor: `${ratingColor}`,
               })}
             />
           )}
@@ -34,4 +57,4 @@ const Amongus = () => {
     </>
   );
 };
-export default Amongus;
+export default InImageRating;
