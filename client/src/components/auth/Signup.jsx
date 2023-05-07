@@ -22,6 +22,7 @@ import Button from "@mui/material/Button";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { styles } from "../admin-dashboard/common/styles";
+import { validateSignUp } from "./validate";
 
 const initialFormData = {
 	name: "",
@@ -44,46 +45,6 @@ const Signup = () => {
 		setShowPassword(!showPassword);
 	};
 
-	const validateInput = (values) => {
-		const {
-			email,
-			password,
-			confirmPassword,
-			name,
-			mobile_no,
-			gender,
-			birth_date,
-		} = values;
-		const errors = {};
-		const emailRegex =
-			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-		if (!emailRegex.test(email)) errors.email = "Please enter a valid email";
-		if (!email) errors.email = "Email is required";
-		if (password !== confirmPassword) {
-			errors.password = "Password does not match";
-			errors.confirmPassword = "Password does not match";
-		}
-		if (password.length < 6) {
-			errors.password = "Password must be 6 characters long";
-			errors.confirmPassword = "Password must be 6 characters long";
-		}
-		if (!password) {
-			errors.password = "Password is required";
-			errors.confirmPassword = "Password is required";
-		}
-		if (!name) errors.name = "Name is required";
-		if (!gender) errors.gender = "Gender is required";
-		if (mobile_no.length < 11) errors.mobile_no = "Invalid phone number";
-		if (!mobile_no) errors.mobile_no = "Phone is required";
-		if (!birth_date) errors.birth_date = "Birthdate is required";
-
-		setFormErrors(errors);
-
-		if (Object.keys(errors).length > 0) return true;
-		return false;
-	};
-
 	const handleChange = (e) => {
 		e.target.name === "confirmPassword"
 			? setFormErrors({ ...formErrors, confirmPassword: "", password: "" })
@@ -94,7 +55,7 @@ const Signup = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		if (validateInput(formData)) return;
+		if (!validateSignUp(formData, setFormErrors)) return;
 
 		setLoading(true);
 

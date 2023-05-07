@@ -80,11 +80,6 @@ exports.signUp = asyncHandler(async (req, res, next) => {
 
 	// send token in cookie to keep user logged in
 	cookieToken(user, res);
-
-	res.status(201).json({
-		status: "success",
-		message: "Signup successful",
-	});
 });
 
 // login
@@ -148,6 +143,7 @@ exports.resetPassword = async (req, res, next) => {
 
 	await user.save();
 
+	// send token in cookie to keep user logged in
 	cookieToken(user, res);
 };
 

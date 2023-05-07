@@ -18,6 +18,7 @@ import Button from "@mui/material/Button";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { styles } from "../admin-dashboard/common/styles";
+import { validateLogIn } from "./validate";
 
 const initialFormData = {
 	email: "",
@@ -43,26 +44,10 @@ const Login = () => {
 			: setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const validateInput = (values) => {
-		const { email, password } = values;
-		const errors = {};
-		const emailRegex =
-			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-		if (!email) errors.email = "Email is required";
-		else if (!emailRegex.test(email))
-			errors.email = "Please enter a valid email";
-		if (!password) errors.password = "Password is required";
-
-		setFormErrors(errors);
-		if (Object.keys(errors).length > 0) return false;
-		return true;
-	};
-
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		if (!validateInput(formData)) return;
+		if (!validateLogIn(formData, setFormErrors)) return;
 
 		setLoading(true);
 

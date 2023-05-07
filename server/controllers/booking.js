@@ -144,11 +144,6 @@ exports.deleteBooking = asyncHandler(async (req, res, next) => {
 		return next(new CustomError("Booking not found", 404));
 	}
 
-	// check if user is authorized to delete booking
-	// if (booking.user.toString() !== req.user._id.toString()) {
-	// 	return next(new CustomError("unAuthorized user for deletion", 400));
-	// }
-
 	const seats = booking.seats;
 
 	const showId = booking.show.id;
