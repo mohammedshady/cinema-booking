@@ -10,8 +10,19 @@ const UnAuthorized = () => {
 	const navigate = useNavigate();
 	const { user } = useAuthState();
 
+const handleClick = () => {
+	user?.role === 0 ? navigate("/") : navigate("/admin");
+}
+
 	return (
-		<Container sx={{ p: "13.39rem 1.2rem" }}>
+		<Container
+			sx={{
+				position: "absolute",
+				top: "50%",
+				left: "50%",
+				transform: "translate(-50%, -50%)",
+			}}
+		>
 			<Box
 				component={"div"}
 				sx={{
@@ -62,9 +73,7 @@ const UnAuthorized = () => {
 				}}
 			>
 				<Button
-					onClick={() => {
-						user?.role === 0 ? navigate("/") : navigate("/admin");
-					}}
+					onClick={handleClick}
 					sx={{
 						border: "1px solid #525252",
 						color: "white",

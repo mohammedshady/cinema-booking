@@ -46,7 +46,7 @@ const App = () => {
 					<Route path="/movies" element={<Movies />} />
 					<Route path="/movies/details/:id" element={<HomeMovieDetails />} />
 					<Route path="/shows/:id" element={<Shows />} />
-					<Route path="/user/resetPassword" element={<ResetPass />} />
+					<Route path="/resetPassword" element={<ResetPass />} />
 
 					{/* protected routes for user */}
 					<Route element={<PrivateRoute allowedRoles={[0]} />}>

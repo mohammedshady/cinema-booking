@@ -19,11 +19,11 @@ import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import Sidebar from "./common/Sidebar";
 
-// const darkTheme = createTheme({
-// 	palette: {
-// 		mode: "dark",
-// 	},
-// });
+const darkTheme = createTheme({
+	palette: {
+		mode: "dark",
+	},
+});
 
 const navItems = [
 	{ name: "Home", path: "/admin", icon: <HomeIcon /> },
@@ -60,9 +60,8 @@ const AdminPanel = () => {
 	};
 
 	return (
-		// <ThemeProvider theme={darkTheme}>
-		// 	<CssBaseline />
-		<>
+		<ThemeProvider theme={darkTheme}>
+			<CssBaseline />
 
 			<Box sx={{ display: "flex" }}>
 				{/* Sidebar */}
@@ -125,8 +124,7 @@ const AdminPanel = () => {
 					<Outlet />
 				</Box>
 			</Box>
-			{/* </ThemeProvider> */}
-			</>
+		</ThemeProvider>
 	);
 };
 

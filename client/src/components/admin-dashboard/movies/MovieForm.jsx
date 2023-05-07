@@ -194,7 +194,7 @@ const MovieForm = (props) => {
 					name="release_date"
 					label="Release Date"
 					value={formData.release_date}
-					error={formData.release_date}
+					error={formErrors.release_date}
 					setFormData={setFormData}
 					setFormErrors={setFormErrors}
 				/>
