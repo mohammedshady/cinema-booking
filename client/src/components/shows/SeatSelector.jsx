@@ -1,14 +1,14 @@
 import { useEffect, useReducer, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
-import SeatMap from "../util/SeatMap";
+import SeatMap from "./SeatMap";
 import Loader from "../util/Loader";
 
 import axios from "axios";
 
 // toast
 import "./SeatSelector.css";
-import Navbar from "../Navbar";
+import Navbar from "../navBar/Navbar";
 
 import screenLogo from "./../../assets/images/screen.png";
 import SeatsConfirm from "./seatsConfirm";
@@ -26,6 +26,7 @@ const initialState = {
   startTime: "",
 };
 
+//remove reducer 3
 const reducer = (state, action) => {
   const { type, payload } = action;
 
@@ -69,12 +70,10 @@ const reducer = (state, action) => {
 const SeatSelector = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const [msg, setMsg] = useState({});
   const [show, setShow] = useState(false);
-  const [submit, setSubmit] = useState(false);
   const [multipleSeatConflict, setMultipleSeatConflict] = useState(false);
 
   const { loading, error, availableSeats, bookedSeats, screen, price } = state;
@@ -86,8 +85,7 @@ const SeatSelector = () => {
         dispatch({ type: "FETCH_SUCCESS", payload: res.data.data });
       })
       .catch((err) => {
-        if (err.response.status == 403)
-          navigate("/login", { state: { from: location } });
+        if (err.response.status == 403) navigate("/login");
         dispatch({ type: "FETCH_ERROR", payload: "Something went wrong" });
       });
   };
@@ -96,10 +94,12 @@ const SeatSelector = () => {
     fetchSeats();
   }, [multipleSeatConflict]);
 
+  //set the seats for the show
   const [seats, setSeats] = useState([]);
   const handleSelectedSeats = (seatSet) => {
     setSeats([...seatSet]);
   };
+  //confirm modal call
   const handleModal = () => {
     if (seats.length == 0) {
       setMsg({
@@ -116,6 +116,8 @@ const SeatSelector = () => {
     }
     setShow(true);
   };
+
+  //book seats on modal submit
   const handleSubmit = async (e) => {
     setShow(false);
     e.preventDefault();
@@ -129,15 +131,14 @@ const SeatSelector = () => {
         navigate("/bookings");
       })
       .catch((error) => {
-        if (error.response.status == 403)
-          navigate("/login", { state: { from: location } });
+        if (error.response.status == 403) navigate("/login");
         else {
           setMultipleSeatConflict(true);
         }
       });
   };
-  // if (error) return <Loader msg="error" />;
-  // else if (loading) return <Loader msg="loading" />;
+  if (error) return <Loader msg="error" />;
+  else if (loading) return <Loader msg="loading" />;
 
   return (
     <>

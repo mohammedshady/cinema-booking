@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import ProgressProvider from "./ProgressProvider";
+import ProgressProvider from "../util/ProgressProvider";
 import "react-circular-progressbar/dist/styles.css";
 
 const InImageRating = ({ rating }) => {

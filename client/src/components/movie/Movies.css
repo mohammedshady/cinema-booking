@@ -1,5 +1,153 @@
 .welcome-home-page {
+  display: flex;
   padding: 40px;
+}
+.side-to-side-filter-movies {
+  display: flex;
+  margin: 2% 0;
+}
+.movies-search-page {
+  display: flex;
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.search-filter-movies-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-items: flex-start;
+  justify-content: flex-start;
+  max-width: 1900px;
+  margin: 0 auto;
+}
+.search-filter-bar-container {
+  width: 95%;
+  align-self: flex-end;
+  display: flex;
+}
+.search-filter-bar-container fieldset {
+  border-color: 0 !important;
+}
+.searched-section-movies {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.filtered-searched-movies-big-container {
+  margin: 0 auto;
+}
+.side-bar-filter-container {
+  padding: 8px;
+  border-radius: 10px;
+  width: 260px;
+  height: 800px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-around;
+  background-color: #383a5a30;
+}
+.side-bar-filter-item {
+  width: 100%;
+}
+.horizontal-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* .horizontal-flex div {
+  cursor: pointer;
+  width: 25px;
+  margin: 0px 5px;
+} */
+.horizontal-flex:hover {
+  background-color: #212b3b;
+}
+.side-bar-filter-item-title {
+  margin: 10px;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.575);
+}
+.side-bar-filter-item-contents {
+  font-size: 0.8rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.long-filter {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.top-rated-filter-bar-img {
+  width: 250px;
+  padding: 0px !important;
+}
+.top-rated-filter-bar-img img {
+  width: 240px;
+
+  border-radius: 3px;
+}
+.top-rated-filter-bar-title {
+  align-self: center;
+}
+.long-filter::-webkit-scrollbar {
+  width: 7px;
+}
+.long-filter::-webkit-scrollbar-track {
+  background: #00000000;
+}
+.long-filter::-webkit-scrollbar-thumb {
+  background-color: #cfcfcf;
+  border-radius: 10px;
+  border: 4px solid #ffffff00;
+}
+
+.side-bar-filter-item-contents div {
+  padding: 10px 20px;
+  width: 100%;
+  transition: 0.2s all;
+  cursor: pointer;
+}
+.side-bar-filter-item-contents div:hover {
+  background-color: #212b3b;
+}
+.active-sort {
+  background-color: #212b3b !important;
+}
+.rated-movies-scroll-container {
+  scroll-behavior: smooth;
+  margin: 0 auto;
+  overflow-x: scroll;
+}
+.rated-movies-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+.rated-movies-scroll {
+  scroll-behavior: smooth;
+  width: 1000px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  font-size: 0.8rem;
+}
+.rated-movies-scroll-controls span {
+  cursor: pointer;
+  text-align: center;
+  margin: 10px;
+}
+.rated-movies-scroll-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.current-page-count {
+  align-self: flex-end;
+}
+.rated-movies-scroll::-webkit-scrollbar {
+  display: none;
 }
 .welcome-msg-hdr {
   font-size: 4rem;
@@ -35,7 +183,6 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
   align-items: center;
 }
 .movie-heading {
@@ -82,7 +229,49 @@
   align-self: flex-end;
   margin: 8px 0px;
 }
+.slider-movie-item {
+  cursor: pointer;
+  position: relative;
+}
+
+.slider-movie-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 2rem;
+  transform: translate(-50%, -50%);
+  color: white;
+}
 .css-1636szt,
 .css-1yhq19e {
   color: white !important;
+}
+.rating-sort-check,
+.asc-sort-check,
+.released-sort-check,
+.soon-sort-check {
+  font-size: 0.9rem;
+  background-color: #161924;
+  color: white;
+  padding: 8px;
+  margin: 5px;
+  transition: all 0.2s linear;
+  align-self: flex-start;
+}
+.rating-sort-check:hover,
+.asc-sort-check:hover,
+.released-sort-check:hover,
+.soon-sort-check:hover {
+  background-color: #212b3b !important;
+}
+.active-sort-btn {
+  background-color: #212b3b !important;
+}
+.side-sort-btn-container {
+  margin-right: 15px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
 }

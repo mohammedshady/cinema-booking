@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Loader from "./Loader";
+import Loader from "../util/Loader";
 import "./SeatMap.css";
 
 const seatSet = new Set();
@@ -55,7 +55,6 @@ const SeatMap = (props) => {
     //   newArr[myIndex] = false;
     //   setCheckedSeats([...newArr]);
     // }
-
 
     if (checkedSeats[myIndex] == false || checkedSeats[myIndex] == undefined) {
       seatSet.add(e.target.dataset.value);

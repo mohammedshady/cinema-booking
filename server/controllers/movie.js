@@ -10,15 +10,8 @@ const Show = require("../models/show");
 
 // get all movies
 exports.userGetAllMovies = asyncHandler(async (req, res, next) => {
-	const { searchKey } = req.query;
-
-	const movieNameRegex = new RegExp(searchKey, "i");
-
 	const movies = await Movie.find(
-		{
-			$or: [{ title: movieNameRegex }],
-			status: { $ne: "deleted" },
-		},
+		{ status: { $ne: "deleted" } },
 		{
 			images: 1,
 			duration: 1,

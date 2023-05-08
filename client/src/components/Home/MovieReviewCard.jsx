@@ -6,7 +6,7 @@ import "./MovieReviewCard.css";
 import StarIcon from "@mui/icons-material/Star";
 import BookIcon from "@mui/icons-material/Book";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
-import Time from "../util/Time";
+import ArrayString from "../util/ArrayString";
 
 const MovieReviewCard = ({ data }) => {
   const ref = useRef(null);
@@ -19,13 +19,14 @@ const MovieReviewCard = ({ data }) => {
   const [movies, setMovies] = useState(newArr);
   const navigate = useNavigate();
 
+  //button scroll handler
   const scrollRight = (scrollOffset) => {
     ref.current.scrollLeft += scrollOffset;
   };
   const scrollLeft = (scrollOffset) => {
     ref.current.scrollLeft -= scrollOffset;
   };
-
+  //toggle movie details
   const toggleItem = (index) => {
     setMovies((prev) =>
       prev.map((movie, i) => {
@@ -38,7 +39,7 @@ const MovieReviewCard = ({ data }) => {
         }
       })
     );
-
+    //handle scroll too
     const cardWidth = 350;
     const position =
       index * cardWidth + (cardWidth / 2 - window.innerWidth / 2) + 100;
@@ -111,13 +112,7 @@ const MovieReviewCard = ({ data }) => {
                           <div className="movie-review-genre contain">
                             <p className="detail-review-title">Genres</p>
                             <p>
-                              {movie.genre.map((genre) => {
-                                return (
-                                  <span className="movie-review-genre-item">
-                                    {genre}
-                                  </span>
-                                );
-                              })}
+                              <ArrayString arr={movie.genres} />
                             </p>
                           </div>
                         </div>
@@ -129,13 +124,7 @@ const MovieReviewCard = ({ data }) => {
                           <div className="movie-review-genre contain">
                             <p className="detail-review-title">Actors</p>
                             <p>
-                              {movie.actors.map((actor) => {
-                                return (
-                                  <span className="movie-review-genre-item">
-                                    {actor}
-                                  </span>
-                                );
-                              })}
+                              <ArrayString arr={movie.actors} />
                             </p>
                           </div>
                         </div>

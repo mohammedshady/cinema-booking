@@ -1,4 +1,6 @@
 export const sortAlphabetically = (movies, option) => {
+    if (!option)
+        return movies
     if (option === "Asc") {
         movies.sort(function (a, b) {
             let titleA = a.title.toUpperCase();
@@ -11,20 +13,9 @@ export const sortAlphabetically = (movies, option) => {
             }
             return 0;
         });
-    } else if (option === "Des") {
-        movies.sort(function (a, b) {
-            let titleA = a.title.toUpperCase();
-            let titleB = b.title.toUpperCase();
-            if (titleA > titleB) {
-                return -1;
-            }
-            if (titleA < titleB) {
-                return 1;
-            }
-            return 0;
-        });
     }
-    return movies;
+    return movies
+
 }
 export const searchInMovies = (movies, searchKey) => {
     let filteredMovies = movies.filter(movie =>
@@ -35,14 +26,37 @@ export const searchInMovies = (movies, searchKey) => {
 }
 
 export const sortByRating = (movies, option) => {
+    if (!option) {
+        return movies;
+    }
     if (option === "High")
         movies.sort(function (a, b) {
             return b.rating - a.rating;
         });
-    else {
-        movies.sort(function (a, b) {
-            return a.rating - b.rating;
-        });
-    }
     return movies;
 }
+
+export const filterByGenre = (movies, genre) => {
+    if (genre == "All") {
+        return movies;
+    }
+    return movies.filter((movie) => {
+        return movie.genre.includes(genre);
+    });
+};
+
+export const filterByLanguage = (movies, language) => {
+    if (language == "All") {
+        return movies;
+    }
+    return movies.filter((movie) => {
+        return movie.language.includes(language);
+    });
+};
+
+export const sortByStatus = (movies, option) => {
+    if (option == "") {
+        return movies;
+    }
+    return movies.filter((movie) => movie.status === option)
+};

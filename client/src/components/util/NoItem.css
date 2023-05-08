@@ -1,0 +1,11 @@
+.no-item-container {
+  width: 50%;
+  display: flex;
+  align-items: center;
+}
+.no-item-text {
+  font-weight: 500;
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.212);
+  text-align: center;
+}

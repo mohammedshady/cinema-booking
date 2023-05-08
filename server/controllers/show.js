@@ -28,24 +28,11 @@ exports.getShowByMovieId = asyncHandler(async (req, res, next) => {
 		await show.save();
 	}
 
-	let { sortBy, order } = req.query; // not important
-
-	sortBy = sortBy || "date"; // not important
-	order = order || 1; // not important
 
 	// get shows for the movie
 	const showsForMovie = await Show.find(
 		{ movie: id, status: "starting soon" },
-		{
-			movie: 0,
-			endTime: 0,
-			status: 0,
-			seats: 0,
-			createdAt: 0,
-			updatedAt: 0,
-		} // not important
 	)
-		.sort({ [`${sortBy}`]: order }) // not important
 		.populate({
 			path: "screen",
 			model: "screen",

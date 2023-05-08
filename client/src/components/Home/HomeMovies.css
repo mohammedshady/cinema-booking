@@ -19,6 +19,8 @@
 }
 .welcome-home-page {
   padding: 40px 0px;
+  display: flex;
+  flex-direction: column;
 }
 .welcome-msg-hdr {
   font-size: 2rem;
@@ -68,7 +70,7 @@
 .home-movie-cards-bar-header {
   text-align: left;
   margin-right: auto;
-  font-size: 2rem;
+  font-size: 2.5rem;
 }
 .home-movie-cards-bar-item {
   color: #fff;
@@ -85,7 +87,7 @@
   border-bottom: 2px solid #fff;
 }
 .movies-home-page {
-  margin: 30px 0px;
+  margin: 10% 0;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -119,4 +121,235 @@
 }
 .movies-leaderboard-header {
   font-size: 2rem;
+}
+.exclusive-coming-soon-movie {
+  max-width: 1920px;
+  margin: 0 auto;
+}
+.coming-soon-movie-container {
+  position: relative;
+  width: 100%;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.01),
+    rgb(13 17 23 / 90%) 100%
+  );
+}
+.coming-soon-movie-container img {
+  position: relative;
+  z-index: -1;
+  width: 100%;
+  transition: all 0.3s ease-in-out;
+}
+
+.coming-soon-movie-details-container {
+  position: absolute;
+  margin: 20px;
+  bottom: 15%;
+}
+.coming-soon-movie-details {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.coming-soon-movie-details-date {
+  font-size: 11rem;
+  font-weight: 900;
+  color: white;
+  text-shadow: 0 5px 10px rgba(0, 0, 0, 1);
+  mix-blend-mode: soft-light;
+  margin: 30px;
+}
+.coming-soon-movie-details-text {
+  color: white;
+  max-width: 1000px;
+  padding: 0px 40px;
+  margin: 0px 25px;
+}
+.coming-soon-movie-details-text-title {
+  font-size: 6rem;
+  font-weight: 500;
+  margin: 10px 0px;
+}
+.coming-soon-movie-details-text-desc {
+  font-size: 1.5rem;
+  margin: 30px 0px;
+}
+.coming-soon-movie-details-text-title-controls {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.568);
+}
+.coming-soon-movie-details-controls {
+  margin: 10px 0px;
+}
+.coming-soon-movie-controls-btn1,
+.coming-soon-movie-controls-btn2 {
+  font-size: 1.2rem;
+  margin-right: 30px;
+  padding: 20px 30px;
+  background-color: #3b82f6;
+  border-radius: 6px;
+  color: white;
+}
+.see-more-movies-home-btn {
+  margin: 30px 20px;
+  padding: 10px 30px;
+  border: 2px solid white;
+  border-radius: 2px;
+
+  transition: all 0.3s ease;
+}
+.see-more-movies-home-btn:hover {
+  box-shadow: inset 0 -3.25em 0 0 white;
+  color: #0d1117;
+}
+
+@media all and (min-width: 1280px) and (max-width: 1600px) {
+  .coming-soon-movie-details-date {
+    font-size: 9rem;
+    font-weight: 900;
+  }
+  .coming-soon-movie-details-text-title {
+    font-size: 5rem;
+    font-weight: 500;
+  }
+  .coming-soon-movie-details-text-desc {
+    font-size: 1rem;
+  }
+  .coming-soon-movie-details-text-title-controls {
+    font-size: 0.9rem;
+  }
+  .coming-soon-movie-controls-btn2 {
+    font-size: 1rem;
+  }
+  .coming-soon-movie-controls-btn1,
+  .coming-soon-movie-controls-btn2 {
+    font-size: 1.1rem;
+    margin-right: 30px;
+  }
+}
+@media all and (min-width: 1024px) and (max-width: 1280px) {
+  .coming-soon-movie-details-date {
+    font-size: 6rem;
+    margin: 10;
+    font-weight: 900;
+  }
+  .coming-soon-movie-details-text-title {
+    font-size: 4rem;
+    font-weight: 500;
+  }
+  .coming-soon-movie-details-text-desc {
+    font-size: 1rem;
+  }
+  .coming-soon-movie-details-text-title-controls {
+    font-size: 0.8rem;
+  }
+  .coming-soon-movie-controls-btn1,
+  .coming-soon-movie-controls-btn2 {
+    font-size: 1rem;
+    margin-right: 30px;
+    padding: 15px 25px;
+  }
+  .coming-soon-movie-details-text {
+    max-width: 800px;
+  }
+}
+
+@media all and (min-width: 768px) and (max-width: 1024px) {
+  .coming-soon-movie-details-date {
+    font-size: 4rem;
+    font-weight: 500;
+    margin: 5px;
+  }
+  .coming-soon-movie-details-text-title {
+    font-size: 2.5rem;
+    font-weight: 300;
+  }
+  .coming-soon-movie-details-text-desc {
+    font-size: 0.9rem;
+    margin: 20px 0px;
+  }
+  .coming-soon-movie-controls-btn1,
+  .coming-soon-movie-controls-btn2 {
+    font-size: 0.9rem;
+    margin-right: 10px;
+    padding: 9px;
+  }
+  .coming-soon-movie-details-text {
+    padding: 0 20px;
+    margin: 0 15px;
+  }
+  .coming-soon-movie-details-text {
+    max-width: 600px;
+  }
+}
+
+@media all and (min-width: 480px) and (max-width: 768px) {
+  .coming-soon-movie-details-date {
+    font-size: 3rem;
+    font-weight: 300;
+    margin: 0px;
+    text-align: center;
+  }
+  .coming-soon-movie-details-text-title {
+    font-size: 1.5rem;
+    font-weight: 300;
+  }
+  .coming-soon-movie-details-text-desc {
+    font-size: 0.8rem;
+    margin: 10px 0px;
+  }
+  .coming-soon-movie-controls-btn1,
+  .coming-soon-movie-controls-btn2 {
+    font-size: 0.8rem;
+    margin-right: 0px;
+    padding: 6px;
+  }
+  .coming-soon-movie-details-text {
+    padding: 0;
+    margin: 0;
+  }
+  .home-movie-cards-bar-header {
+    font-size: 1rem;
+  }
+}
+
+@media all and (max-width: 480px) {
+  .coming-soon-movie-details-date {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin: 0px;
+    text-align: center;
+  }
+  .coming-soon-movie-details-text-title {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 300;
+    margin: 0px;
+  }
+  .coming-soon-movie-details-text-title-controls {
+    display: none;
+  }
+  .coming-soon-movie-details-text-desc {
+    text-align: center;
+    font-size: 0.3rem;
+    margin: 0;
+  }
+  .coming-soon-movie-controls-btn1,
+  .coming-soon-movie-controls-btn2 {
+    font-size: 0.4rem;
+    margin-right: 0px;
+    padding: 5px;
+  }
+  .coming-soon-movie-details-text {
+    padding: 0;
+    margin: 0;
+    max-width: 400px;
+  }
+  .home-movie-cards-bar-container {
+    justify-content: center;
+  }
+  .home-movie-cards-bar-header {
+    display: none;
+  }
 }

@@ -6,6 +6,12 @@
   margin: 30px;
   height: 250px;
 }
+.delete-booking-icon {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+}
 .ticket-movie-img-container {
   margin: 0px 25px;
   display: flex;
@@ -57,8 +63,6 @@
 }
 .ticket-details-list-item-p {
   font-weight: 500;
-}
-.ticket-details-list-item-text {
 }
 .ticket-cosm {
   width: 40px;

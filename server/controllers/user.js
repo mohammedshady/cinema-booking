@@ -13,33 +13,45 @@ const Booking = require("../models/booking");
 
 // load user data from token
 exports.loadUser = asyncHandler(async (req, res, next) => {
-	// get token from cookie
+	// Get token from cookie
 	const token = req.cookies.token;
 
-	// if token is unavailable, send null user
-	if (!token)
+	// If token is unavailable, send null user
+	if (!token) {
 		return res.status(200).json({
 			status: "success",
 			data: {
 				user: null,
 			},
 		});
-
-	// verify token using secret key
-	const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
-	// if token is invalid or expired
-	if (!decodedToken)
-		return next(new CustomError("Invalid or expired token", 403));
-
-	const user = await User.findById(decodedToken.id).select("+role");
-
-	if (!user) {
-		return next(new CustomError("User not found", 404));
 	}
 
-	// send updated token in cookie with every request
-	cookieToken(user, res);
+	try {
+		// Verify token using secret key without throwing an error
+		const decodedToken = jwt.verify(token, process.env.JWT_SECRET, {
+			ignoreExpiration: true,
+		});
+
+		// If token is still valid, use the user information from the token to authenticate the user
+		const user = await User.findById(decodedToken.id).select("+role");
+
+		if (!user) {
+			return next(new CustomError("User not found", 404));
+		}
+
+		return res.status(200).json({
+			status: "success",
+			data: {
+				user,
+			},
+		});
+	} catch (err) {
+		// If token is invalid or expired, send null user or unauthorized error
+		return res.status(401).json({
+			status: "error",
+			message: "Unauthorized",
+		});
+	}
 });
 
 // sign up
@@ -68,16 +80,11 @@ exports.signUp = asyncHandler(async (req, res, next) => {
 
 	// send token in cookie to keep user logged in
 	cookieToken(user, res);
-
-	res.status(201).json({
-		status: "success",
-		message: "Signup successful",
-	});
 });
 
 // login
 exports.logIn = asyncHandler(async (req, res, next) => {
-	const { email, password } = req.body;
+	const { email, password, rememberMe } = req.body;
 
 	if (!email || !password)
 		return next(new CustomError("Email & password are required", 400));
@@ -96,12 +103,7 @@ exports.logIn = asyncHandler(async (req, res, next) => {
 	}
 
 	// send token in cookie to keep user logged in
-	cookieToken(user, res);
-
-	res.status(200).json({
-		status: "success",
-		message: "Login successful",
-	});
+	cookieToken(user, res, rememberMe);
 });
 
 // logout user
@@ -127,21 +129,22 @@ exports.resetPassword = async (req, res, next) => {
 	if (!date_of_birth)
 		return next(new CustomError("Birthdate is required", 400));
 
-		const user = await User.findOne({ email }).select('email date_of_birth');
+	const user = await User.findOne({ email }).select("email date_of_birth");
 
-	if (!user) return next(new CustomError("User not found", 404));
+	if (!user) return next(new CustomError("Email not found", 404));
 
 	if (
 		user.date_of_birth.toISOString() !== new Date(date_of_birth).toISOString()
 	) {
-		return next(new CustomError("Incorrect birthdate", 400));
+		return next(new CustomError("Invalid birthdate", 400));
 	}
 
 	user.password = newPassword;
 
 	await user.save();
 
-	return res.status(200).json({ message: "Password reset successfully" });
+	// send token in cookie to keep user logged in
+	cookieToken(user, res);
 };
 
 /* 

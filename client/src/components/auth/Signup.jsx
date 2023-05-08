@@ -1,169 +1,304 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "./form.css";
-// components
-import BackButton from "../util/BackButton";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import notify from "../admin-dashboard/common/notify";
+import { Date } from "../admin-dashboard/common/DateTime";
 import Loader from "../util/Loader";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormHelperText from "@mui/material/FormHelperText";
+import FormControl from "@mui/material/FormControl";
+import RadioGroup from "@mui/material/RadioGroup";
+import Radio from "@mui/material/Radio";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
+import Button from "@mui/material/Button";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { styles } from "../admin-dashboard/common/styles";
+import { validateSignUp } from "./validate";
 
-// toast
-import { toast } from "react-toastify";
-
-import { signupUser, useAuthDispatch, useAuthState } from "../../context";
-
-const defaultFormData = {
+const initialFormData = {
   name: "",
   email: "",
   mobile_no: "",
   gender: "",
   password: "",
-  birth_date: "",
+  confirmPassword: "",
+  birth_date: null,
 };
 
 const Signup = () => {
-  const [formData, setFormData] = useState(defaultFormData);
-  const dispatch = useAuthDispatch();
-  const { loading } = useAuthState();
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState(initialFormData);
   const [formErrors, setFormErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const validateInput = (values) => {
-    const { email, password, name, mobile_no, gender } = values;
-    const errors = {};
-    const emailRegex =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-    if (!email) errors.email = "Email is required";
-    else if (!emailRegex.test(email))
-      errors.email = "Please enter a valid email";
-    if (!password) errors.password = "Password is required";
-    else if (password.length < 6)
-      errors.password = "Password must be 6 characters long";
-
-    if (!name) errors.name = "name is required";
-    if (!gender) errors.gender = "gender is required";
-    if (!mobile_no) errors.mobile_no = "mobile no is required";
-    else if (mobile_no.length < 11)
-      errors.mobile_no = "number must be 12 characters long";
-
-    setFormErrors(errors);
-    if (Object.keys(errors).length > 0) return true;
-    return false;
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleChange = (e) => {
+    e.target.name === "confirmPassword"
+      ? setFormErrors({ ...formErrors, confirmPassword: "", password: "" })
+      : setFormErrors({ ...formErrors, [e.target.name]: "" });
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (validateInput(formData)) return;
+    if (!validateSignUp(formData, setFormErrors)) return;
 
-    const res = await signupUser(dispatch, formData);
-    if (res) navigate("/");
+    setLoading(true);
+
+    axios
+      .post(`api/user/signup`, formData)
+      .then((res) => {
+        setLoading(false);
+        const user = res?.data?.data?.user;
+        if (user) window.location.replace("/");
+      })
+      .catch((err) => {
+        notify(err?.response?.data?.message || err.toString());
+        !err.toString().includes("Network Error") && setLoading(false);
+      });
   };
 
   if (loading) return <Loader msg="loading" />;
 
   return (
-    <div className="form-signup-block">
-      <div className="form-container">
-        <h1>SignUp</h1>
-        <form onSubmit={handleSubmit} autoComplete="off">
-          <div className="form-inputs-container">
-            <div>
-              <label htmlFor="">name</label>
-              <input
-                className="input-group"
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-              />
-              <div className={`form-container-p`}>{formErrors.fname}</div>
-            </div>
-            <div>
-              <label htmlFor="">email</label>
-              <input
-                className="form-container-input"
-                type="text"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-              <p className={`form-container-p`}>{formErrors.email}</p>
-            </div>
-            <div>
-              <label htmlFor="">password</label>
-              <input
-                className="form-container-input"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-              <p className={`form-container-p`}>{formErrors.password}</p>
-            </div>
-            <div>
-              <label htmlFor="">phone</label>
-              <input
-                className="form-container-input"
-                type="text"
+    <Container
+      sx={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        maxWidth: "500px!important",
+      }}
+    >
+      <Paper
+        sx={{
+          width: "100%",
+          borderRadius: "8px",
+          p: 5.75,
+          mt: 7,
+          backgroundColor: "unset",
+        }}
+      >
+        <Box
+          component="form"
+          autoComplete="off"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+          <Stack spacing={1}>
+            {/* Title */}
+
+            <Typography
+              variant={"h1"}
+              sx={{
+                fontSize: "2rem",
+                textAlign: "center",
+                fontWeight: "bold",
+                m: "1rem 0px 3.125rem",
+              }}
+            >
+              Create an account
+            </Typography>
+
+            {/* Name */}
+
+            <TextField
+              name="name"
+              label="Name"
+              value={formData.name}
+              sx={styles.global}
+              onChange={handleChange}
+              required
+              autoComplete="on"
+              error={formErrors.name}
+              helperText={formErrors.name}
+            />
+
+            {/* Email Address */}
+
+            <TextField
+              name="email"
+              label="Email address"
+              value={formData.email}
+              sx={styles.global}
+              onChange={handleChange}
+              required
+              autoComplete="on"
+              error={formErrors.email}
+              helperText={formErrors.email}
+            />
+
+            {/* Password */}
+
+            <TextField
+              name="password"
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton onClick={handleClickShowPassword} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              value={formData.password}
+              sx={styles.global}
+              autoComplete="on"
+              onChange={handleChange}
+              required
+              error={formErrors.password}
+              helperText={formErrors.password}
+            />
+
+            {/* Confirm password */}
+
+            <TextField
+              name="confirmPassword"
+              label="Confirm Password"
+              type={showPassword ? "text" : "password"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton onClick={handleClickShowPassword} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              value={formData.confirmPassword}
+              sx={styles.global}
+              autoComplete="on"
+              onChange={handleChange}
+              required
+              error={formErrors.confirmPassword}
+              helperText={formErrors.confirmPassword}
+            />
+
+            <Stack direction={"row"} spacing={2}>
+              {/* Phone Number */}
+
+              <TextField
+                label="Phone Number"
                 name="mobile_no"
+                sx={styles.global}
                 value={formData.mobile_no}
                 onChange={handleChange}
+                type="number"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">+20</InputAdornment>
+                  ),
+                }}
+                required
+                error={formErrors.mobile_no}
+                helperText={formErrors.mobile_no}
               />
-              <p className={`form-container-p`}>{formErrors.mobile_no}</p>
-            </div>
-            <div>
-              <label htmlFor="">birth date</label>
-              <input
-                className="form-container-input"
-                type="date"
+
+              {/* Birth Date */}
+
+              <Date
                 name="birth_date"
+                label="Birth Date"
                 value={formData.birth_date}
-                onChange={handleChange}
+                error={formErrors.birth_date}
+                setFormData={setFormData}
+                setFormErrors={setFormErrors}
               />
-            </div>
-            <div>
-              <div className="form-container-group">
-                <div className="form-container-input">
-                  <label>Male</label>
-                  <input
-                    type="checkbox"
-                    name="gender"
-                    value="male"
-                    checked={formData.gender === "male"}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="form-container-input">
-                  <label>Female</label>
-                  <input
-                    type="checkbox"
-                    name="gender"
-                    value="female"
-                    checked={formData.gender === "female"}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-              <p className={`form-container-p`}>{formErrors.gender}</p>
-            </div>
-            <button type="submit" className="form-container-btn">
-              SignUp
-            </button>
-            <p className="form-container-links">
-              Already have account ?{" "}
-              <Link to="../login" replace={true} className="text-blue-400">
-                Login
-              </Link>
-            </p>
-          </div>
-          <BackButton />
-        </form>
-      </div>
-    </div>
+            </Stack>
+
+            {/* Gender */}
+
+            <FormControl error={formErrors.gender} sx={{ height: "65px" }}>
+              <RadioGroup row sx={{ justifyContent: "center" }}>
+                <FormControlLabel
+                  value="male"
+                  control={
+                    <Radio
+                      checked={formData.gender === "male"}
+                      onChange={handleChange}
+                      value="male"
+                      name="gender"
+                    />
+                  }
+                  sx={{ ml: 0 }}
+                  label="Male"
+                />
+                <FormControlLabel
+                  value="female"
+                  control={
+                    <Radio
+                      checked={formData.gender === "female"}
+                      onChange={handleChange}
+                      value="female"
+                      name="gender"
+                    />
+                  }
+                  sx={{ m: 0 }}
+                  label="Female"
+                />
+              </RadioGroup>
+              <FormHelperText sx={{ textAlign: "center" }}>
+                {formErrors.gender}
+              </FormHelperText>
+            </FormControl>
+
+            {/* Sign up */}
+
+            <Button type="submit" variant="contained" sx={styles.button}>
+              Signup
+            </Button>
+
+            <Box>
+              {/* Login */}
+
+              <Stack
+                direction={"row"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                spacing={1}
+              >
+                <Typography
+                  variant="body2"
+                  gutterBottom
+                  sx={{
+                    color: "#c1c2c5",
+                    textAlign: "center",
+                    lineHeight: "unset",
+                    m: 0,
+                  }}
+                >
+                  Already have an account?
+                </Typography>
+
+                <Link
+                  underline="hover"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </Link>
+              </Stack>
+            </Box>
+          </Stack>
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 

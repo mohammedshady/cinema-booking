@@ -1,7 +1,6 @@
 import React from "react";
-import { useState } from "react";
 import "./seatsConfirm.css";
-
+//confirm modal for booking seats
 const SeatsConfirm = ({ msg, handleSubmit, setState }) => {
   return (
     <div className="seats-confirm-container">

@@ -9,7 +9,7 @@ const Show = require("../models/show");
 
 // get user bookings
 exports.userGetBookings = asyncHandler(async (req, res, next) => {
-	// find all bookings belonging to the authenticated user
+	// find all bookings belonging to the user
 	const bookings = await Booking.find(
 		{ user: req.user._id },
 		{ user: 0, updatedAt: 0 }
@@ -143,12 +143,7 @@ exports.deleteBooking = asyncHandler(async (req, res, next) => {
 	if (!booking) {
 		return next(new CustomError("Booking not found", 404));
 	}
-
-	// check if user is authorized to delete booking
-	// if (booking.user.toString() !== req.user._id.toString()) {
-	// 	return next(new CustomError("unAuthorized user for deletion", 400));
-	// }
-
+	// send token in cookie to keep user logged in
 	const seats = booking.seats;
 
 	const showId = booking.show.id;

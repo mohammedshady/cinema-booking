@@ -1,123 +1,223 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import TextField from "@mui/material/TextField";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
-// components
-import BackButton from "../util/BackButton";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import notify from "../admin-dashboard/common/notify";
 import Loader from "../util/Loader";
-import "./form.css";
-
-import { loginUser, useAuthDispatch, useAuthState } from "../../context";
-
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
+import Button from "@mui/material/Button";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { styles } from "../admin-dashboard/common/styles";
+import { validateLogIn } from "./validate";
+
+const initialFormData = {
+  email: "",
+  password: "",
+  rememberMe: false,
+};
 
 const Login = () => {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [formErrors, setFormErrors] = useState({});
-	const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState(initialFormData);
+  const [formErrors, setFormErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-	const handleClickShowPassword = () => {
-		setShowPassword(!showPassword);
-	};
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
-	const dispatch = useAuthDispatch();
-	const { loading } = useAuthState();
+  const handleChange = (e) => {
+    setFormErrors({ ...formErrors, [e.target.name]: "" });
+    e.target.name === "rememberMe"
+      ? setFormData({ ...formData, [e.target.name]: e.target.checked })
+      : setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-	const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-	const validateInput = (values) => {
-		const { email, password } = values;
-		const errors = {};
-		const emailRegex =
-			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!validateLogIn(formData, setFormErrors)) return;
 
-		if (!email) errors.email = "Email is required";
-		else if (!emailRegex.test(email))
-			errors.email = "Please enter a valid email";
-		if (!password) errors.password = "Password is required";
+    setLoading(true);
 
-		setFormErrors(errors);
-		if (Object.keys(errors).length > 0) return true;
-		return false;
-	};
+    axios
+      .post(`api/user/login`, formData)
+      .then((res) => {
+        setLoading(false);
+        const user = res?.data?.data?.user;
+        user.role == 1
+          ? window.location.replace("/admin")
+          : window.location.replace("/");
+      })
+      .catch((err) => {
+        notify(err?.response?.data?.message || err.toString());
+        !err.toString().includes("Network Error") && setLoading(false);
+      });
+  };
 
-	// login handler
-	const handleLogin = async (e) => {
-		e.preventDefault();
-		let data = { email, password };
+  if (loading) return <Loader msg="loading" />;
 
-		if (validateInput({ email, password })) return;
+  return (
+    <Container
+      sx={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        maxWidth: "500px!important",
+      }}
+    >
+      <Paper
+        sx={{
+          width: "100%",
+          borderRadius: "8px",
+          p: 5.75,
+          mt: 7,
+          backgroundColor: "unset",
+        }}
+      >
+        <Box
+          component="form"
+          autoComplete="off"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+          <Stack spacing={3}>
+            {/* Title */}
 
-		let user = await loginUser(dispatch, data);
-		if (!user) return;
-		user?.role == 1 ? navigate("/admin") : navigate("/");
-	};
+            <Typography
+              variant={"h1"}
+              sx={{
+                fontSize: "2.5rem",
+                textAlign: "center",
+                fontWeight: "bold",
+                m: "1rem 0px 3.125rem",
+              }}
+            >
+              Welcome back!
+            </Typography>
 
-	if (loading) return <Loader msg="loading" />;
-	const amongus = (
-		<div className="form-login-block">
-			<div className="form-container">
-				<h1>LogIn</h1>
-				<form onSubmit={handleLogin} autoComplete="off">
-					<div className="form-inputs-container">
-						<div>
-							<label htmlFor="">email</label>
-							<input
-								type="text"
-								name="email"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								className="form-container-input"
-							/>
-							<p className={`form-container-p`}>{formErrors.email}</p>
-						</div>
-						<div>
-							<label htmlFor="">password</label>
-							<input
-								type="password"
-								name="password"
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								className="form-container-input"
-							/>
-							<p className="form-container-p">{formErrors.password}</p>
-						</div>
+            {/* Email Address */}
 
-						<button type="submit" className="form-container-btn">
-							Login
-						</button>
+            <TextField
+              name="email"
+              label="Email address"
+              value={formData.email}
+              sx={styles.global}
+              onChange={handleChange}
+              required
+              autoComplete="on"
+              error={formErrors.email}
+              helperText={formErrors.email}
+            />
 
-						<div>
-							<p className="form-container-links">
-								New user ?{" "}
-								<Link to="../signup" replace={true} className="text-blue-400">
-									SignUp
-								</Link>
-							</p>
-							<div>
-								<Link to="/user/resetPassword" className="text-blue-400">
-									Forgot password ?
-								</Link>
-							</div>
-						</div>
-					</div>
-					<BackButton />
-				</form>
-			</div>
-		</div>
-	);
+            {/* Password */}
 
-	return amongus;
+            <Box>
+              <TextField
+                name="password"
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton onClick={handleClickShowPassword} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                value={formData.password}
+                sx={styles.global}
+                autoComplete="on"
+                onChange={handleChange}
+                required
+                error={formErrors.password}
+                helperText={formErrors.password}
+              />
+
+              <Stack
+                direction={"row"}
+                sx={{ mt: "-8px" }}
+                alignItems={"center"}
+                justifyContent={"space-around"}
+              >
+                {/* Remember me */}
+
+                <FormControlLabel
+                  sx={{ "& span": { fontSize: "0.875rem" } }}
+                  control={
+                    <Checkbox
+                      name="rememberMe"
+                      checked={formData.rememberMe}
+                      onChange={handleChange}
+                      size="small"
+                    />
+                  }
+                  label="Remember me"
+                />
+
+                {/* Forget password */}
+
+                <Typography
+                  variant="body2"
+                  gutterBottom
+                  sx={{ textAlign: "center", lineHeight: "unset", m: 0 }}
+                >
+                  <Link
+                    underline="hover"
+                    sx={{ cursor: "pointer" }}
+                    onClick={() => navigate("/resetPassword")}
+                  >
+                    Forgot password?
+                  </Link>
+                </Typography>
+              </Stack>
+            </Box>
+
+            {/* Log in */}
+
+            <Button type="submit" variant="contained" sx={styles.button}>
+              Login
+            </Button>
+
+            <Box>
+              {/* Sign up */}
+
+              <Stack direction={"row"} justifyContent={"center"} spacing={1}>
+                <Typography
+                  variant="body1"
+                  gutterBottom
+                  sx={{ color: "#c1c2c5" }}
+                >
+                  Don't have an account?
+                </Typography>
+
+                <Link
+                  underline="hover"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => navigate("/signup")}
+                >
+                  Sign up
+                </Link>
+              </Stack>
+            </Box>
+          </Stack>
+        </Box>
+      </Paper>
+    </Container>
+  );
 };
 
 export default Login;
