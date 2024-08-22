@@ -63,235 +63,235 @@ const Signup = () => {
       notify(err?.response?.data?.message || err.toString());
       !err.toString().includes("Network Error") && setLoading(false);
     });
-};
 
-if (!validateSignUp(formData, setFormErrors)) return;
+  if (!validateSignUp(formData, setFormErrors)) return;
 
-return (
-  <Container
-    sx={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      maxWidth: "500px!important",
-    }}
-  >
-    <Paper
+  return (
+    <Container
       sx={{
-        width: "100%",
-        borderRadius: "8px",
-        p: 5.75,
-        mt: 7,
-        backgroundColor: "unset",
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        maxWidth: "500px!important",
       }}
     >
-      <Box
-        component="form"
-        autoComplete="off"
-        onSubmit={handleSubmit}
-        noValidate
+      <Paper
+        sx={{
+          width: "100%",
+          borderRadius: "8px",
+          p: 5.75,
+          mt: 7,
+          backgroundColor: "unset",
+        }}
       >
-        <Stack spacing={1}>
-          {/* Title */}
+        <Box
+          component="form"
+          autoComplete="off"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+          <Stack spacing={1}>
+            {/* Title */}
 
-          <Typography
-            variant={"h1"}
-            sx={{
-              fontSize: "2rem",
-              textAlign: "center",
-              fontWeight: "bold",
-              m: "1rem 0px 3.125rem",
-            }}
-          >
-            Create an account
-          </Typography>
+            <Typography
+              variant={"h1"}
+              sx={{
+                fontSize: "2rem",
+                textAlign: "center",
+                fontWeight: "bold",
+                m: "1rem 0px 3.125rem",
+              }}
+            >
+              Create an account
+            </Typography>
 
-          {/* Name */}
-
-          <TextField
-            name="name"
-            label="Name"
-            value={formData.name}
-            sx={styles.global}
-            onChange={handleChange}
-            required
-            autoComplete="on"
-            error={formErrors.name}
-            helperText={formErrors.name}
-          />
-
-          {/* Email Address */}
-
-          <TextField
-            name="email"
-            label="Email address"
-            value={formData.email}
-            sx={styles.global}
-            onChange={handleChange}
-            required
-            autoComplete="on"
-            error={formErrors.email}
-            helperText={formErrors.email}
-          />
-
-          {/* Password */}
-
-          <TextField
-            name="password"
-            label="Password"
-            type={showPassword ? "text" : "password"}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">
-                  <IconButton onClick={handleClickShowPassword} edge="end">
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            value={formData.password}
-            sx={styles.global}
-            autoComplete="on"
-            onChange={handleChange}
-            required
-            error={formErrors.password}
-            helperText={formErrors.password}
-          />
-
-          {/* Confirm password */}
-
-          <TextField
-            name="confirmPassword"
-            label="Confirm Password"
-            type={showPassword ? "text" : "password"}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">
-                  <IconButton onClick={handleClickShowPassword} edge="end">
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            value={formData.confirmPassword}
-            sx={styles.global}
-            autoComplete="on"
-            onChange={handleChange}
-            required
-            error={formErrors.confirmPassword}
-            helperText={formErrors.confirmPassword}
-          />
-
-          <Stack direction={"row"} spacing={2}>
-            {/* Phone Number */}
+            {/* Name */}
 
             <TextField
-              label="Phone Number"
-              name="mobile_no"
+              name="name"
+              label="Name"
+              value={formData.name}
               sx={styles.global}
-              value={formData.mobile_no}
               onChange={handleChange}
-              type="number"
+              required
+              autoComplete="on"
+              error={formErrors.name}
+              helperText={formErrors.name}
+            />
+
+            {/* Email Address */}
+
+            <TextField
+              name="email"
+              label="Email address"
+              value={formData.email}
+              sx={styles.global}
+              onChange={handleChange}
+              required
+              autoComplete="on"
+              error={formErrors.email}
+              helperText={formErrors.email}
+            />
+
+            {/* Password */}
+
+            <TextField
+              name="password"
+              label="Password"
+              type={showPassword ? "text" : "password"}
               InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">+20</InputAdornment>
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton onClick={handleClickShowPassword} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
                 ),
               }}
+              value={formData.password}
+              sx={styles.global}
+              autoComplete="on"
+              onChange={handleChange}
               required
-              error={formErrors.mobile_no}
-              helperText={formErrors.mobile_no}
+              error={formErrors.password}
+              helperText={formErrors.password}
             />
 
-            {/* Birth Date */}
+            {/* Confirm password */}
 
-            <Date
-              name="birth_date"
-              label="Birth Date"
-              value={formData.birth_date}
-              error={formErrors.birth_date}
-              setFormData={setFormData}
-              setFormErrors={setFormErrors}
+            <TextField
+              name="confirmPassword"
+              label="Confirm Password"
+              type={showPassword ? "text" : "password"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton onClick={handleClickShowPassword} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              value={formData.confirmPassword}
+              sx={styles.global}
+              autoComplete="on"
+              onChange={handleChange}
+              required
+              error={formErrors.confirmPassword}
+              helperText={formErrors.confirmPassword}
             />
-          </Stack>
 
-          {/* Gender */}
+            <Stack direction={"row"} spacing={2}>
+              {/* Phone Number */}
 
-          <FormControl error={formErrors.gender} sx={{ height: "65px" }}>
-            <RadioGroup row sx={{ justifyContent: "center" }}>
-              <FormControlLabel
-                value="male"
-                control={
-                  <Radio
-                    checked={formData.gender === "male"}
-                    onChange={handleChange}
-                    value="male"
-                    name="gender"
-                  />
-                }
-                sx={{ ml: 0 }}
-                label="Male"
-              />
-              <FormControlLabel
-                value="female"
-                control={
-                  <Radio
-                    checked={formData.gender === "female"}
-                    onChange={handleChange}
-                    value="female"
-                    name="gender"
-                  />
-                }
-                sx={{ m: 0 }}
-                label="Female"
-              />
-            </RadioGroup>
-            <FormHelperText sx={{ textAlign: "center" }}>
-              {formErrors.gender}
-            </FormHelperText>
-          </FormControl>
-
-          {/* Sign up */}
-
-          <Button type="submit" variant="contained" sx={styles.button}>
-            Signup
-          </Button>
-
-          <Box>
-            {/* Login */}
-
-            <Stack
-              direction={"row"}
-              justifyContent={"center"}
-              alignItems={"center"}
-              spacing={1}
-            >
-              <Typography
-                variant="body2"
-                gutterBottom
-                sx={{
-                  color: "#c1c2c5",
-                  textAlign: "center",
-                  lineHeight: "unset",
-                  m: 0,
+              <TextField
+                label="Phone Number"
+                name="mobile_no"
+                sx={styles.global}
+                value={formData.mobile_no}
+                onChange={handleChange}
+                type="number"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">+20</InputAdornment>
+                  ),
                 }}
-              >
-                Already have an account?
-              </Typography>
+                required
+                error={formErrors.mobile_no}
+                helperText={formErrors.mobile_no}
+              />
 
-              <Link
-                underline="hover"
-                sx={{ cursor: "pointer" }}
-                onClick={() => navigate("/login")}
-              >
-                Login
-              </Link>
+              {/* Birth Date */}
+
+              <Date
+                name="birth_date"
+                label="Birth Date"
+                value={formData.birth_date}
+                error={formErrors.birth_date}
+                setFormData={setFormData}
+                setFormErrors={setFormErrors}
+              />
             </Stack>
-          </Box>
-        </Stack>
-      </Box>
-    </Paper>
-  </Container>
-);
+
+            {/* Gender */}
+
+            <FormControl error={formErrors.gender} sx={{ height: "65px" }}>
+              <RadioGroup row sx={{ justifyContent: "center" }}>
+                <FormControlLabel
+                  value="male"
+                  control={
+                    <Radio
+                      checked={formData.gender === "male"}
+                      onChange={handleChange}
+                      value="male"
+                      name="gender"
+                    />
+                  }
+                  sx={{ ml: 0 }}
+                  label="Male"
+                />
+                <FormControlLabel
+                  value="female"
+                  control={
+                    <Radio
+                      checked={formData.gender === "female"}
+                      onChange={handleChange}
+                      value="female"
+                      name="gender"
+                    />
+                  }
+                  sx={{ m: 0 }}
+                  label="Female"
+                />
+              </RadioGroup>
+              <FormHelperText sx={{ textAlign: "center" }}>
+                {formErrors.gender}
+              </FormHelperText>
+            </FormControl>
+
+            {/* Sign up */}
+
+            <Button type="submit" variant="contained" sx={styles.button}>
+              Signup
+            </Button>
+
+            <Box>
+              {/* Login */}
+
+              <Stack
+                direction={"row"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                spacing={1}
+              >
+                <Typography
+                  variant="body2"
+                  gutterBottom
+                  sx={{
+                    color: "#c1c2c5",
+                    textAlign: "center",
+                    lineHeight: "unset",
+                    m: 0,
+                  }}
+                >
+                  Already have an account?
+                </Typography>
+
+                <Link
+                  underline="hover"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </Link>
+              </Stack>
+            </Box>
+          </Stack>
+        </Box>
+      </Paper>
+    </Container>
+  );
+};
 
 export default Signup;
