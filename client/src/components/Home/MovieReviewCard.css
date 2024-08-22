@@ -49,9 +49,7 @@
 .gallery-btn {
   position: absolute;
   cursor: pointer;
-  padding: 20px;
-  border-radius: 50%;
-  border: 2px solid white;
+  padding: 25px;
   z-index: 2;
 }
 .rightc {

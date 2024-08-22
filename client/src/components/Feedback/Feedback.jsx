@@ -28,7 +28,9 @@ const Feedback = () => {
     e.preventDefault();
     if (validateInput(message)) return;
     try {
-      const res = await axios.post(`/api/user/feedback`, { message });
+      const res = await axios.post(`/api/user/feedback`, {
+        message,
+      });
       if (res) {
         toast.success("Thanks for your valuable feedback");
         navigate(-1);
@@ -54,7 +56,9 @@ const Feedback = () => {
             className="text-area"
             placeholder="Write your message here !"
           ></textarea>
-          {formError ? <p className="error-text-area">{formError}</p> : null}
+          {formError ? (
+            <p className="error-text-area">{formError.message}</p>
+          ) : null}
           <button type="submit" className="feedback-submit-btn">
             Submit
           </button>

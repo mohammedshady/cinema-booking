@@ -19,3 +19,13 @@
   margin: 20px;
   align-items: center;
 }
+.delete-booking-icon button {
+  padding: 4px;
+  border-radius: 3px;
+  background-color: rgb(236, 86, 86);
+  color: white;
+  transition: all 0.2 linear;
+}
+.delete-booking-icon button:hover {
+  background-color: rgb(238, 116, 116);
+}

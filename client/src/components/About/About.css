@@ -59,6 +59,11 @@
   font-size: 3rem;
   margin: 15px;
 }
+.in-p-details {
+  margin: 5px 0px;
+  color: rgba(255, 255, 255, 0.377);
+  cursor: pointer;
+}
 .about-us-container img {
   animation: slide-in-blurred-left 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
@@ -71,4 +76,7 @@
 }
 .about-us-for-image {
   width: 300px;
+}
+.whole-about-container {
+  overflow: hidden;
 }

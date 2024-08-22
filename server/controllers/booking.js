@@ -143,7 +143,7 @@ exports.deleteBooking = asyncHandler(async (req, res, next) => {
 	if (!booking) {
 		return next(new CustomError("Booking not found", 404));
 	}
-	// send token in cookie to keep user logged in
+
 	const seats = booking.seats;
 
 	const showId = booking.show.id;

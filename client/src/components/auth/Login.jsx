@@ -52,7 +52,7 @@ const Login = () => {
     setLoading(true);
 
     axios
-      .post(`api/user/login`, formData)
+      .post(`/api/user/login`, formData)
       .then((res) => {
         setLoading(false);
         const user = res?.data?.data?.user;

@@ -6,16 +6,16 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
 import LogoutIcon from "@mui/icons-material/Logout";
 import StyleIcon from "@mui/icons-material/Style";
 import TextsmsIcon from "@mui/icons-material/Textsms";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
+import MovieIcon from "@mui/icons-material/Movie";
 import { useNavigate } from "react-router-dom";
 import { logout, useAuthDispatch, useAuthState } from "../../context";
 import { useLocation } from "react-router-dom";
+import steveImage from "../../assets/images/steve.jpg";
 
 const pages = [
   { name: "Home", path: "/" },
@@ -59,10 +59,13 @@ function Navbar({ position }) {
         backgroundImage:
           "linear-gradient(to top,rgba(0, 0, 0, 0.01) 0%,rgba(0, 0, 0, 0.9) 90%,rgb(13 17 23 / 98%) 100%)",
         boxShadow: "unset",
+        padding: "20px 40px 0px 40px",
       }}
     >
       <Toolbar disableGutters>
-        <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+        <MovieIcon
+          sx={{ display: { xs: "none", md: "flex" }, mr: 1, fontSize: 42 }}
+        />
         <Typography
           variant="h6"
           noWrap
@@ -77,9 +80,7 @@ function Navbar({ position }) {
             color: "inherit",
             textDecoration: "none",
           }}
-        >
-          LOGO
-        </Typography>
+        ></Typography>
 
         <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
           <IconButton size="large" onClick={handleOpenNavMenu} color="inherit">
@@ -118,7 +119,7 @@ function Navbar({ position }) {
             ))}
           </Menu>
         </Box>
-        <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+        <MovieIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
         <Typography
           variant="h5"
           noWrap
@@ -134,9 +135,7 @@ function Navbar({ position }) {
             color: "inherit",
             textDecoration: "none",
           }}
-        >
-          LOGO
-        </Typography>
+        ></Typography>
         <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
           {pages.map((page) => (
             <Button
@@ -145,7 +144,7 @@ function Navbar({ position }) {
               sx={{
                 borderBottom:
                   location.pathname === page.path
-                    ? { borderBottom: "2px solid #3b82f6" }
+                    ? { borderBottom: "2px solid white" }
                     : null,
                 borderRadius: 0,
                 padding: "20px 40px",
@@ -154,7 +153,7 @@ function Navbar({ position }) {
                 textTransform: "unset",
                 "&:hover": {
                   backgroundColor: "unset",
-                  borderBottom: "2px solid #3b82f6",
+                  borderBottom: "2px solid white",
                 },
               }}
               style={{ margin: 0 }}
@@ -170,14 +169,20 @@ function Navbar({ position }) {
               onClick={handleOpenUserMenu}
               sx={{
                 borderRadius: "50%",
-                border: "3px solid #3b82f6",
+                color: "white",
+                border: "3px solid white",
                 fontSize: "1.4rem",
                 width: "50px",
                 height: "50px",
                 minWidth: 0,
+                padding: 0,
               }}
             >
-              {user.email[0].toUpperCase()}
+              <img
+                src={steveImage}
+                style={{ borderRadius: "50%", width: 45, height: 45 }}
+              ></img>
+              {/* {user.email[0].toUpperCase()} */}
             </Button>
           ) : (
             <Button onClick={() => navigate("/login")}>Login</Button>

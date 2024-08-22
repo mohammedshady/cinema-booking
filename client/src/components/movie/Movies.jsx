@@ -241,7 +241,11 @@ const Movies = () => {
                     })}
                   </div>
                 </div>
-                <TopRatedSlider topRatedMovies={topRatedMovies} />
+                {topRatedMovies.length > 0 ? (
+                  <TopRatedSlider topRatedMovies={topRatedMovies} />
+                ) : (
+                  <></>
+                )}
               </div>
             </Box>
             <div className="filtered-searched-movies-big-container">

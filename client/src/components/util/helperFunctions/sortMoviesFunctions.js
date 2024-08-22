@@ -1,7 +1,7 @@
 export const sortAlphabetically = (movies, option) => {
     if (!option)
         return movies
-    if (option === "Asc") {
+    if (option) {
         movies.sort(function (a, b) {
             let titleA = a.title.toUpperCase();
             let titleB = b.title.toUpperCase();
@@ -29,7 +29,7 @@ export const sortByRating = (movies, option) => {
     if (!option) {
         return movies;
     }
-    if (option === "High")
+    if (option)
         movies.sort(function (a, b) {
             return b.rating - a.rating;
         });

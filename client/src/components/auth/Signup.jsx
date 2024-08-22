@@ -60,7 +60,7 @@ const Signup = () => {
     setLoading(true);
 
     axios
-      .post(`api/user/signup`, formData)
+      .post(`/api/user/signup`, formData)
       .then((res) => {
         setLoading(false);
         const user = res?.data?.data?.user;

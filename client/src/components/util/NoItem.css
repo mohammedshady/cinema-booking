@@ -1,7 +1,8 @@
 .no-item-container {
-  width: 50%;
+  margin: 15% auto;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 .no-item-text {
   font-weight: 500;

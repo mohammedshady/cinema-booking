@@ -30,7 +30,7 @@ export const validateSignUp = (values, setFormErrors) => {
   }
   if (!name) errors.name = "Name is required";
   if (!gender) errors.gender = "Gender is required";
-  if (mobile_no.length < 11) errors.mobile_no = "Invalid phone number";
+  if (mobile_no.length < 10) errors.mobile_no = "Invalid phone number";
   if (!mobile_no) errors.mobile_no = "Phone is required";
   if (!birth_date) errors.birth_date = "Birthdate is required";
   else {
@@ -88,7 +88,7 @@ export const validateResetPassword = (
   if (activeStep === 1) {
     if (!date_of_birth) errors.date_of_birth = "birthdate is required";
     else {
-      let [year, month, day] = birth_date.split("-");
+      let [year, month, day] = date_of_birth.split("-");
       day = day.split("T")[0];
       const dateObject = new Date(year, month - 1, day);
       if (
@@ -97,7 +97,7 @@ export const validateResetPassword = (
         dateObject.getDate() != day ||
         year > 2050
       )
-        errors.birth_date = "Incorrect date";
+        errors.date_of_birth = "Incorrect date";
     }
   }
 

@@ -9,30 +9,42 @@ const TopRatedSlider = ({ topRatedMovies }) => {
   const [clickCounter, setClickCounter] = useState(1);
   const navigate = useNavigate();
 
+  //handle scroll click
   const handleClick = (number) => {
     const totalPages = topRatedMovies.length;
 
-    if (clickCounter + number < 1 || clickCounter + number > totalPages) {
+    if (clickCounter + number < 1) {
       return;
     }
 
+    const newIndex = clickCounter + number;
+    if (newIndex > totalPages) {
+      setClickCounter(1);
+      resetScroll();
+      return;
+    } else {
+      setClickCounter(newIndex);
+    }
     scrollRightHandler(number * 250);
-    setClickCounter(clickCounter + number);
   };
 
+  //scroll manually
   const scrollRightHandler = (scrollOffset) => {
     if (ref.current) {
       ref.current.scrollLeft += scrollOffset;
     }
   };
+  const resetScroll = () => {
+    ref.current.scrollLeft = 0;
+  };
+  //auto scroll for top rated movies
   useEffect(() => {
     const interval = setInterval(() => {
-      const totalPages = topRatedMovies.length;
-      clickCounter < totalPages ? handleClick(1) : handleClick(-1);
+      handleClick(1);
     }, 8000);
     return () => clearInterval(interval);
   }, [clickCounter, topRatedMovies]);
-
+  console.log(topRatedMovies);
   return (
     <div className="side-bar-filter-item">
       <p className="side-bar-filter-item-title">Top Rated</p>
@@ -47,10 +59,9 @@ const TopRatedSlider = ({ topRatedMovies }) => {
                 >
                   <div className="slider-movie-item">
                     <img
-                      src={movie.images.banner}
+                      src={"http://localhost:5000" + movie.images.banner}
                       className="slider-movie-image"
                     />
-                    {/* <p className="slider-movie-title">{movie.title}</p> */}
                   </div>
                 </div>
               ))

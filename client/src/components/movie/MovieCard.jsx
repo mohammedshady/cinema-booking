@@ -8,6 +8,7 @@ import StarIcon from "@mui/icons-material/Star";
 const MovieCard = ({ movie, withTitle }) => {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
+
   //display details on hover
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -28,7 +29,7 @@ const MovieCard = ({ movie, withTitle }) => {
       >
         <img
           className="movie-card-img"
-          src={movie.images.poster}
+          src={"http://localhost:5000" + movie.images.poster}
           alt={movie.title}
         />
         {!withTitle ? (

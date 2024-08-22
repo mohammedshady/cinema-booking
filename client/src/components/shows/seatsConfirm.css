@@ -25,7 +25,8 @@
   align-items: center;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  border-radius: 8px;
+  border-radius: 4px;
+  height: 200px;
   animation: slide-in-top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 .seats-confirm-header {
@@ -39,16 +40,24 @@
   padding: 10px;
 }
 .seats-confirm-controls {
+  margin: 10px 0px;
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  gap: 15px;
+  justify-content: center;
   flex-wrap: wrap;
 }
 .seats-confirm-btn {
-  border-radius: 4px;
+  transition: all 0.3s ease;
+  border-radius: 2px;
   cursor: pointer;
   width: 80px;
   padding: 10px;
-  background-color: cadetblue;
+  background-color: #0d1117;
   color: white;
+}
+.seats-confirm-btn:hover {
+  border: 1px solid #0d1117;
+  box-shadow: inset 0 -3em 0 0 white;
+  color: #0d1117;
 }

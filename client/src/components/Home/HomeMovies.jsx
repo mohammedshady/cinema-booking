@@ -61,20 +61,19 @@ const HomeMovies = () => {
   }, []);
 
   let releasedMovies = movies?.filter((movie) => movie.status === "released");
-  let topRatedMovies = movies?.filter((movie) => movie.rating == 5);
   let comingSoonMovies = movies?.filter((movie) => movie.status !== "released");
+  let topRatedMovies = movies?.filter((movie) => movie.rating == 5);
 
-  const recentComingSoonMovie = movies?.find(
-    (movie) =>
-      movie.status === "coming soon" &&
-      Date.parse(movie.release_date) >= Date.now()
-  );
+  const recentComingSoonMovie = movies
+    ?.filter((movie) => movie.status === "coming soon")
+    .sort((a, b) => Date.parse(a.release_date) - Date.parse(b.release_date))
+    .find((movie) => Date.parse(movie.release_date) >= Date.now());
 
   if (loading) return <Loader msg="loading" />;
 
   const DisplayMovies = ({ movies }) => {
     const visibleMovies = movies.length <= 8 ? movies : movies.slice(0, 8);
-    console.log(movies.length);
+
     return (
       <>
         <div className="movie-cards">
@@ -96,8 +95,9 @@ const HomeMovies = () => {
 
   return (
     <div>
-      <Navbar position={"absolute"} />
-      {Object.keys(recentComingSoonMovie).length > 0 ? (
+      {recentComingSoonMovie ? <Navbar position={"absolute"} /> : <Navbar />}
+
+      {recentComingSoonMovie ? (
         <ComingSoonMovie
           recentComingSoonMovie={recentComingSoonMovie}
           moviesRef={moviesRef}
@@ -112,7 +112,10 @@ const HomeMovies = () => {
             <div className="movies-container">
               <div className="home-movie-cards-ac">
                 <div className="home-movie-cards-bar-container" ref={moviesRef}>
-                  <h1 className="home-movie-cards-bar-header">
+                  <h1
+                    className="home-movie-cards-bar-header"
+                    style={{ fontSize: 48 }}
+                  >
                     Discover Movies
                   </h1>
                   <ul className="home-movie-cards-bar">
@@ -155,8 +158,8 @@ const HomeMovies = () => {
         <div className="welcome-home-page">
           {topRatedMovies.length > 0 ? (
             <>
-              <p className="movie-top-rated-header">
-                Top rated movies in our cinema
+              <p className="movie-top-rated-header" style={{ fontSize: 48 }}>
+                Top Rated Movies
               </p>
               {topRatedMovies.length > 0 ? (
                 <MovieReviewCard data={topRatedMovies} />

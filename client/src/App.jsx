@@ -1,6 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-
-// components
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import HomeMovies from "./components/Home/HomeMovies";
 import Login from "./components/auth/Login.jsx";

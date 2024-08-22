@@ -8,8 +8,12 @@ const morgan = require("morgan");
 const errorHandler = require("./middlewares/errorHandler");
 const userRoute = require("./routes/user");
 const adminRoute = require("./routes/admin");
+const cors = require("cors");
 
 const app = express();
+
+//Use CORS middleware
+app.use(cors());
 
 // middleware to parse JSON in request body
 app.use(express.json());
@@ -22,8 +26,8 @@ app.use(cookieParser());
 app.use(fileUpload());
 
 // serve the frontend static files
-const buildPath = path.normalize(path.join(__dirname, "../client/dist"));
-app.use(express.static(buildPath));
+// const buildPath = path.normalize(path.join(__dirname, "../client/dist"));
+// app.use(express.static(buildPath));
 
 // serve uploaded images
 app.use(express.static(path.join(__dirname, "uploads")));
@@ -36,14 +40,14 @@ app.use("/api/user", userRoute);
 app.use("/api/admin", adminRoute);
 
 // serve frontend
-app.get("*", (req, res) => {
-	res.sendFile(path.join(buildPath, "index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(buildPath, "index.html"));
+// });
 
 // error handling middleware
 app.use(errorHandler);
 
 // start the server
 app.listen(process.env.PORT, () =>
-	console.log(`App is running on port: ${process.env.PORT}`)
+  console.log(`App is running on port: ${process.env.PORT}`)
 );

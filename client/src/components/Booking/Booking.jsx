@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 
@@ -11,6 +11,7 @@ import NoItem from "../util/NoItem";
 
 import "./Booking.css";
 import notify from "../admin-dashboard/common/notify";
+import Footer from "../footer/Footer";
 
 const initialState = {
   loading: true,
@@ -92,6 +93,7 @@ const Booking = () => {
           )}
         </div>
       </div>
+      <Footer />
     </>
   );
 };

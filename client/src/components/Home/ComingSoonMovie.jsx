@@ -11,7 +11,11 @@ const ComingSoonMovie = ({
     <div className="exclusive-coming-soon-movie">
       <div className="coming-soon-movie-container">
         <img
-          src={recentComingSoonMovie?.images.banner}
+          src={
+            recentComingSoonMovie
+              ? "http://localhost:5000" + recentComingSoonMovie.images.banner
+              : ""
+          }
           alt="Coming-Soon-Movie"
         />
         <div className="coming-soon-movie-details-container">
@@ -20,7 +24,10 @@ const ComingSoonMovie = ({
           </div>
           <div className="coming-soon-movie-details">
             <div className="coming-soon-movie-details-text">
-              <div className="coming-soon-movie-details-text-title">
+              <div
+                className="coming-soon-movie-details-text-title"
+                style={{ fontSize: 56 }}
+              >
                 {recentComingSoonMovie?.title}
                 <div className="coming-soon-movie-details-text-title-controls">
                   <span>

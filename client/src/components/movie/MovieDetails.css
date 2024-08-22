@@ -37,12 +37,12 @@
   top: 30%;
   width: 300px;
   height: 250px;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid #3b82f6;
+  border: 1px solid white;
 }
 .feedback-modal p {
   text-align: center;
@@ -54,15 +54,22 @@
   font-size: 1.1rem;
 }
 .feedback-modal button {
+  transition: all 0.3s ease;
   cursor: pointer;
   padding: 15px;
-  border-radius: 10px;
-  background-color: #3b82f6;
+  border: 2px solid white;
+  /* border-radius: 10px; */
+  background-color: #0d1117;
   color: white;
   transition: all 0.2s linear;
 }
 .feedback-modal button:hover {
-  background-color: #2564c9;
+  box-shadow: inset 0 -3.4em 0 0 white;
+  color: #0d1117;
+
+  /* background-color: white;
+  color: #0d1117;
+  border-color: white; */
 }
 .movie-details-img-banner {
   display: flex;
@@ -113,9 +120,13 @@
   margin: 20px 10px;
 }
 .movie-desc-desc {
+  margin-left: 12px;
   max-width: 600px;
   font-size: 1rem;
   word-wrap: break-word;
+}
+.fixed-height {
+  height: 260vh;
 }
 .movie-data {
   margin: 30px 0px;
@@ -157,6 +168,11 @@
   padding: 15px 75px;
   border-radius: 2px;
   border: 1px solid white;
+  transition: all 0.3s ease;
+}
+.movie-details-sec-btn:hover {
+  box-shadow: inset 0 -3.4em 0 0 white;
+  color: #0d1117;
 }
 .cast-img {
   width: 130px;
@@ -209,7 +225,8 @@
   margin: 20px;
   width: 40px;
   height: 40px;
-  background-color: darkcyan;
+  background-color: #3b82f6;
+  color: white;
   position: absolute;
   right: 0;
   border-radius: 50%;
@@ -342,6 +359,9 @@
   .movie-details-text {
     text-align: center;
   }
+  .feedback-modal {
+    display: none;
+  }
   .entry-info {
     width: 100%;
   }
@@ -372,6 +392,9 @@
   .movie-details-img-poster img {
     width: 300px;
     height: 420px;
+  }
+  .feedback-modal {
+    display: none;
   }
   .movie-details-inner-container {
     top: 200px;
@@ -414,6 +437,9 @@
 }
 
 @media all and (max-width: 480px) {
+  .feedback-modal {
+    display: none;
+  }
   .movie-details-img-poster img {
     width: 277px;
     height: 400px;

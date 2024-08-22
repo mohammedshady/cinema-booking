@@ -13,6 +13,7 @@ import Navbar from "../navBar/Navbar";
 import screenLogo from "./../../assets/images/screen.png";
 import SeatsConfirm from "./seatsConfirm";
 import Date from "../util/Date";
+import Footer from "../footer/Footer";
 
 const initialState = {
   loading: true,
@@ -202,6 +203,7 @@ const SeatSelector = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

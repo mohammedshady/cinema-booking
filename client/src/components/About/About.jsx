@@ -16,10 +16,11 @@ const About = () => {
           <div>
             <p className="about-us-container-title">About Us..</p>
             <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor,
-              minima nihil voluptate, maiores adipisci sed quibusdam similique
-              necessitatibus cupiditate nesciunt eos quia sapiente cumque ut
-              doloribus possimus odit. Asperiores, deleniti!
+              Our movie booking website was founded with the goal of making it
+              easy and convenient for movie-goers to book tickets online. We
+              strive to provide a seamless user experience and make the ticket
+              booking process hassle-free. Our website features a user-friendly
+              interface
             </p>
           </div>
         </div>
@@ -27,10 +28,10 @@ const About = () => {
           <div>
             <p className="about-us-container-title">Contact Us..</p>
             <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor,
-              minima nihil voluptate, maiores adipisci sed quibusdam similique
-              necessitatibus cupiditate nesciunt eos quia sapiente cumque ut
-              doloribus possimus odit. Asperiores, deleniti!
+              If you have any questions or feedback, please don't hesitate to
+              contact us. You can reach us at
+              <p className="in-p-details">support@moviebooking.com</p>
+              <p className="in-p-details">+1-123-456-7890.</p>
             </p>
           </div>
           <div>

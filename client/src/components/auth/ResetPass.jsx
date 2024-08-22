@@ -54,7 +54,7 @@ const ResetPass = () => {
       setLoading(true);
 
       axios
-        .post("api/user/resetPassword", formData)
+        .post("/api/user/resetPassword", formData)
         .then(() => {
           setLoading(false);
           window.location.replace("/");

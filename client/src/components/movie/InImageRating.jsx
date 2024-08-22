@@ -5,18 +5,21 @@ import ProgressProvider from "../util/ProgressProvider";
 import "react-circular-progressbar/dist/styles.css";
 
 const InImageRating = ({ rating }) => {
-  const goodRating = "#42f572";
-  const mehRating = "#ebf25c";
-  const badRating = "#f25e5c";
+  const goodRating = "#67b57c";
+  const mehRating = "#d3db7d";
+  const mehRating2 = "#dbb57d";
+  const badRating = "#de6657";
 
   const [ratingColor, setRatingColor] = useState("");
 
   useEffect(() => {
     let color = "";
-    if (rating >= 3) {
+    if (rating >= 4) {
       color = goodRating;
-    } else if (rating > 1 && rating < 3) {
+    } else if (rating >= 3 && rating < 4) {
       color = mehRating;
+    } else if (rating >= 2 && rating < 3) {
+      color = mehRating2;
     } else {
       color = badRating;
     }
@@ -39,7 +42,7 @@ const InImageRating = ({ rating }) => {
         >
           {(value) => (
             <CircularProgressbar
-              strokeWidth={11}
+              strokeWidth={10}
               value={value}
               maxValue={5}
               text={rating}

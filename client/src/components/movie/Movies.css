@@ -4,6 +4,7 @@
 }
 .side-to-side-filter-movies {
   display: flex;
+  gap: 2%;
   margin: 2% 0;
 }
 .movies-search-page {
@@ -126,7 +127,7 @@
 }
 .rated-movies-scroll {
   scroll-behavior: smooth;
-  width: 1000px;
+  width: 4000px;
   overflow: hidden;
   display: flex;
   align-items: flex-start;
@@ -232,6 +233,11 @@
 .slider-movie-item {
   cursor: pointer;
   position: relative;
+}
+.slider-movie-item img {
+  height: auto;
+  width: 250px !important;
+  max-width: unset;
 }
 
 .slider-movie-title {

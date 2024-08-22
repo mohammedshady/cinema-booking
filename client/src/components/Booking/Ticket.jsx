@@ -1,25 +1,11 @@
 import Date from "../util/Date";
 import Time from "../util/Time";
 import ArrayString from "../util/ArrayString";
-import CloseIcon from "@mui/icons-material/Close";
 import QRCode from "react-qr-code";
 
 import "./Ticket.css";
 
 const Ticket = ({ booking, handleDelete }) => {
-  // const {
-  //   _id,
-  //   show: { id, screenName, date, startTime },
-  //   totalAmount,
-  //   bookingId,
-  //   seats,
-  //   movie: {
-  //     images: { poster },
-  //     title,
-  //   },
-  //   isExpired,
-  // } = booking;
-
   const LIST_ITEMS = [
     {
       name: "Screen : ",
@@ -44,13 +30,15 @@ const Ticket = ({ booking, handleDelete }) => {
   ];
   return (
     <div className="ticket-item">
-      <span
-        className={"delete-booking-icon"}
-        onClick={() => {
-          handleDelete(booking._id);
-        }}
-      >
-        <CloseIcon color={"error"} fontSize="large" />
+      <span className="delete-booking-icon">
+        <button
+          className="delete-booking-btn"
+          onClick={() => {
+            handleDelete(booking._id);
+          }}
+        >
+          cancel
+        </button>
       </span>
       <div className="ticket-cosm right"></div>
       <div className="ticket-cosm left"></div>
@@ -59,7 +47,7 @@ const Ticket = ({ booking, handleDelete }) => {
       <div className="ticket-movie-img-container">
         <img
           className="ticket-movie-img"
-          src={booking.movie.images.poster}
+          src={"http://localhost:5000" + booking.movie.images.poster}
           alt={booking.movie.title}
         />
       </div>

@@ -44,18 +44,6 @@ const SeatMap = (props) => {
      * 		user want to disselect seat =>
      * 			change defaultChecked option & remove from set
      * */
-    // if (checkedSeats[myIndex] == (false || undefined)) {
-    //   seatSet.add(e.target.value);
-    //   const newArr = checkedSeats;
-    //   newArr[myIndex] = true;
-    //   setCheckedSeats([...newArr]);
-    // } else {
-    //   seatSet.delete(e.target.value);
-    //   const newArr = checkedSeats;
-    //   newArr[myIndex] = false;
-    //   setCheckedSeats([...newArr]);
-    // }
-
     if (checkedSeats[myIndex] == false || checkedSeats[myIndex] == undefined) {
       seatSet.add(e.target.dataset.value);
       const newArr = checkedSeats;
@@ -96,15 +84,6 @@ const SeatMap = (props) => {
       const seat = seats.find((seat) => seat.row === row && seat.col === col);
       const myIndex = cols * (seat.row - 1) + (seat.col - 1);
       tr.push(
-        // <input
-        //   className="input-seat"
-        //   type="checkbox"
-        //   checked={checkedSeats[myIndex]}
-        //   disabled={seat?.isBooked}
-        //   value={seat?._id}
-        //   name={seat?.name}
-        //   onChange={(e) => handleSeatChange(myIndex, e)}
-        // />
         <div
           className={`input-seat ${
             checkedSeats[myIndex]

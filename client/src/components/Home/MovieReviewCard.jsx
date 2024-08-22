@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import "./MovieReviewCard.css";
 import StarIcon from "@mui/icons-material/Star";
 import BookIcon from "@mui/icons-material/Book";
-import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrayString from "../util/ArrayString";
 
 const MovieReviewCard = ({ data }) => {
@@ -55,10 +56,10 @@ const MovieReviewCard = ({ data }) => {
       <div className="gallery-wrap">
         <div className="gallery-btn leftc">
           <button
-            className="gallery-move-btn"
-            onClick={() => scrollLeft(250 * 5)}
+            className="see-more-button"
+            onClick={() => scrollLeft(300 * 5)}
           >
-            <ArrowRightAltIcon style={{ color: "white" }} />
+            <ArrowBackIosNewIcon />
           </button>
         </div>
         <div className="movie-gallery-wrapper" ref={ref}>
@@ -77,21 +78,10 @@ const MovieReviewCard = ({ data }) => {
               >
                 <div className="movie-gallery-item-img">
                   <img
-                    src={movie.images.poster}
+                    src={"http://localhost:5000" + movie.images.poster}
                     className="movie-gallery-card-img"
                   />
-                  <div className="movie-img-icon">
-                    {movie.visible ? (
-                      <BookIcon
-                        style={{
-                          fontSize: "4rem",
-                          color: "#46c361",
-                          textShadow:
-                            "text-shadow: -12px 5px 15px #edededa2, 5px -2px 10px #ededed33;",
-                        }}
-                      />
-                    ) : null}
-                  </div>
+                  <div className="movie-img-icon"></div>
                 </div>
                 {movie.visible ? (
                   <div className="movie-gallery-item-review">
@@ -112,7 +102,7 @@ const MovieReviewCard = ({ data }) => {
                           <div className="movie-review-genre contain">
                             <p className="detail-review-title">Genres</p>
                             <p>
-                              <ArrayString arr={movie.genres} />
+                              <ArrayString arr={movie.genre} />
                             </p>
                           </div>
                         </div>
@@ -170,10 +160,10 @@ const MovieReviewCard = ({ data }) => {
         </div>
         <div className="gallery-btn rightc">
           <button
-            className="gallery-move-btn"
-            onClick={() => scrollRight(250 * 5)}
+            className="see-more-button"
+            onClick={() => scrollRight(300 * 5)}
           >
-            <ArrowRightAltIcon style={{ color: "white" }} />
+            <ArrowForwardIosOutlinedIcon />
           </button>
         </div>
       </div>
