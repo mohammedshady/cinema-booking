@@ -75,7 +75,6 @@ const ResetPass = () => {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
-
   if (loading) return <Loader msg="loading" />;
 
   const titles = [
