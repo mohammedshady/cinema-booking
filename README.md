@@ -34,7 +34,7 @@ For cinema management, the app provides a comprehensive admin dashboard. Admins 
     `npm install`
 4. Create the database `cinema` in MongoDB.
 5. Create the `.env` file in the server directory and add the following details:
-    ```
+    ```env
     PORT=5000
     DB_URL=mongodb://127.0.0.1:27017/cinema
     BASE_URL=http://localhost:5000
